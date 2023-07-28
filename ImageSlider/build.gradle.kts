@@ -1,17 +1,14 @@
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
-    alias(libs.plugins.com.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.org.jetbrains.kotlin.android)
 }
 
 android {
-    namespace = "com.fang.taipeitour"
+    namespace = "com.module.imageslider"
+    resourcePrefix = "imageslider"
 
     defaultConfig {
-        applicationId = "com.fang.taipeitour"
-        versionCode = 1
-        versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -57,13 +54,5 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 
-    // custom
-    implementation(projects.imageSlider)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.coroutine.android)
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
-    implementation(libs.koin.compose)
-    implementation(libs.retrofit.core)
-    implementation(libs.retrofit.gson)
+    implementation(libs.coil.compose)
 }

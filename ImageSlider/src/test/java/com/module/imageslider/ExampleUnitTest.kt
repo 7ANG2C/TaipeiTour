@@ -1,4 +1,4 @@
-package com.fang.taipeitour
+package com.module.imageslider
 
 import org.junit.Test
 
