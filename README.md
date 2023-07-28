@@ -1,2 +1,2 @@
 # TaipeiTour
-Hello Taipe!, enjoy Taipei!
+Hello Taipei!, enjoy Taipei!
