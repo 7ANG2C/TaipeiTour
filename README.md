@@ -28,8 +28,12 @@ Hello Taipei, enjoy Taipei!
     - `./gradlew spotlessApply` 修正程式碼
 
 ## 建置環境
-Android Studio Giraffe | 2022.3.1
-Build #AI-223.8836.35.2231.10406996, built on June 29, 2023
-Runtime version: 17.0.6+0-17.0.6b829.9-10027231 aarch64
-VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o.
-macOS 12.6 | Memory: 4096M | Cores: 8
+- Android Studio Giraffe | 2022.3.1
+- Build #AI-223.8836.35.2231.10406996, built on June 29, 2023
+- Runtime version: 17.0.6+0-17.0.6b829.9-10027231 aarch64
+- VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o.
+- macOS 12.6 | Memory: 4096M | Cores: 8
+
+## 設計理念
+- 版面參考各大旅遊 APP
+- Style 參考國泰

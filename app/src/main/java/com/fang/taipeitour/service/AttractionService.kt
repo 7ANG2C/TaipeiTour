@@ -21,7 +21,7 @@ interface TaipeiTourApiService {
     @GET("{lang}/Attractions/All")
     suspend fun getAllAttractions(
         @Path("lang") language: String,
-        @Query("page") page: Int = 1,
+        @Query("page") page: Int,
         @Query("categoryIds") categoryIds: String = "",
         @Query("nlat") nlat: String = "",
         @Query("elong") elong: String = "",

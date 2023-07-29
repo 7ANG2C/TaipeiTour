@@ -22,9 +22,9 @@ data class Attraction(
      * @param id 2213
      * @param name "葫蘆國小跨堤人行陸橋"
      * @param nameZh null
-     * @param open_status 1
+     * @param openStatus 1
      * @param introduction "位於葫蘆國小附近的跨堤人行陸橋，..."
-     * @param open_time ""
+     * @param openTime ""
      * @param zipcode "111"
      * @param distric "士林區"
      * @param address "111 臺北市士林區環河北路三段"
@@ -51,17 +51,17 @@ data class Attraction(
      */
     data class Data(
         @SerializedName("id")
-        val id: Long,
+        val id: String,
         @SerializedName("name")
         val name: String,
         @SerializedName("name_zh")
-        val nameZh: String,
+        val nameZh: String?,
         @SerializedName("open_status")
-        val open_status: Int,
+        val openStatus: Int,
         @SerializedName("introduction")
         val introduction: String,
         @SerializedName("open_time") // "",
-        val open_time: String,
+        val openTime: String,
         @SerializedName("zipcode")
         val zipcode: String,
         @SerializedName("distric")

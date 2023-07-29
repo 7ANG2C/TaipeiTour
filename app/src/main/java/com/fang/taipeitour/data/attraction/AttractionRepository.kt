@@ -7,9 +7,9 @@ import kotlinx.coroutines.withContext
 
 class AttractionRepository() {
 
-    suspend operator fun invoke(): Attraction {
+    suspend operator fun invoke(language: String = "zh-tw", page: Int): Attraction {
         return withContext(Dispatchers.IO) {
-            TaipeiTourApi().getAllAttractions("zh-tw")
+            TaipeiTourApi().getAllAttractions(language, page)
         }
     }
 

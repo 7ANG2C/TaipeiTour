@@ -6,35 +6,40 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fang.taipeitour.model.OnListItemClicked
-import com.fang.taipeitour.service.Attraction
+import com.fang.taipeitour.model.attraction.Attraction2
 import com.module.imageslider.ImageSlider
 
 @Composable
 fun AttractionScreen(
-    list: List<Attraction.Data>? = emptyList(),
-    invoke: OnListItemClicked<Attraction.Data>
+    list: List<Attraction2>?,
+    invoke: OnListItemClicked<Attraction2>
 ) {
     Surface {
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(list.orEmpty()) { item ->
-                AttractionItem(
-                    item, invoke
-                )
+        Column {
+            Text("共 SIZE 項商品")
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(list.orEmpty()) { item ->
+                    AttractionItem(
+                        item, invoke
+                    )
+                }
             }
         }
+
     }
 }
 
 @Composable
 private fun AttractionItem(
-    item: Attraction.Data,
-    invoke: OnListItemClicked<Attraction.Data>
+    item: Attraction2,
+    invoke: OnListItemClicked<Attraction2>
 ) {
     Column(
         Modifier.clickable {

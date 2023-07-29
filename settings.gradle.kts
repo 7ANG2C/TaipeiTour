@@ -8,6 +8,9 @@ pluginManagement {
     }
     resolutionStrategy {
         eachPlugin {
+            if (requested.id.id in setOf("org.jetbrains.kotlin.android", "kotlin-parcelize", "org.jetbrains.kotlin.kapt")) {
+                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
+            }
             if (requested.id.id in setOf("com.diffplug.spotless")) {
                 useModule("com.diffplug.spotless:spotless-plugin-gradle:${requested.version}")
             }

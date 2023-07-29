@@ -17,7 +17,7 @@ class TaipeiTourApi {
         retrofit.create(TaipeiTourApiService::class.java)
     }
 
-    suspend fun getAllAttractions(language: String) =
-        taipeiTourApiService.getAllAttractions(language)
+    suspend fun getAllAttractions(language: String, page: Int) =
+        taipeiTourApiService.getAllAttractions(language, page)
 
 }

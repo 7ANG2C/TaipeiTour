@@ -21,6 +21,7 @@ koinAndroid = "3.4.2"
 koinCompose = "3.4.5"
 spotless = "6.5.2"
 coil = "2.4.0"
+accompanist = "0.30.1"
 # plugin ver
 protobufGradle = "0.9.1"
 # Build
@@ -57,8 +58,10 @@ koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = 
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 spotless-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
 
 [plugins]
+kotlin-parcelize = { id = "kotlin-parcelize", version.ref = "org-jetbrains-kotlin-android" }
 com-android-application = { id = "com.android.application", version.ref = "agp" }
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin-android" }
 # custom

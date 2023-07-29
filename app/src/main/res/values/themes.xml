@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    Theme.AppCompat.Light.DarkActionBar-->
+    <!--    Theme.AppCompat.Light.DarkActionBar-->
     <style name="Theme.TaipeiTour" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:screenOrientation">portrait</item>
     </style>
