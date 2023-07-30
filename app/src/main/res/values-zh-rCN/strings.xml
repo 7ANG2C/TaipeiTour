@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">遊台北</string>
+    <string name="app_ver">TaipeiTour</string>
+    <string name="home">home</string>
+    <string name="setting">Settings</string>
+    <string name="language">檢中</string>
+</resources>
