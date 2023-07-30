@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">TaipeiTour</string>
-    <string name="language">語言</string>
-    <string name="setting">Settings</string>
+    <string name="app_name">Taipei Tour</string>
+    <string name="app_ver">App Ver. </string>
+    <string name="home">HOME</string>
+    <string name="setting">SETTING</string>
+    <string name="language">English</string>
 </resources>

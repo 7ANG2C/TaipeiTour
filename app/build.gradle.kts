@@ -18,7 +18,7 @@ android {
     defaultConfig {
         applicationId = "com.fang.taipeitour"
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -51,6 +51,7 @@ android {
         }
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     composeOptions {
@@ -94,6 +95,8 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.protobuf.javalite)
     testImplementation(libs.koin.test)
+    implementation(libs.coil.compose)
+    implementation ("androidx.compose.material:material:1.4.3")
 }
 
 protobuf {

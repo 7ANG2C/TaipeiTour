@@ -46,7 +46,7 @@ class UserPreferencesDataStore(context: Context) {
             .mapLatest { dataWrapper ->
                 UserPreferences(
                     id = dataWrapper.darkMode,
-                    name = dataWrapper.darkMode,
+                    darkMode = dataWrapper.darkMode,
                 )
             }
             .distinctUntilChanged()

@@ -28,6 +28,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,7 +69,6 @@ val SwatchC = Color(0xFFF2DDA4)
 @ExperimentalFoundationApi
 @Composable
 fun App() {
-
     val scope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
     val refresh = remember {
@@ -96,7 +98,6 @@ fun App() {
 @ExperimentalFoundationApi
 @Composable
 fun App2() {
-
     val scope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
     val refresh = remember {
@@ -175,8 +176,6 @@ fun CustomPullToRefresh(
     onRefresh: () -> Unit,
     content: @Composable () -> Unit,
 ) {
-
-
     val pullState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
     var offset by remember { mutableStateOf(0) }
     val animatedOffset by animateIntAsState(
@@ -191,7 +190,6 @@ fun CustomPullToRefresh(
     val indicator = remember { 50.dp }
     val indicatorPx = remember { with(density) { indicator.toPx() } }
 
-
     CompositionLocalProvider(
         LocalOverscrollConfiguration provides null
     ) {
@@ -201,7 +199,6 @@ fun CustomPullToRefresh(
             onRefresh = onRefresh,
             refreshTriggerDistance = trigger,
             indicator = { state, _ ->
-
                 val willRefresh = state.indicatorOffset.roundToInt() > triggerPx
                 offset = state.indicatorOffset.roundToInt() + if (willRefresh) 100 else 0
 
@@ -224,10 +221,8 @@ fun CustomPullToRefresh(
                         )
                         .size(indicator)
                 )
-
             }
         ) {
-
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -235,11 +230,11 @@ fun CustomPullToRefresh(
             ) {
                 content()
             }
-
         }
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @ExperimentalFoundationApi
 @Composable
 fun FancyPullToRefresh(
@@ -248,8 +243,7 @@ fun FancyPullToRefresh(
     onRefresh: () -> Unit,
     content: @Composable () -> Unit,
 ) {
-
-    val pullState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
+    val pullState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh)
     var offset by remember { mutableStateOf(0) }
     val animatedOffset by animateIntAsState(
         targetValue = offset,
@@ -260,61 +254,48 @@ fun FancyPullToRefresh(
     val trigger = remember { 120.dp }
     val triggerPx = remember { with(density) { trigger.toPx() } }
 
-
-    CompositionLocalProvider(
-        LocalOverscrollConfiguration provides null
-    ) {
-        SwipeRefresh(
-            modifier = modifier,
-            state = pullState,
-            onRefresh = onRefresh,
-            refreshTriggerDistance = trigger,
-            indicator = { state, _ ->
-
-                val willRefresh = state.indicatorOffset.roundToInt() > triggerPx
-                offset = state.indicatorOffset.roundToInt() + if (willRefresh) 100 else 0
-
-                offset = when {
-                    willRefresh -> triggerPx.roundToInt() + (state.indicatorOffset.roundToInt() * .1f).roundToInt()
-                    state.isRefreshing -> triggerPx.roundToInt()
-                    else -> state.indicatorOffset.roundToInt()
-                }
-            }
+//    CompositionLocalProvider(
+//        LocalOverscrollConfiguration provides null
+//    ) {
+    Box(modifier = modifier.pullRefresh(pullState, !isRefreshing)) {
+        Box(
+            Modifier.background(color = Purple80)
         ) {
-            Box(
-                Modifier
-                    .background(color = Purple80)
+            FancyRefreshAnimation(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth(),
+                isRefreshing = { isRefreshing },
+                willRefresh = { offset > triggerPx },
+                offsetProgress = { min(animatedOffset / triggerPx, 1f) }
+            )
+            val willRefresh = pullState.progress.roundToInt() > triggerPx
+            offset = pullState.progress.roundToInt() + if (willRefresh) 100 else 0
 
+            offset = when {
+                willRefresh -> triggerPx.roundToInt() + (pullState.progress.roundToInt() * .1f).roundToInt()
+                isRefreshing -> triggerPx.roundToInt()
+                else -> pullState.progress.roundToInt()
+            }
+            val scale by animateFloatAsState(
+                targetValue = if (offset > triggerPx) .95f else 1f,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                )
+            )
+
+            Box(modifier = Modifier
+                .scale(scale)
+                .offset { IntOffset(x = 0, y = animatedOffset) }
+                .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                .fillMaxSize()
+                .background(Purple40)
             ) {
-
-                FancyRefreshAnimation(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .fillMaxWidth(),
-                    isRefreshing = { pullState.isRefreshing },
-                    willRefresh = { offset > triggerPx },
-                    offsetProgress = { min(animatedOffset / triggerPx, 1f) }
-                )
-
-                val scale by animateFloatAsState(
-                    targetValue = if (offset > triggerPx) .95f else 1f,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                    )
-                )
-
-                Box(modifier = Modifier
-                    .scale(scale)
-                    .offset { IntOffset(x = 0, y = animatedOffset) }
-                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-                    .fillMaxSize()
-                    .background(Purple40)
-                ) {
-                    content()
-                }
+                content()
             }
         }
     }
+//    }
 }
 
 @Composable
@@ -324,7 +305,6 @@ fun FancyRefreshAnimation(
     willRefresh: () -> Boolean,
     offsetProgress: () -> Float,
 ) {
-
     Row(
         modifier = modifier
             .padding(16.dp)

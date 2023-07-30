@@ -1,4 +1,4 @@
-package com.module.imageslider
+package com.fang.taipeitour.ui.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -14,7 +14,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,10 +31,10 @@ import coil.compose.AsyncImage
 fun ImageSlider(modifier: Modifier, images: List<String>) {
     val dd = LocalConfiguration.current
     val w = remember {
-        mutableStateOf(dd.screenWidthDp*0.9)
+        mutableStateOf(dd.screenWidthDp * 0.9)
     }
     val h = remember {
-        mutableStateOf(w.value*0.75)
+        mutableStateOf(w.value * 0.75)
     }
     Box(
         modifier = modifier
@@ -43,33 +42,30 @@ fun ImageSlider(modifier: Modifier, images: List<String>) {
             .height(h.value.dp)
             .clip(RoundedCornerShape(8.dp))
     ) {
-        if(images.isEmpty()) {
-            Text(text = "No Image")
-        } else {
-            val state = rememberPagerState()
-            HorizontalPager(    modifier = Modifier
+        val state = rememberPagerState()
+        HorizontalPager(
+            modifier = Modifier
                 .width(w.value.dp)
                 .height(h.value.dp)
-                .clip(RoundedCornerShape(8.dp)),state = state, pageCount = images.size) {
-                AsyncImage(
-                    modifier = Modifier
-                        .height(h.value.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    model = images[it],
-                    contentDescription = null,
-                    contentScale = ContentScale.FillHeight
-                )
-            }
-            Column(  modifier = Modifier.align(Alignment.BottomCenter)) {
-                Indicator(
-                    pageCount = images.size,
-                    pagerState = state,
-
-                    )
-                Spacer(modifier = Modifier.height(24.dp))
-            }
+                .clip(RoundedCornerShape(8.dp)), state = state, pageCount = images.size
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .height(h.value.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                model = images[it],
+                contentDescription = null,
+                contentScale = ContentScale.FillHeight
+            )
         }
+        Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+            Indicator(
+                pageCount = images.size,
+                pagerState = state,
 
+                )
+            Spacer(modifier = Modifier.height(24.dp))
+        }
 
     }
 }

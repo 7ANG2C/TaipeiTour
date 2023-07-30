@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">遊台北</string>
+    <string name="app_name">臺北</string>
+    <string name="app_ver">App Ver. </string>
+    <string name="home">主頁</string>
+    <string name="setting">設定</string>
     <string name="language">繁體中文</string>
-    <string name="setting">Settings</string>
 </resources>
