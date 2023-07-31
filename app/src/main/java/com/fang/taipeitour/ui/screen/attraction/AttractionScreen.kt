@@ -1,16 +1,36 @@
 package com.fang.taipeitour.ui.screen.attraction
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.with
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FloatingActionButton
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,28 +45,39 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.fang.taipeitour.R
 import com.fang.taipeitour.model.OnListItemClicked
-import com.fang.taipeitour.model.attraction.Attraction2
-import com.module.imageslider.ImageSlider
+import com.fang.taipeitour.model.attraction.Attraction
+import com.fang.taipeitour.ui.component.CustomImage
+import com.fang.taipeitour.ui.component.ImageSlider
+import com.fang.taipeitour.ui.component.dsl.stateValue
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@OptIn(
+
+    ExperimentalAnimationApi::class
+)
 @Composable
 fun AttractionScreen(
     viewModel: AttractionViewModel,
-    invoke: OnListItemClicked<Attraction2>
+    invoke: OnListItemClicked<Attraction>
 ) {
 
-    val isRefreshing = remember {
-        mutableStateOf(false)
-    }
+    val isRefreshing = viewModel.isRefreshingState.stateValue()
+
 //    val pullRefreshState = rememberPullRefreshState(isRefreshing.value, {
 //        isRefreshing.value = true
 //        viewModel.refresh()
 //    })
-    val list = viewModel.state.collectAsState().value
+    val bundle = viewModel.listState.collectAsState().value
     Surface {
         Box {
             val state = rememberLazyListState()
@@ -58,10 +89,10 @@ fun AttractionScreen(
 //                } else {
 //
 //                }
-                FancyPullToRefresh(
-                    isRefreshing = isRefreshing.value,
+                PullRefresh(
+                    isRefreshing = isRefreshing,
                     onRefresh = {
-                        isRefreshing.value = true
+
                         viewModel.refresh()
                     }
                 ) {
@@ -71,12 +102,12 @@ fun AttractionScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(
-                            list?.filterIsInstance<AttractionViewModel.Item.Data>().orEmpty()
-                                .map { it.sdfsdf }
+                            bundle?.list?.filterIsInstance<AttractionViewModel.Item.Data>()
+                                .orEmpty().map { it.attraction }
                         ) { item ->
                             AttractionItem(item, invoke)
                         }
-                        list?.singleOrNull { it == AttractionViewModel.Item.Hint }?.let {
+                        bundle?.list?.singleOrNull { it == AttractionViewModel.Item.Loading }?.let {
                             item {
                                 Text(text = "Loading\nLoading")
                             }
@@ -96,38 +127,121 @@ fun AttractionScreen(
             }
 
             val scope = rememberCoroutineScope()
-            Surface(modifier = Modifier.align(Alignment.BottomEnd)) {
-                if (state.isScrollingUp()) {
-
-                    FloatingActionButton(onClick = {
-                        isRefreshing.value = false
-                        scope.launch {
-                            state.animateScrollToItem(0)
-                        }
-                    }) {
+            FloatingActionButton(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.BottomEnd),
+                onClick = {
+                    scope.launch {
+                        state.animateScrollToItem(0)
                     }
-                } else {
-                    list?.size?.let {
-                        Text("${state.layoutInfo.visibleItemsInfo.lastOrNull()?.index}/$it")
+                },
+//                    shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 30)),
+//                    backgroundColor = MaterialTheme.colorScheme.tertiary
+            ) {
+                AnimatedContent(
+                    targetState = state.isScrollingUp(),
+                    transitionSpec = {
+                        val animationSpec = tween<IntOffset>(800)
+                        val fadeAnimationSpec = tween<Float>(800)
+                        val enterTransition = slideInVertically(animationSpec) { height ->
+                            height
+                        } + fadeIn(fadeAnimationSpec)
+                        val exitTransition = slideOutVertically(animationSpec) { height ->
+                            -height
+                        } + fadeOut(fadeAnimationSpec)
+                        (enterTransition with exitTransition).using(SizeTransform(clip = true))
+                    }
+                ) { visible ->
+                    if (visible) {
+                        CustomImage(res = R.drawable.ic_scroll_up)
+                    } else {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            bundle?.list?.size?.let {
+                                Text(
+                                    "${state.layoutInfo.visibleItemsInfo.lastOrNull()?.index}",
+                                    color = MaterialTheme.colorScheme.onTertiary,
+                                    fontSize = 12.sp
+                                )
+                            }
+                            Divider(
+                                Modifier
+                                    .height(1.dp)
+                                    .width(20.dp),
+                                color = MaterialTheme.colorScheme.onTertiary
+                            )
+                            bundle?.list?.size?.let {
+                                Text(
+                                    "$it",
+                                    color = MaterialTheme.colorScheme.onTertiary,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
                     }
                 }
             }
+
+//            Snackbar(Modifier.align(Alignment.BottomCenter)) {
+//                Text(text = "Error")
+//            }
+
         }
     }
 }
 
 @Composable
 private fun AttractionItem(
-    item: Attraction2,
-    invoke: OnListItemClicked<Attraction2>
+    item: Attraction,
+    invoke: OnListItemClicked<Attraction>
 ) {
-    Column(
-        Modifier.clickable {
+    var isExpand by remember { mutableStateOf(false) }
+    val rotationAngle by animateFloatAsState(
+        targetValue = if (isExpand) 180f else 0f
+    )
+    ElevatedCard(
+        shape = MaterialTheme.shapes.large,
+        modifier = Modifier.clickable {
             invoke(item)
         }
     ) {
-        ImageSlider(Modifier, item.images.map { it.src })
+        ImageSlider(
+            Modifier
+                .fillMaxWidth()
+                .aspectRatio(3f / 1f), item.images.map { it.src }, RoundedCornerShape(8.dp)
+        )
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(text = item.name)
+            IconButton(
+                onClick = {
+                    isExpand = !isExpand
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Icon(
+                    modifier = Modifier.rotate(rotationAngle),
+                    painter = painterResource(id = R.drawable.ic_arrow_drop),
+                    contentDescription = null,
+                    tint = Color.White
+                )
+            }
+            AnimatedVisibility(visible = isExpand) {
+                Column {
+                    Text(item.zipCode + item.distric)
+                    Text(
+                        item.introduction,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2
+                    )
+                }
+            }
+        }
     }
+
 }
 
 @Composable

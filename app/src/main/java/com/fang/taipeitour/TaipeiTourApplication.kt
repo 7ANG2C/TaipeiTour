@@ -2,7 +2,9 @@ package com.fang.taipeitour
 
 import android.app.Application
 import com.fang.taipeitour.di.DataStoreModule
+import com.fang.taipeitour.di.RepositoryModule
 import com.fang.taipeitour.di.ViewModelModule
+import com.module.taipeitourapi.external.di.TaipeiTourServiceModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -18,8 +20,10 @@ class TaipeiTourApplication : Application() {
         startKoin {
             androidContext(this@TaipeiTourApplication)
             modules(
-                ViewModelModule(),
-                DataStoreModule()
+                TaipeiTourServiceModule.invoke() +
+                    ViewModelModule() +
+                    DataStoreModule.invoke() +
+                    RepositoryModule.invoke()
             )
         }
     }

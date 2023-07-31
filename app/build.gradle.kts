@@ -1,4 +1,3 @@
-
 import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -57,7 +56,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
     }
-    packaging {
+    packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -82,7 +81,7 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
 
     // custom
-    implementation(projects.imageSlider)
+    implementation(projects.taipeiTourApi)
 //    implementation(libs.androidx.appcompat)
     implementation(libs.coroutine.android)
     implementation(libs.koin.core)

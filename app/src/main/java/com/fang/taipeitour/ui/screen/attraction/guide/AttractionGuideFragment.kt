@@ -16,6 +16,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -24,6 +25,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,15 +33,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -50,13 +53,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -65,8 +71,11 @@ import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
-import com.fang.taipeitour.model.attraction.Attraction2
+import com.fang.taipeitour.R
+import com.fang.taipeitour.extension.logD
+import com.fang.taipeitour.model.attraction.Attraction
 import com.fang.taipeitour.ui.component.ImageSlider
+import com.fang.taipeitour.ui.component.dsl.stateValue
 import com.fang.taipeitour.ui.theme.TaipeiTourTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -78,7 +87,7 @@ class AttractionGuideFragment : Fragment() {
 
     companion object {
         private const val ARG_ID = "id"
-        fun createIntent(id: Attraction2): Fragment {
+        fun createIntent(id: Attraction): Fragment {
             return AttractionGuideFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_ID, id)
@@ -88,7 +97,7 @@ class AttractionGuideFragment : Fragment() {
     }
 
     private val viewModel by viewModel<AttractionGuideViewModel> {
-        parametersOf(requireArguments().getParcelable<Attraction2>(ARG_ID))
+        parametersOf(requireArguments().getParcelable<Attraction>(ARG_ID))
     }
 
     override fun onCreateView(
@@ -129,10 +138,15 @@ class AttractionGuideFragment : Fragment() {
         val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.toPx() }
 
         Box(modifier = modifier) {
+            val isShow = remember {
+                mutableStateOf(false)
+            }
             Body(
                 scroll = scroll,
                 modifier = Modifier.fillMaxSize()
-            )
+            ) {
+                isShow.value = true
+            }
             Header(
                 scroll = scroll,
                 headerHeightPx = headerHeightPx,
@@ -140,12 +154,31 @@ class AttractionGuideFragment : Fragment() {
                     .fillMaxWidth()
                     .height(headerHeight)
             )
-            Toolbar(
+            IconButton(
+                onClick = {
+                    (context as? OnCloseListener)?.onClose()
+                },
+                modifier = Modifier
+                    .padding(20.dp)
+                    .size(24.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back),
+                    contentDescription = null,
+                    tint = Color.White
+                )
+            }
+            TopBar(
                 scroll = scroll,
                 headerHeightPx = headerHeightPx,
-                toolbarHeightPx = toolbarHeightPx
+//                toolbarHeightPx = toolbarHeightPx
             )
             Title(scroll = scroll)
+            Crossfade(targetState = isShow.value) {
+                Web(it) {
+                    isShow.value = false
+                }
+            }
         }
     }
 
@@ -164,58 +197,70 @@ class AttractionGuideFragment : Fragment() {
         ) {
             ImageSlider(
                 modifier = Modifier,
-                images = viewModel.state.collectAsState().value?.images?.map { it.src }.orEmpty()
+                images = viewModel.state.collectAsState().value?.images?.map { it.src }.orEmpty(),
+                RoundedCornerShape(0.dp)
             )
             Box(
                 Modifier
                     .fillMaxSize()
                     .background(
                         brush = Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Blue),
+                            colors = listOf(
+                                Color.Transparent,
+                                MaterialTheme.colorScheme.onSecondary
+                            ),
                             startY = 3 * headerHeightPx / 4 // Gradient applied to wrap the title only
                         )
                     )
             )
+
         }
     }
 
     @Composable
-    private fun Body(scroll: ScrollState, modifier: Modifier = Modifier) {
-        val isShow = remember {
-            mutableStateOf(false)
-        }
-
+    private fun Body(scroll: ScrollState, modifier: Modifier = Modifier, onClick: () -> Unit) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier.verticalScroll(scroll)
         ) {
             Spacer(Modifier.height(headerHeight))
             val state = viewModel.state.collectAsState().value
-            if (state != null) {
+            Text(
+                text = state.originalUrl.takeIf { it.isNotBlank() } ?: "--",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Justify,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .clickable {
+                        onClick()
+                    }
+            )
+            Text(
+                text = state.officialSite.takeIf { it.isNotBlank() } ?: "--",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Justify,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .clickable {
+                        onClick()
+                    }
+            )
+            state.introduction.split("\r\n\r\n").forEach {
+                logD("werrwe", it)
+                Row {
+                    repeat(3) {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.6f))
+                        )
+                    }
+                }
                 Text(
-                    text = state.url.takeIf { it.isNotBlank() } ?: "--",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Justify,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .clickable {
-                            isShow.value = true
-                        }
-                )
-                Text(
-                    text = state.officialSite.takeIf { it.isNotBlank() } ?: "--",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Justify,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .clickable {
-                            isShow.value = true
-                        }
-                )
-                Text(
-                    text = state.introduction,
+                    text = it,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Justify,
@@ -223,9 +268,13 @@ class AttractionGuideFragment : Fragment() {
                 )
             }
         }
+    }
 
-        val mUrl = viewModel.state.collectAsState().value?.url ?: ""
-        if (isShow.value) {
+    @Composable
+    private fun Web(isShow: Boolean, click: () -> Unit) {
+
+        val mUrl = viewModel.state.collectAsState().value.originalUrl
+        if (isShow) {
             val webViewChromeClient = object : WebChromeClient() {
                 override fun onProgressChanged(view: WebView?, newProgress: Int) {
                     // 回調網頁內容加載進度
@@ -283,11 +332,11 @@ class AttractionGuideFragment : Fragment() {
             }
             var webView: WebView? = null
             val coroutineScope = rememberCoroutineScope()
-            AndroidView(modifier = modifier, factory = { ctx ->
+            AndroidView(modifier = Modifier.fillMaxSize(), factory = { ctx ->
                 WebView(ctx).apply {
                     this.webViewClient = webViewClient
                     this.webChromeClient = webViewChromeClient
-                    this.settings?.apply {
+                    this.settings.apply {
                         // 允許 JS 交互
                         javaScriptEnabled = true
                         // 将图片调整到适合webView的大小
@@ -307,12 +356,12 @@ class AttractionGuideFragment : Fragment() {
                     loadUrl(mUrl)
                 }
             })
-            if (isShow.value) {
+            if (isShow) {
                 BackHandler {
                     if (webView?.canGoBack() == true) {
                         webView?.goBack()
                     } else {
-                        isShow.value = false
+                        click()
                         // finish()
                     }
                 }
@@ -359,12 +408,13 @@ class AttractionGuideFragment : Fragment() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun Toolbar(
+    private fun TopBar(
         scroll: ScrollState,
         headerHeightPx: Float,
-        toolbarHeightPx: Float,
+//        toolbarHeightPx: Float,
         modifier: Modifier = Modifier
     ) {
+        val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.toPx() }
         val toolbarBottom by remember {
             mutableStateOf(headerHeightPx - toolbarHeightPx)
         }
@@ -384,26 +434,31 @@ class AttractionGuideFragment : Fragment() {
             TopAppBar(
                 modifier = Modifier.background(
                     brush = Brush.horizontalGradient(
-                        listOf(Color.White, Color.Red)
+                        listOf(
+                            MaterialTheme.colorScheme.secondaryContainer,
+                            MaterialTheme.colorScheme.primaryContainer
+                        )
                     )
-                ),
+                ).height(toolbarHeight),
                 navigationIcon = {
+                    val context= LocalContext.current
                     IconButton(
-                        onClick = {},
+                        onClick = {
+                            (context as? OnCloseListener)?.onClose()
+                        },
                         modifier = Modifier
                             .padding(16.dp)
                             .size(24.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Menu,
+                            painter = painterResource(id = R.drawable.ic_back),
                             contentDescription = null,
                             tint = Color.White
                         )
                     }
                 },
                 title = {},
-//            backgroundColor = Color.Transparent,
-//            elevation = 0.dp
+                colors = TopAppBarDefaults.smallTopAppBarColors(Color.Transparent)
             )
         }
     }
@@ -417,7 +472,7 @@ class AttractionGuideFragment : Fragment() {
         var titleWidthPx by remember { mutableStateOf(0f) }
 
         Text(
-            text = "FANG FANG",
+            text = viewModel.state.stateValue().name,
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,

@@ -8,7 +8,7 @@ pluginManagement {
     }
     resolutionStrategy {
         eachPlugin {
-            if (requested.id.id in setOf("org.jetbrains.kotlin.android", "kotlin-parcelize", "org.jetbrains.kotlin.kapt")) {
+            if (requested.id.id in setOf("org.jetbrains.kotlin.android", "kotlin-parcelize")) {
                 useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
             }
             if (requested.id.id in setOf("com.diffplug.spotless")) {
@@ -28,7 +28,7 @@ dependencyResolutionManagement {
 
 include(
     ":app",
-    ":ImageSlider"
+    ":TaipeiTourApi"
 )
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

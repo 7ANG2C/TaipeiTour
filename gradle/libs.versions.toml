@@ -1,7 +1,7 @@
 # Version 1
 
 [versions]
-agp = "8.1.0"
+agp = "7.4.2"
 org-jetbrains-kotlin-android = "1.8.10"
 core-ktx = "1.9.0"
 junit = "4.13.2"
@@ -44,12 +44,13 @@ ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
 # custom
-protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
 coroutine-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutine" }
 coroutine-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutine" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
+protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
 retrofit-core = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
@@ -58,16 +59,15 @@ koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = 
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 spotless-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
-accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
 
 [plugins]
-kotlin-parcelize = { id = "kotlin-parcelize", version.ref = "org-jetbrains-kotlin-android" }
 com-android-application = { id = "com.android.application", version.ref = "agp" }
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin-android" }
 # custom
-spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
-protobuf = { id = "com.google.protobuf", version.ref = "protobufGradle" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-parcelize = { id = "kotlin-parcelize", version.ref = "org-jetbrains-kotlin-android" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobufGradle" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 [bundles]
 

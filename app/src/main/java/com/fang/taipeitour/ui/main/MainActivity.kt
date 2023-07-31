@@ -5,9 +5,11 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,14 +34,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,39 +52,39 @@ import androidx.compose.ui.unit.sp
 import com.fang.taipeitour.BuildConfig
 import com.fang.taipeitour.FeatureFlag
 import com.fang.taipeitour.R
-import com.fang.taipeitour.model.attraction.Attraction2
 import com.fang.taipeitour.ui.component.FragmentContainer
 import com.fang.taipeitour.ui.component.TopBar
+import com.fang.taipeitour.ui.component.dsl.stateValue
 import com.fang.taipeitour.ui.screen.attraction.AttractionScreen
 import com.fang.taipeitour.ui.screen.attraction.AttractionViewModel
 import com.fang.taipeitour.ui.screen.attraction.guide.AttractionGuideFragment
+import com.fang.taipeitour.ui.screen.attraction.guide.OnCloseListener
 import com.fang.taipeitour.ui.screen.setting.SettingScreen
 import com.fang.taipeitour.ui.screen.setting.SettingViewModel
 import com.fang.taipeitour.ui.theme.TaipeiTourTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnCloseListener {
 
+    private val mainViewModel by viewModel<MainViewModel>()
     private val viewModel by viewModel<AttractionViewModel>()
     private val settingViewModel by viewModel<SettingViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         @OptIn(ExperimentalMaterial3Api::class)
         setContent {
             val current = remember {
                 mutableStateOf(ScreenMenu.HOME)
             }
-            TaipeiTourTheme(darkTheme = true) {
+            TaipeiTourTheme(darkTheme = mainViewModel.darkModeState.stateValue().enabled) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    var isShowGuide by remember {
-                        mutableStateOf<Attraction2?>(null)
-                    }
-
+                    val isShowGuide = viewModel.guideState.collectAsState().value != null
                     val drawerState = rememberDrawerState(DrawerValue.Closed)
                     val coroutine = rememberCoroutineScope()
                     val dialog = remember {
@@ -107,48 +110,52 @@ class MainActivity : AppCompatActivity() {
                                         drawerState.open()
                                     }
                                 }
+
                                 Crossfade(
                                     targetState = current.value,
                                     animationSpec = tween(500)
                                 ) { selectedColor ->
-                                    when (selectedColor) {
-                                        ScreenMenu.HOME -> AttractionScreen(
-                                            viewModel
-                                        ) {
-                                            isShowGuide = it
+                                    val scaleAlpha: Float by animateFloatAsState(
+                                        targetValue = if (drawerState.targetValue == DrawerValue.Open) .9f else 1f,
+                                        animationSpec = tween(durationMillis = 300)
+                                    )
+                                    Box(Modifier.scale(scaleAlpha)) {
+                                        when (selectedColor) {
+                                            ScreenMenu.HOME -> AttractionScreen(
+                                                viewModel
+                                            ) {
+                                                viewModel.setAttractionGuide(it)
+                                            }
+                                            ScreenMenu.SETTING -> SettingScreen(settingViewModel)
                                         }
-                                        ScreenMenu.SETTING -> SettingScreen(settingViewModel)
                                     }
+
                                 }
                             }
                         }
                     }
+
+                    val scale by animateFloatAsState(
+                        targetValue = if (isShowGuide) 1f else .9f,
+                        tween(400)
+//                        animationSpec = spring(
+//                            dampingRatio = Spring.DampingRatioMediumBouncy,
+//                        )
+                    )
                     Crossfade(
-                        targetState = isShowGuide,
-                        animationSpec = tween(1000)
-                    ) { selectedColor ->
-                        selectedColor?.let {
+                        targetState = viewModel.guideState.collectAsState().value,
+                        animationSpec = tween(400)
+                    ) { attr ->
+                        attr?.let {
                             FragmentContainer(
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .scale(scale),
                                 fragment = AttractionGuideFragment.createIntent(it),
                                 update = { /* no need update */ }
                             )
                         }
                     }
-//                    AnimatedVisibility(
-//                        modifier = Modifier.fillMaxSize(),
-//                        visible = isShowGuide != null,
-//                        enter = fadeIn(animationSpec = tween(3000)),
-//                        exit = fadeOut(animationSpec = tween(3000))
-//                    ) {
-//                        isShowGuide?.let {
-//                            FragmentContainer(
-//                                modifier = Modifier.fillMaxSize(),
-//                                fragment = AttractionGuideFragment.createIntent(it),
-//                                update = { /* no need update */ }
-//                            )
-//                        }
-//                    }
 
                     if (dialog.value) {
                         AlertDialog(onDismissRequest = { dialog.value = false }, confirmButton = {
@@ -159,10 +166,10 @@ class MainActivity : AppCompatActivity() {
                                 Text("confirmButton")
                             }
                         }, title = {
-                                Text("title")
-                            }, text = {
-                                Text("text")
-                            })
+                            Text("title")
+                        }, text = {
+                            Text("text")
+                        })
                     }
                     BackHandler(
                         // your condition to enable handler
@@ -174,7 +181,9 @@ class MainActivity : AppCompatActivity() {
                                     drawerState.animateTo(DrawerValue.Closed, tween(1000))
                                 }
                             }
-                            isShowGuide != null -> isShowGuide = null
+                            isShowGuide -> {
+                                viewModel.setAttractionGuide(null)
+                            }
                             current.value != ScreenMenu.HOME -> current.value = ScreenMenu.HOME
                             else -> dialog.value = true
                         }
@@ -193,22 +202,7 @@ class MainActivity : AppCompatActivity() {
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
             ) {
-                val index = remember {
-                    mutableStateOf(0)
-                }
-                val isShowGuide = remember {
-                    mutableStateOf<Attraction2?>(null)
-                }
 
-                val isShowGuideValue = isShowGuide.value
-                if (isShowGuideValue != null) {
-//                    FragmentContainer(
-//                        modifier = Modifier.fillMaxSize(),
-//                        fragment = AttractionGuideFragment.createIntent()
-//                    ) {
-//                        (this as? AttractionListener)?.onAttraction(sfdsfd)
-//                    }
-                }
             }
         }
     }
@@ -371,5 +365,9 @@ class MainActivity : AppCompatActivity() {
     @Composable
     private fun ScreenPreview() {
         Screen()
+    }
+
+    override fun onClose() {
+        viewModel.setAttractionGuide(null)
     }
 }

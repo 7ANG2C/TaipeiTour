@@ -8,10 +8,10 @@ enum class DarkMode(val key: String) {
     ;
 
     companion object {
-        val default by lazy { DarkMode.ENABLED }
+        val default = ENABLED
         val all by lazy { values().toList() }
-        fun findByKeyOrDefault(key: String, default: DarkMode = this.default) {
-            all.find { it.key == key } ?: default
-        }
+        fun findByKey(key: String) = all.find { it.key == key }
     }
+
+    val enabled get() = this == ENABLED
 }
