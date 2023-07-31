@@ -7,11 +7,11 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.Serializer
 import androidx.datastore.dataStore
 import androidx.datastore.preferences.protobuf.InvalidProtocolBufferException
-import java.io.InputStream
-import java.io.OutputStream
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapLatest
+import java.io.InputStream
+import java.io.OutputStream
 
 class UserPreferencesDataStore(context: Context) {
 
@@ -59,5 +59,4 @@ class UserPreferencesDataStore(context: Context) {
                 .build()
         }
     }
-
 }

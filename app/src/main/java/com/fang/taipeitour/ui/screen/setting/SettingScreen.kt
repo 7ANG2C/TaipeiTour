@@ -49,13 +49,13 @@ import com.fang.taipeitour.model.language.getLocaleString
 import com.fang.taipeitour.model.language.res
 import com.fang.taipeitour.ui.component.CustomImage
 import com.fang.taipeitour.util.screenHeightDp
+import org.koin.core.context.GlobalContext
 import java.lang.Math.PI
 import java.lang.Math.cos
 import java.lang.Math.min
 import java.lang.Math.sin
 import java.lang.Math.sqrt
 import kotlin.math.pow
-import org.koin.core.context.GlobalContext
 
 /**
  * 使用者設定 Screen
@@ -75,26 +75,35 @@ fun SettingScreen(settingViewModel: SettingViewModel) {
         ElevatedCard(modifier = Modifier.fillMaxWidth()) {
             Row(modifier = Modifier.padding(16.dp)) {
                 Spacer(modifier = Modifier.weight(1f))
-                Text(settingList.toString(), Modifier.clickable {
-                    isShow.value = true
-                })
+                Text(
+                    settingList.toString(),
+                    Modifier.clickable {
+                        isShow.value = true
+                    }
+                )
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
 
         ElevatedCard(modifier = Modifier.fillMaxWidth()) {
             Row(modifier = Modifier.padding(16.dp)) {
-                Text("DarkMode", Modifier.clickable {
-                    isShow.value = true
-                })
+                Text(
+                    "DarkMode",
+                    Modifier.clickable {
+                        isShow.value = true
+                    }
+                )
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
         ElevatedCard(modifier = Modifier.fillMaxWidth()) {
             Row(modifier = Modifier.padding(16.dp)) {
-                Text("Theme", Modifier.clickable {
-                    isShow.value = true
-                })
+                Text(
+                    "Theme",
+                    Modifier.clickable {
+                        isShow.value = true
+                    }
+                )
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -107,18 +116,24 @@ fun SettingScreen(settingViewModel: SettingViewModel) {
                 ExperientalSetting.ColorScheme -> {
                     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
                         Row(modifier = Modifier.padding(16.dp)) {
-                            Text("Theme", Modifier.clickable {
-                                isShow.value = true
-                            })
+                            Text(
+                                "Theme",
+                                Modifier.clickable {
+                                    isShow.value = true
+                                }
+                            )
                         }
                     }
                 }
                 ExperientalSetting.Clear -> {
                     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
                         Row(modifier = Modifier.padding(16.dp)) {
-                            Text("Theme", Modifier.clickable {
-                                isShow.value = true
-                            })
+                            Text(
+                                "Theme",
+                                Modifier.clickable {
+                                    isShow.value = true
+                                }
+                            )
                         }
                     }
                 }
@@ -157,14 +172,13 @@ fun SettingScreen(settingViewModel: SettingViewModel) {
             }
         }
     }
-
 }
 
 fun Modifier.gradientBackground(colors: List<Color>, angle: Float) = this.then(
     Modifier.drawBehind {
         val angleRad = angle / 180f * PI
-        val x = cos(angleRad).toFloat() //Fractional x
-        val y = sin(angleRad).toFloat() //Fractional y
+        val x = cos(angleRad).toFloat() // Fractional x
+        val y = sin(angleRad).toFloat() // Fractional y
 
         val radius = sqrt((size.width.pow(2) + size.height.pow(2)).toDouble()).toFloat() / 2f
         val offset = center + Offset(x * radius, y * radius)
@@ -225,12 +239,13 @@ fun ThemeSwitcher(
         animationSpec = animationSpec
     )
 
-    Box(modifier = Modifier
-        .width(size * 2)
-        .height(size)
-        .clip(shape = parentShape)
-        .clickable { onClick() }
-        .background(MaterialTheme.colorScheme.secondaryContainer)
+    Box(
+        modifier = Modifier
+            .width(size * 2)
+            .height(size)
+            .clip(shape = parentShape)
+            .clickable { onClick() }
+            .background(MaterialTheme.colorScheme.secondaryContainer)
     ) {
         Box(
             modifier = Modifier

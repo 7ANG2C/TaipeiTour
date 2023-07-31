@@ -13,4 +13,3 @@ data class Link(
     @SerializedName("subject")
     val subject: String
 )
-

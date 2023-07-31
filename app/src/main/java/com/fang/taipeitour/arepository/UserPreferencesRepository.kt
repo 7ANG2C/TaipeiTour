@@ -4,7 +4,4 @@ import com.fang.taipeitour.datastore.user.UserPreferencesDataStore
 
 class UserPreferencesRepository(
     store: UserPreferencesDataStore
-) {
-
-
-}
+)

@@ -15,4 +15,3 @@ enum class DarkMode(val key: String) {
         }
     }
 }
-

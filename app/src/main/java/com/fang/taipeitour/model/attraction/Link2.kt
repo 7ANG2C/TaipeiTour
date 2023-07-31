@@ -13,4 +13,3 @@ data class Link2(
     val src: String,
     val subject: String
 ) : Parcelable
-

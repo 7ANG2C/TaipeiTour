@@ -19,5 +19,4 @@ class TaipeiTourApi {
 
     suspend fun getAllAttractions(language: String, page: Int) =
         taipeiTourApiService.getAllAttractions(language, page)
-
 }

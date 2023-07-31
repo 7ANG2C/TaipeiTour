@@ -66,9 +66,7 @@ data class Attraction2(
     val images: List<Image2>,
     val files: List<File2>,
     val links: List<Link2>,
-) : Parcelable {
-
-}
+) : Parcelable
 
 fun convert(it: Attraction.Data): Attraction2 {
     return Attraction2(
@@ -103,4 +101,3 @@ fun convert(it: Attraction.Data): Attraction2 {
         links = it.links.map { Link2(it.src, it.subject) },
     )
 }
-

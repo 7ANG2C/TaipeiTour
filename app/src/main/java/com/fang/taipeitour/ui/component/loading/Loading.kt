@@ -77,5 +77,4 @@ fun LoadingAnimation(
             )
         }
     }
-
 }

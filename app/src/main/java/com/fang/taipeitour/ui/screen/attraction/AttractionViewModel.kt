@@ -12,9 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AttractionViewModel(
-
-) : ViewModel() {
+class AttractionViewModel() : ViewModel() {
 
     var currentPage = 1
 
@@ -57,5 +55,4 @@ class AttractionViewModel(
         withContext(Dispatchers.IO) {
             repository.invoke(page = page).data.map { convert(it) }
         }
-
 }

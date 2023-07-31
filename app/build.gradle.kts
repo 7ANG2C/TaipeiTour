@@ -1,4 +1,4 @@
-import java.io.ByteArrayOutputStream
+
 import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -96,7 +96,7 @@ dependencies {
     implementation(libs.protobuf.javalite)
     testImplementation(libs.koin.test)
     implementation(libs.coil.compose)
-    implementation ("androidx.compose.material:material:1.4.3")
+    implementation("androidx.compose.material:material:1.4.3")
 }
 
 protobuf {
@@ -119,4 +119,3 @@ protobuf {
 fun getDateTime(): String {
     return SimpleDateFormat("YYYY.MM.dd.HH.mm").format(Date())
 }
-

@@ -9,5 +9,4 @@ object DataStoreModule {
     operator fun invoke() = module {
         singleOf(::UserPreferencesDataStore)
     }
-
 }

@@ -12,5 +12,4 @@ class AttractionRepository() {
             TaipeiTourApi().getAllAttractions(language, page)
         }
     }
-
 }

@@ -26,5 +26,4 @@ interface TaipeiTourApiService {
         @Query("nlat") nlat: String = "",
         @Query("elong") elong: String = "",
     ): Attraction
-
 }

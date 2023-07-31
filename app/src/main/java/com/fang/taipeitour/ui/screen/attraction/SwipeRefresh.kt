@@ -54,10 +54,10 @@ import com.fang.taipeitour.ui.theme.Purple40
 import com.fang.taipeitour.ui.theme.Purple80
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import java.lang.Float.min
-import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.Float.min
+import kotlin.math.roundToInt
 
 val Primary = Color(0xFF6200EE)
 val BackgroundColor = Color(0xFF464655)
@@ -136,7 +136,6 @@ fun ListItem(index: Int) {
             modifier = Modifier.fillMaxWidth()
         ) {
 
-
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp),
             ) {
@@ -144,27 +143,25 @@ fun ListItem(index: Int) {
                     Text(
                         text = "TOP RATED",
 
-                        )
+                    )
                 Text(
                     text = when (index) {
                         5 -> "This is Mambo..."
                         else -> "This is $index"
                     },
 
-                    )
+                )
                 Text(
                     text = when (index) {
                         5 -> "... number five"
                         else -> "This is the body of the number $index"
                     },
 
-                    )
-
+                )
             }
         }
         Box(modifier = Modifier.height(8.dp))
         Divider()
-
     }
 }
 
@@ -284,12 +281,13 @@ fun FancyPullToRefresh(
                 )
             )
 
-            Box(modifier = Modifier
-                .scale(scale)
-                .offset { IntOffset(x = 0, y = animatedOffset) }
-                .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-                .fillMaxSize()
-                .background(Purple40)
+            Box(
+                modifier = Modifier
+                    .scale(scale)
+                    .offset { IntOffset(x = 0, y = animatedOffset) }
+                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                    .fillMaxSize()
+                    .background(Purple40)
             ) {
                 content()
             }
@@ -315,7 +313,8 @@ fun FancyRefreshAnimation(
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(1f), contentAlignment = Alignment.TopCenter
+                .weight(1f),
+            contentAlignment = Alignment.TopCenter
         ) {
             CircleWithRing(
                 modifier = Modifier
@@ -331,7 +330,8 @@ fun FancyRefreshAnimation(
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(1f), contentAlignment = Alignment.BottomCenter
+                .weight(1f),
+            contentAlignment = Alignment.BottomCenter
         ) {
             CircleWithRing(
                 modifier = Modifier
@@ -347,7 +347,8 @@ fun FancyRefreshAnimation(
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(1f), contentAlignment = Alignment.Center
+                .weight(1f),
+            contentAlignment = Alignment.Center
         ) {
             CircleWithRing(
                 modifier = Modifier
@@ -363,7 +364,8 @@ fun FancyRefreshAnimation(
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(1f), contentAlignment = Alignment.BottomCenter
+                .weight(1f),
+            contentAlignment = Alignment.BottomCenter
         ) {
             CircleWithRing(
                 modifier = Modifier
@@ -379,7 +381,8 @@ fun FancyRefreshAnimation(
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(1f), contentAlignment = Alignment.TopCenter
+                .weight(1f),
+            contentAlignment = Alignment.TopCenter
         ) {
             CircleWithRing(
                 modifier = Modifier
@@ -391,9 +394,7 @@ fun FancyRefreshAnimation(
                 color = SwatchA,
             )
         }
-
     }
-
 }
 
 @Composable

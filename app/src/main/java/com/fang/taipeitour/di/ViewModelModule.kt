@@ -24,5 +24,4 @@ object ViewModelModule {
         viewModelOf(::SettingViewModel)
         factoryOf(::SettingFlavorBehaviorImpl).bind<SettingFlavorBehavior>()
     }
-
 }

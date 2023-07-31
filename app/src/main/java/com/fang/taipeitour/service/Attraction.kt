@@ -109,5 +109,4 @@ data class Attraction(
         @SerializedName("links")
         val links: List<Link>,
     )
-
 }

@@ -72,7 +72,8 @@ fun AttractionScreen(
                     ) {
                         items(
                             list?.filterIsInstance<AttractionViewModel.Item.Data>().orEmpty()
-                                .map { it.sdfsdf }) { item ->
+                                .map { it.sdfsdf }
+                        ) { item ->
                             AttractionItem(item, invoke)
                         }
                         list?.singleOrNull { it == AttractionViewModel.Item.Hint }?.let {
@@ -104,20 +105,15 @@ fun AttractionScreen(
                             state.animateScrollToItem(0)
                         }
                     }) {
-
                     }
-
                 } else {
                     list?.size?.let {
-                        Text("${state.layoutInfo.visibleItemsInfo.lastOrNull()?.index}/${it}")
+                        Text("${state.layoutInfo.visibleItemsInfo.lastOrNull()?.index}/$it")
                     }
                 }
-
             }
         }
-
     }
-
 }
 
 @Composable
@@ -171,7 +167,6 @@ private fun LazyListState.OnBottomReached(
     LaunchedEffect(key1 = shouldLoadMore) {
         snapshotFlow { shouldLoadMore.value }.collectLatest { shouldLoadMore ->
             if (shouldLoadMore) loadMore()
-
         }
     }
 }

@@ -159,10 +159,10 @@ class MainActivity : AppCompatActivity() {
                                 Text("confirmButton")
                             }
                         }, title = {
-                            Text("title")
-                        }, text = {
-                            Text("text")
-                        })
+                                Text("title")
+                            }, text = {
+                                Text("text")
+                            })
                     }
                     BackHandler(
                         // your condition to enable handler
@@ -177,7 +177,6 @@ class MainActivity : AppCompatActivity() {
                             isShowGuide != null -> isShowGuide = null
                             current.value != ScreenMenu.HOME -> current.value = ScreenMenu.HOME
                             else -> dialog.value = true
-
                         }
                         // your action to be called if back handler is enabled
 //                isOverlayPresented = false
@@ -269,7 +268,6 @@ class MainActivity : AppCompatActivity() {
                                 fontWeight = FontWeight.Normal
                             )
                         }
-
                     }
                 }
                 if (FeatureFlag.Flag.value) {
@@ -367,7 +365,6 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
-
     }
 
     @Preview(showBackground = true)

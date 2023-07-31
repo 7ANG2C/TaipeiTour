@@ -47,7 +47,8 @@ fun ImageSlider(modifier: Modifier, images: List<String>) {
             modifier = Modifier
                 .width(w.value.dp)
                 .height(h.value.dp)
-                .clip(RoundedCornerShape(8.dp)), state = state, pageCount = images.size
+                .clip(RoundedCornerShape(8.dp)),
+            state = state, pageCount = images.size
         ) {
             AsyncImage(
                 modifier = Modifier
@@ -63,10 +64,9 @@ fun ImageSlider(modifier: Modifier, images: List<String>) {
                 pageCount = images.size,
                 pagerState = state,
 
-                )
+            )
             Spacer(modifier = Modifier.height(24.dp))
         }
-
     }
 }
 

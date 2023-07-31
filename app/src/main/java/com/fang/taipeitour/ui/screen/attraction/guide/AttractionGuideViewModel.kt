@@ -18,6 +18,4 @@ class AttractionGuideViewModel(
     init {
         _state.value = id
     }
-
-
 }

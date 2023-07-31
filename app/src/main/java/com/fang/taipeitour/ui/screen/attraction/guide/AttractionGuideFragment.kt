@@ -235,7 +235,8 @@ class AttractionGuideFragment : Fragment() {
             }
             val webViewClient = object : WebViewClient() {
                 override fun onPageStarted(
-                    view: WebView?, url: String?,
+                    view: WebView?,
+                    url: String?,
                     favicon: Bitmap?
                 ) {
                     super.onPageStarted(view, url, favicon)
@@ -254,8 +255,8 @@ class AttractionGuideFragment : Fragment() {
                     if (null == request?.url) return false
                     val showOverrideUrl = request.url.toString()
                     try {
-                        if (!showOverrideUrl.startsWith("")
-                            && !showOverrideUrl.startsWith("")
+                        if (!showOverrideUrl.startsWith("") &&
+                            !showOverrideUrl.startsWith("")
                         ) {
                             // 處理非 http https 開頭
                             Intent(Intent.ACTION_VIEW, Uri.parse(showOverrideUrl)).apply {
@@ -289,7 +290,7 @@ class AttractionGuideFragment : Fragment() {
                     this.settings?.apply {
                         // 允許 JS 交互
                         javaScriptEnabled = true
-                        //将图片调整到适合webView的大小
+                        // 将图片调整到适合webView的大小
                         useWideViewPort = true
                         // 縮放至螢幕大小
                         loadWithOverviewMode = true
@@ -354,7 +355,6 @@ class AttractionGuideFragment : Fragment() {
 //                }
 //            )
         }
-
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -498,7 +498,6 @@ class AttractionGuideFragment : Fragment() {
     @Composable
     private fun Preview() {
         TaipeiTourTheme {
-
         }
     }
 
@@ -511,6 +510,5 @@ class AttractionGuideFragment : Fragment() {
         initSettings: (webSettings: WebSettings?) -> Unit = {},
         onReceivedError: (error: WebResourceError?) -> Unit = {}
     ) {
-
     }
 }

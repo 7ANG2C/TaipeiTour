@@ -32,10 +32,10 @@ import coil.compose.AsyncImage
 fun ImageSlider(modifier: Modifier, images: List<String>) {
     val dd = LocalConfiguration.current
     val w = remember {
-        mutableStateOf(dd.screenWidthDp*0.9)
+        mutableStateOf(dd.screenWidthDp * 0.9)
     }
     val h = remember {
-        mutableStateOf(w.value*0.75)
+        mutableStateOf(w.value * 0.75)
     }
     Box(
         modifier = modifier
@@ -43,14 +43,17 @@ fun ImageSlider(modifier: Modifier, images: List<String>) {
             .height(h.value.dp)
             .clip(RoundedCornerShape(8.dp))
     ) {
-        if(images.isEmpty()) {
+        if (images.isEmpty()) {
             Text(text = "No Image")
         } else {
             val state = rememberPagerState()
-            HorizontalPager(    modifier = Modifier
-                .width(w.value.dp)
-                .height(h.value.dp)
-                .clip(RoundedCornerShape(8.dp)),state = state, pageCount = images.size) {
+            HorizontalPager(
+                modifier = Modifier
+                    .width(w.value.dp)
+                    .height(h.value.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                state = state, pageCount = images.size
+            ) {
                 AsyncImage(
                     modifier = Modifier
                         .height(h.value.dp)
@@ -60,17 +63,15 @@ fun ImageSlider(modifier: Modifier, images: List<String>) {
                     contentScale = ContentScale.FillHeight
                 )
             }
-            Column(  modifier = Modifier.align(Alignment.BottomCenter)) {
+            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
                 Indicator(
                     pageCount = images.size,
                     pagerState = state,
 
-                    )
+                )
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
-
-
     }
 }
 

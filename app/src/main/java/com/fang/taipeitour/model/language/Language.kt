@@ -18,4 +18,3 @@ enum class Language(val locale: Locale, val display: String, val key: String) {
         val all by lazy { values().toList() }
     }
 }
-
