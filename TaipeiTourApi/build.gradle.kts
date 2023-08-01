@@ -28,11 +28,12 @@ android {
 
 dependencies {
     implementation(libs.core.ktx)
-    implementation(platform(libs.compose.bom))
+    implementation(libs.lifecycle.runtime.ktx)
+//    implementation(platform(libs.compose.bom))
     testImplementation(libs.junit)
-    debugImplementation(libs.ui.tooling)
+//    debugImplementation(libs.ui.tooling)
 
-    // common
+    // custom
     implementation(libs.koin.core)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.gson)
