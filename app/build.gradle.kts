@@ -95,12 +95,12 @@ dependencies {
     implementation(libs.protobuf.javalite)
     testImplementation(libs.koin.test)
     implementation(libs.coil.compose)
-    implementation("androidx.compose.material:material:1.4.3")
+    implementation(libs.androidx.compose.material)
 }
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.21.12"
+        artifact = "com.google.protobuf:protoc:${libs.versions.protobuf.get()}"
     }
 
     // Generates the java Protobuf-lite code for the Protobufs in this project. See
