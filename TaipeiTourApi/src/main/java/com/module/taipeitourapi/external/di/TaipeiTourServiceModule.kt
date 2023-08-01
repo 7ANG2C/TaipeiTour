@@ -11,7 +11,18 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 /**
- * core module
+ * Call this function before access any api.
+ *
+ * For example, initialize at application onCreate:
+ * ```
+ * class YourApplication : Application() {
+ *     override fun onCreate() {
+ *         ...
+ *         TaipeiTourServiceModule.invoke(...)
+ *         ...
+ *     }
+ * }
+ * ```
  */
 object TaipeiTourServiceModule {
 
