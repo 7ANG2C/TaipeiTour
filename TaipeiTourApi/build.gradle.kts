@@ -29,9 +29,7 @@ android {
 dependencies {
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
-//    implementation(platform(libs.compose.bom))
     testImplementation(libs.junit)
-//    debugImplementation(libs.ui.tooling)
 
     // custom
     implementation(libs.koin.core)

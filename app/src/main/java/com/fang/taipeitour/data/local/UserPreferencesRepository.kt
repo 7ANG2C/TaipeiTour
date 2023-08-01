@@ -7,6 +7,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapLatest
 
+/**
+ * user app preferences repository
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserPreferencesRepository(
     private val dataStore: UserPreferencesDataStore

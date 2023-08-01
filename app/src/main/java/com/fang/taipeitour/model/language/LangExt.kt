@@ -9,7 +9,7 @@ import com.fang.taipeitour.R
  * 在拿不到 null
  * exception return null
  */
-fun Language.getLocaleString(context: Context, id: Int = R.string.language): String? {
+fun Language.getLocaleString(context: Context, id: Int): String? {
     return kotlin.runCatching {
         val config = Configuration(context.resources.configuration)
         config.setLocale(locale)
@@ -20,13 +20,13 @@ fun Language.getLocaleString(context: Context, id: Int = R.string.language): Str
 
 val Language.res
     get() = when (this) {
-        Language.TAIWAN -> R.drawable.tw
-        Language.CHINA -> R.drawable.cn
-        Language.ENGLISH -> R.drawable.us
-        Language.JAPAN -> R.drawable.jp
-        Language.KOREA -> R.drawable.kr
-        Language.SPAN -> R.drawable.es
-        Language.INDONESIA -> R.drawable.id
-        Language.THAILAND -> R.drawable.th
-        Language.VIETNAM -> R.drawable.vn
+        Language.TAIWAN -> R.drawable.flag_tw
+        Language.CHINA -> R.drawable.flag_cn
+        Language.ENGLISH -> R.drawable.flag_us
+        Language.JAPAN -> R.drawable.flag_jp
+        Language.KOREA -> R.drawable.flag_kr
+        Language.SPAN -> R.drawable.flag_es
+        Language.INDONESIA -> R.drawable.flag_id
+        Language.THAILAND -> R.drawable.flag_th
+        Language.VIETNAM -> R.drawable.flag_vn
     }

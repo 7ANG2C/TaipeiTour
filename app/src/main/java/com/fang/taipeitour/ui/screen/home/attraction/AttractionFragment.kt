@@ -1,4 +1,4 @@
-package com.fang.taipeitour.ui.screen.attraction.guide
+package com.fang.taipeitour.ui.screen.home.attraction
 
 import android.content.Intent
 import android.content.res.Configuration
@@ -34,7 +34,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -57,6 +56,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
@@ -83,12 +83,12 @@ import org.koin.core.parameter.parametersOf
 /**
  * 景點導覽
  */
-class AttractionGuideFragment : Fragment() {
+class AttractionFragment : Fragment() {
 
     companion object {
         private const val ARG_ID = "id"
         fun createIntent(id: Attraction): Fragment {
-            return AttractionGuideFragment().apply {
+            return AttractionFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_ID, id)
                 }
@@ -96,7 +96,7 @@ class AttractionGuideFragment : Fragment() {
         }
     }
 
-    private val viewModel by viewModel<AttractionGuideViewModel> {
+    private val viewModel by viewModel<AttractionViewModel> {
         parametersOf(requireArguments().getParcelable<Attraction>(ARG_ID))
     }
 
@@ -108,12 +108,10 @@ class AttractionGuideFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-
                 CollapsingToolbarParallaxEffect(
                     Modifier
                         .fillMaxSize()
-                        .background(Color(0xff252525))
-//                        .background(MaterialTheme.colorScheme.surface)
+                        .background(MaterialTheme.colorScheme.surface)
                 )
             }
         }
@@ -197,9 +195,10 @@ class AttractionGuideFragment : Fragment() {
         ) {
             ImageSlider(
                 modifier = Modifier,
-                images = viewModel.state.collectAsState().value?.images?.map { it.src }.orEmpty(),
-                RoundedCornerShape(0.dp)
-            )
+                images = viewModel.attractionState.stateValue().images.map { it.src }.orEmpty(),
+                noImageRes = R.drawable.no_image_holder2,
+                contentScale = ContentScale.Inside,
+            ) {}
             Box(
                 Modifier
                     .fillMaxSize()
@@ -223,7 +222,7 @@ class AttractionGuideFragment : Fragment() {
             modifier = modifier.verticalScroll(scroll)
         ) {
             Spacer(Modifier.height(headerHeight))
-            val state = viewModel.state.collectAsState().value
+            val state = viewModel.attractionState.collectAsState().value
             Text(
                 text = state.originalUrl.takeIf { it.isNotBlank() } ?: "--",
                 style = MaterialTheme.typography.bodyLarge,
@@ -272,7 +271,7 @@ class AttractionGuideFragment : Fragment() {
     @Composable
     private fun Web(isShow: Boolean, click: () -> Unit) {
 
-        val mUrl = viewModel.state.collectAsState().value.originalUrl
+        val mUrl = viewModel.attractionState.collectAsState().value.originalUrl
         if (isShow) {
             val webViewChromeClient = object : WebChromeClient() {
                 override fun onProgressChanged(view: WebView?, newProgress: Int) {
@@ -431,14 +430,16 @@ class AttractionGuideFragment : Fragment() {
             exit = fadeOut(animationSpec = tween(300))
         ) {
             TopAppBar(
-                modifier = Modifier.background(
-                    brush = Brush.horizontalGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.secondaryContainer,
-                            MaterialTheme.colorScheme.primaryContainer
+                modifier = Modifier
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.secondaryContainer,
+                                MaterialTheme.colorScheme.primaryContainer
+                            )
                         )
                     )
-                ).height(toolbarHeight),
+                    .height(toolbarHeight),
                 navigationIcon = {
                     val context = LocalContext.current
                     IconButton(
@@ -471,7 +472,7 @@ class AttractionGuideFragment : Fragment() {
         var titleWidthPx by remember { mutableStateOf(0f) }
 
         Text(
-            text = viewModel.state.stateValue().name,
+            text = viewModel.attractionState.stateValue().name,
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,

@@ -1,152 +1,122 @@
 package com.fang.taipeitour.ui.component
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import kotlinx.coroutines.launch
+import coil.ImageLoader
+import coil.compose.SubcomposeAsyncImage
+import com.fang.taipeitour.R
+import com.fang.taipeitour.model.Action
 
+/**
+ * @param ratio height / width
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageSlider(
     modifier: Modifier,
     images: List<String>,
-    clip: Shape
+    noImageRes: Int,
+    contentScale: ContentScale,
+    ratio: Double = 0.75,
+    onPageSelect: Action<Int>,
 ) {
-    val dd = LocalConfiguration.current
-    val w = remember {
-        mutableStateOf(dd.screenWidthDp * 0.9)
-    }
-    val h = remember {
-        mutableStateOf(w.value * 0.75)
-    }
-    Box(
-        modifier = modifier
-            .width(w.value.dp)
-            .height(h.value.dp)
-            .clip(clip)
+    Surface(
+        modifier = modifier,
+        color = Color.Transparent
     ) {
+        val colorFilter = ColorFilter.colorMatrix(
+            ColorMatrix(
+                floatArrayOf(
+                    1.25f, 0f, 0f, 0f, 0f,
+                    0f, 1f, 0f, 0f, 0f,
+                    0f, 0f, 0.75f, 0f, 0f,
+                    0f, 0f, 0f, 1f, 0f
+                )
+            ).apply { setToSaturation(0.6f) }
+        )
         if (images.isEmpty()) {
-            Text(text = "No Image")
+            Image(
+                painter = painterResource(id = noImageRes),
+                contentDescription = null,
+                contentScale = contentScale,
+                colorFilter = colorFilter
+            )
         } else {
-            val state = rememberPagerState()
+            val width = screenWidthDp.dp
+            val height = (screenWidthDp * ratio).dp
+            val pagerState = rememberPagerState()
+            onPageSelect(pagerState.currentPage)
             HorizontalPager(
+                pageCount = images.size,
                 modifier = Modifier
-                    .width(w.value.dp)
-                    .height(h.value.dp)
-                    .clip(clip),
-                state = state, pageCount = images.size
-            ) {
-                var imageVisible by remember { mutableStateOf(false) }
-
-                val imageAlpha: Float by animateFloatAsState(
-                    targetValue = if (imageVisible) 1f else 0f,
-                    animationSpec = tween(durationMillis = 300)
-                )
-//                Box(modifier =  Modifier
-//                    .height(h.value.dp)
-//                    .clip(RoundedCornerShape(8.dp)).alpha(imageAlpha)) {
-                AsyncImage(
-                    modifier = Modifier
-                        .height(h.value.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    model = images[it],
-                    alpha = imageAlpha,
+                    .width(width)
+                    .height(height),
+                state = pagerState,
+            ) { page ->
+                val context = LocalContext.current
+                SubcomposeAsyncImage(
+                    model = images[page],
                     contentDescription = null,
-                    contentScale = ContentScale.FillHeight,
-                    onSuccess = {
-                        imageVisible = true
-                    },
-                    colorFilter = ColorFilter.colorMatrix(
-                        ColorMatrix(
-                            floatArrayOf(
-                                1.25f, 0f, 0f, 0f, 0f,
-                                0f, 1f, 0f, 0f, 0f,
-                                0f, 0f, 0.75f, 0f, 0f,
-                                0f, 0f, 0f, 1f, 0f
-                            )
-                        ).apply {
-                            this.setToSaturation(0.8f)
-                        }
-                    )
-                )
-//                }
-            }
-            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-                Indicator(
-                    pageCount = images.size,
-                    pagerState = state,
-                    currentPage = state.currentPage
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun Indicator(
-    pageCount: Int,
-    pagerState: PagerState,
-    currentPage: Int,
-    modifier: Modifier = Modifier
-) {
-
-    if (pageCount > 1) {
-        val state = rememberLazyListState()
-        val sdf = rememberCoroutineScope()
-        LazyRow(state = state, modifier = modifier.width(84.dp)) {
-            items(pageCount) {
-                val alpha = if (pagerState.currentPage == it) 1f else 0.6f
-                Box(
+                    imageLoader = ImageLoader.Builder(context).crossfade(true).build(),
                     modifier = Modifier
-                        .size(8.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.secondary.copy(alpha = alpha))
+                        .width(width)
+                        .height(height),
+                    loading = {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.inverseOnSurface),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Loading(isFancy = false)
+                        }
+                    },
+                    error = {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.7f)),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_error),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(text = "Oops!", color = MaterialTheme.colorScheme.error)
+                        }
+                    },
+                    contentScale = contentScale,
+                    colorFilter = colorFilter
                 )
-                if (it != pageCount - 1) {
-                    Spacer(modifier = Modifier.width(8.dp))
-                }
             }
         }
-        LaunchedEffect(key1 = currentPage, block = {
 
-            sdf.launch {
-                state.animateScrollToItem(currentPage)
-            }
-        })
     }
 }

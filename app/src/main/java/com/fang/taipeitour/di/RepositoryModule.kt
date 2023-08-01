@@ -18,4 +18,5 @@ object RepositoryModule {
         singleOf(::UserPreferencesRepository)
         factoryOf(::GetAttractionListRepositoryImpl).bind<GetAttractionListRepository>()
     }
+
 }

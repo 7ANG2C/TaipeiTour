@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fang.taipeitour.data.local.UserPreferencesRepository
 import com.fang.taipeitour.model.DarkMode
-import com.fang.taipeitour.ui.component.sharingStartedWhileSubscribed
+import com.fang.taipeitour.util.sharingStartedWhileSubscribed
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapLatest

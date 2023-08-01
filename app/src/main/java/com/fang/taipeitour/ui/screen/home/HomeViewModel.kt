@@ -1,4 +1,4 @@
-package com.fang.taipeitour.ui.screen.attraction
+package com.fang.taipeitour.ui.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,26 +22,27 @@ import kotlinx.coroutines.launch
  * 進入頁面預設 pull refresh
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class AttractionViewModel(
+class HomeViewModel(
     private val repository: GetAttractionListRepository
 ) : ViewModel() {
     private class Page(val value: Int)
 
     private data class Mediator(
-        val state: ListState,
+        val state: AttractionData.State,
         val list: List<Attraction>,
         val page: Int,
     )
 
-    enum class ListState {
-        NoNewData, Fail, SuccessAndNew
-    }
-
-    data class Out(
-        val state: ListState,
-        val list: List<Item>,
+    data class AttractionData(
+        val state: State,
+        val items: List<Item>,
         val page: Int,
-    )
+    ) {
+        enum class State {
+            NoNewData, Fail, SuccessAndNew
+        }
+
+    }
 
     sealed class Item {
         data class Data(val attraction: Attraction) : Item()
@@ -55,11 +56,11 @@ class AttractionViewModel(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshingState = _isRefreshing.asStateFlow()
 
-    private val _listState = MutableStateFlow<Out?>(null)
-    val listState = _listState.asStateFlow()
+    private val _dataState = MutableStateFlow<AttractionData?>(null)
+    val dataState = _dataState.asStateFlow()
 
-    private val _guideState = MutableStateFlow<Attraction?>(null)
-    val guideState = _guideState.asStateFlow()
+    private val _attractionState = MutableStateFlow<Attraction?>(null)
+    val attractionState = _attractionState.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -69,15 +70,15 @@ class AttractionViewModel(
                     .mapLatest {
                         Mediator(
                             if (it.size < perSize) {
-                                ListState.NoNewData
-                            } else ListState.SuccessAndNew,
+                                AttractionData.State.NoNewData
+                            } else AttractionData.State.SuccessAndNew,
                             it,
                             page.value
                         )
                     }
                     .catch {
                         Mediator(
-                            ListState.Fail, emptyList(), page.value
+                            AttractionData.State.Fail, emptyList(), page.value
                         )
                     }
             }
@@ -92,16 +93,16 @@ class AttractionViewModel(
                 .flowOn(Dispatchers.Default)
                 .collectLatest { mediator ->
                     _isRefreshing.value = false
-                    _listState.value = Out(
+                    _dataState.value = AttractionData(
                         mediator.state,
                         when (mediator.state) {
-                            ListState.NoNewData -> {
+                            AttractionData.State.NoNewData -> {
                                 mediator.list.map { Item.Data(it) }
                             }
-                            ListState.Fail -> {
+                            AttractionData.State.Fail -> {
                                 mediator.list.map { Item.Data(it) }
                             }
-                            ListState.SuccessAndNew -> {
+                            AttractionData.State.SuccessAndNew -> {
                                 mediator.list.map { Item.Data(it) } + Item.Loading
                             }
                         },
@@ -126,6 +127,6 @@ class AttractionViewModel(
     }
 
     fun setAttractionGuide(attraction: Attraction?) {
-        _guideState.value = attraction
+        _attractionState.value = attraction
     }
 }

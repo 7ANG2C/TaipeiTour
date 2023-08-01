@@ -25,7 +25,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -55,12 +54,11 @@ import com.fang.taipeitour.R
 import com.fang.taipeitour.ui.component.FragmentContainer
 import com.fang.taipeitour.ui.component.TopBar
 import com.fang.taipeitour.ui.component.dsl.stateValue
-import com.fang.taipeitour.ui.screen.attraction.AttractionScreen
-import com.fang.taipeitour.ui.screen.attraction.AttractionViewModel
-import com.fang.taipeitour.ui.screen.attraction.guide.AttractionGuideFragment
-import com.fang.taipeitour.ui.screen.attraction.guide.OnCloseListener
+import com.fang.taipeitour.ui.screen.home.HomeScreen
+import com.fang.taipeitour.ui.screen.home.HomeViewModel
+import com.fang.taipeitour.ui.screen.home.attraction.AttractionFragment
+import com.fang.taipeitour.ui.screen.home.attraction.OnCloseListener
 import com.fang.taipeitour.ui.screen.setting.SettingScreen
-import com.fang.taipeitour.ui.screen.setting.SettingViewModel
 import com.fang.taipeitour.ui.theme.TaipeiTourTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -68,13 +66,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MainActivity : AppCompatActivity(), OnCloseListener {
 
     private val mainViewModel by viewModel<MainViewModel>()
-    private val viewModel by viewModel<AttractionViewModel>()
-    private val settingViewModel by viewModel<SettingViewModel>()
+    private val homeViewModel by viewModel<HomeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        @OptIn(ExperimentalMaterial3Api::class)
         setContent {
             val current = remember {
                 mutableStateOf(ScreenMenu.HOME)
@@ -84,13 +80,15 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val isShowGuide = viewModel.guideState.collectAsState().value != null
+                    val isShowGuide = homeViewModel.attractionState.collectAsState().value != null
                     val drawerState = rememberDrawerState(DrawerValue.Closed)
                     val coroutine = rememberCoroutineScope()
                     val dialog = remember {
                         mutableStateOf(false)
                     }
+
                     Column() {
+
                         ModalNavigationDrawer(
                             modifier = Modifier.weight(1f),
                             drawerState = drawerState,
@@ -115,18 +113,14 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
                                     targetState = current.value,
                                     animationSpec = tween(500)
                                 ) { selectedColor ->
-                                    val scaleAlpha: Float by animateFloatAsState(
+                                    val scaleAlpha by animateFloatAsState(
                                         targetValue = if (drawerState.targetValue == DrawerValue.Open) .9f else 1f,
                                         animationSpec = tween(durationMillis = 300)
                                     )
                                     Box(Modifier.scale(scaleAlpha)) {
                                         when (selectedColor) {
-                                            ScreenMenu.HOME -> AttractionScreen(
-                                                viewModel
-                                            ) {
-                                                viewModel.setAttractionGuide(it)
-                                            }
-                                            ScreenMenu.SETTING -> SettingScreen(settingViewModel)
+                                            ScreenMenu.HOME -> HomeScreen()
+                                            ScreenMenu.SETTING -> SettingScreen()
                                         }
                                     }
                                 }
@@ -142,7 +136,7 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
 //                        )
                     )
                     Crossfade(
-                        targetState = viewModel.guideState.collectAsState().value,
+                        targetState = homeViewModel.attractionState.collectAsState().value,
                         animationSpec = tween(400)
                     ) { attr ->
                         attr?.let {
@@ -150,7 +144,7 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .scale(scale),
-                                fragment = AttractionGuideFragment.createIntent(it),
+                                fragment = AttractionFragment.createIntent(it),
                                 update = { /* no need update */ }
                             )
                         }
@@ -165,10 +159,10 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
                                 Text("confirmButton")
                             }
                         }, title = {
-                                Text("title")
-                            }, text = {
-                                Text("text")
-                            })
+                            Text("title")
+                        }, text = {
+                            Text("text")
+                        })
                     }
                     BackHandler(
                         // your condition to enable handler
@@ -181,7 +175,7 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
                                 }
                             }
                             isShowGuide -> {
-                                viewModel.setAttractionGuide(null)
+                                homeViewModel.setAttractionGuide(null)
                             }
                             current.value != ScreenMenu.HOME -> current.value = ScreenMenu.HOME
                             else -> dialog.value = true
@@ -205,7 +199,6 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun MenuDrawer(modifier: Modifier = Modifier, onMenuSelected: (ScreenMenu) -> Unit) {
         ModalDrawerSheet(modifier = modifier) {
@@ -228,7 +221,7 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
                     Text(
                         text = "Lisa",
                         fontStyle = MaterialTheme.typography.titleMedium.fontStyle,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.secondary,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Medium
                     )
@@ -246,7 +239,7 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
                             Icon(
                                 painter = painterResource(id = it.icon),
                                 contentDescription = it.title,
-                                tint = MaterialTheme.colorScheme.secondary,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(24.dp)
                             )
 
@@ -254,7 +247,7 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
 
                             Text(
                                 text = it.title,
-                                color = MaterialTheme.colorScheme.secondary,
+                                color = MaterialTheme.colorScheme.primary,
                                 fontSize = 16.sp,
                                 modifier = Modifier.padding(start = 16.dp),
                                 fontWeight = FontWeight.Normal
@@ -351,7 +344,7 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
                 // version
                 Text(
                     text = "App version: ${BuildConfig.VERSION_NAME}",
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Light,
                 )
@@ -366,6 +359,6 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
     }
 
     override fun onClose() {
-        viewModel.setAttractionGuide(null)
+        homeViewModel.setAttractionGuide(null)
     }
 }

@@ -2,6 +2,7 @@ package com.fang.taipeitour.ui.screen.setting
 
 import android.view.MotionEvent
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,27 +39,30 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.fang.taipeitour.R
 import com.fang.taipeitour.model.language.Language
 import com.fang.taipeitour.model.language.getLocaleString
 import com.fang.taipeitour.model.language.res
-import com.fang.taipeitour.ui.component.CustomImage
+import com.fang.taipeitour.ui.component.dsl.stateValue
 import com.fang.taipeitour.ui.component.screenHeightDp
-import org.koin.core.context.GlobalContext
 import java.lang.Math.PI
 import java.lang.Math.cos
 import java.lang.Math.min
 import java.lang.Math.sin
 import java.lang.Math.sqrt
 import kotlin.math.pow
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.context.GlobalContext
 
 /**
- * 使用者設定 Screen
+ * User Settings Screen
  */
 @Composable
-fun SettingScreen(viewModel: SettingViewModel) {
+fun SettingScreen(viewModel: SettingViewModel = koinViewModel()) {
     Column(
         modifier = Modifier
             .background(gradient)
@@ -74,8 +77,9 @@ fun SettingScreen(viewModel: SettingViewModel) {
         ElevatedCard(modifier = Modifier.fillMaxWidth()) {
             Row(modifier = Modifier.padding(16.dp)) {
                 Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    viewModel.language.collectAsState().toString(),
+                Image(
+                    painter = painterResource(id = viewModel.languageState.stateValue().res),
+                    contentDescription = null,
                     Modifier.clickable {
                         isShow.value = true
                     }
@@ -94,16 +98,7 @@ fun SettingScreen(viewModel: SettingViewModel) {
                 )
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-            Row(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    "Theme",
-                    Modifier.clickable {
-                    }
-                )
-            }
-        }
+
         Spacer(modifier = Modifier.height(16.dp))
         AnimatedButton()
         val settingList = remember {
@@ -111,7 +106,7 @@ fun SettingScreen(viewModel: SettingViewModel) {
         }
 
         if (settingList.value.isNotEmpty()) {
-            Text(text = "More Setting")
+            Text(text = "Experimental Setting")
             settingList.value.forEach {
 
                 when (it) {
@@ -119,7 +114,7 @@ fun SettingScreen(viewModel: SettingViewModel) {
                         ElevatedCard(modifier = Modifier.fillMaxWidth()) {
                             Row(modifier = Modifier.padding(16.dp)) {
                                 Text(
-                                    "Theme",
+                                    "Color",
                                     Modifier.clickable {
                                     }
                                 )
@@ -131,7 +126,7 @@ fun SettingScreen(viewModel: SettingViewModel) {
                         ElevatedCard(modifier = Modifier.fillMaxWidth()) {
                             Row(modifier = Modifier.padding(16.dp)) {
                                 Text(
-                                    "Theme",
+                                    "clear",
                                     Modifier.clickable {
                                         viewModel.reset()
                                     }
@@ -150,7 +145,7 @@ fun SettingScreen(viewModel: SettingViewModel) {
                     repeat(Language.all.size) {
                         Card(
                             modifier = Modifier.clickable {
-                                viewModel.setl(Language.all[it])
+                                viewModel.setLanguage(Language.all[it])
                             },
                             colors = CardDefaults.elevatedCardColors(containerColor = Color.Transparent)
                         ) {
@@ -163,12 +158,17 @@ fun SettingScreen(viewModel: SettingViewModel) {
                                     angle = 135f
                                 )
                             ) {
-                                CustomImage(
+
+                                Image(
                                     modifier = Modifier.size(24.dp),
-                                    res = Language.all[it].res
+                                    painter = painterResource(id = Language.all[it].res),
+                                    contentDescription = null,
                                 )
                                 Text(
-                                    text = Language.all[it].getLocaleString(context) ?: "??",
+                                    text = Language.all[it].getLocaleString(
+                                        context,
+                                        R.string.language
+                                    ) ?: "??",
                                 )
                             }
                         }
@@ -188,7 +188,7 @@ fun AnimatedButton() {
     val scale = animateFloatAsState(if (selected.value) 1.2f else 1f)
 
     Column(
-        Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(

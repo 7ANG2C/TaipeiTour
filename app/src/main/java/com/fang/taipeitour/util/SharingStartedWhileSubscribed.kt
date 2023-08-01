@@ -1,4 +1,4 @@
-package com.fang.taipeitour.ui.component
+package com.fang.taipeitour.util
 
 import kotlinx.coroutines.flow.SharingStarted
 

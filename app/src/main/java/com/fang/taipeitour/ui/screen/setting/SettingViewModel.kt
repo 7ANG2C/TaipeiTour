@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.fang.taipeitour.data.local.UserPreferencesRepository
 import com.fang.taipeitour.model.DarkMode
 import com.fang.taipeitour.model.language.Language
-import com.fang.taipeitour.ui.component.sharingStartedWhileSubscribed
+import com.fang.taipeitour.util.sharingStartedWhileSubscribed
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
@@ -16,7 +16,7 @@ class SettingViewModel(
     private val settingFlavorBehavior: SettingFlavorBehavior
 ) : ViewModel() {
 
-    val state = repository.getDarkMode()
+    val darkModeState = repository.getDarkMode()
         .mapLatest {
             it ?: DarkMode.default
         }
@@ -27,7 +27,7 @@ class SettingViewModel(
             initialValue = DarkMode.default
         )
 
-    val language = repository.getLanguage()
+    val languageState = repository.getLanguage()
         .catch { emit(Language.default) }
         .stateIn(
             scope = viewModelScope,
@@ -35,15 +35,16 @@ class SettingViewModel(
             initialValue = Language.default
         )
 
-    fun toggleDarkMode() {
+
+    fun setLanguage(l: Language) {
         viewModelScope.launch {
-            repository.toggleDarkMode()
+            repository.seLanguage(l)
         }
     }
 
-    fun setl(l: Language) {
+    fun toggleDarkMode() {
         viewModelScope.launch {
-            repository.seLanguage(l)
+            repository.toggleDarkMode()
         }
     }
 
