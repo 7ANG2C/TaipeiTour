@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -27,7 +27,7 @@ import kotlinx.coroutines.delay
 fun LoadingAnimation(
     modifier: Modifier = Modifier,
     circleSize: Dp = 16.dp,
-    circleColor: Color = MaterialTheme.colors.primary,
+    circleColor: Color = MaterialTheme.colorScheme.primary,
     spaceBetween: Dp = 8.dp,
     travelDistance: Dp = 20.dp
 ) {
