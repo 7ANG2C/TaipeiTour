@@ -25,5 +25,4 @@ class MainViewModel(
             started = sharingStartedWhileSubscribed(),
             initialValue = DarkMode.default
         )
-
 }

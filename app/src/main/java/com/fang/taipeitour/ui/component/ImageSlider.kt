@@ -103,7 +103,6 @@ fun ImageSlider(
                     )
                 )
 //                }
-
             }
             Column(modifier = Modifier.align(Alignment.BottomCenter)) {
                 Indicator(
@@ -150,6 +149,4 @@ private fun Indicator(
             }
         })
     }
-
-
 }

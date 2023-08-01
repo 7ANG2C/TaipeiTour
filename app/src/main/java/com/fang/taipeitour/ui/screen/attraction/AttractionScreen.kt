@@ -185,7 +185,6 @@ fun AttractionScreen(
 //            Snackbar(Modifier.align(Alignment.BottomCenter)) {
 //                Text(text = "Error")
 //            }
-
         }
     }
 }
@@ -208,7 +207,8 @@ private fun AttractionItem(
         ImageSlider(
             Modifier
                 .fillMaxWidth()
-                .aspectRatio(3f / 1f), item.images.map { it.src }, RoundedCornerShape(8.dp)
+                .aspectRatio(3f / 1f),
+            item.images.map { it.src }, RoundedCornerShape(8.dp)
         )
         Column(
             Modifier
@@ -241,7 +241,6 @@ private fun AttractionItem(
             }
         }
     }
-
 }
 
 @Composable

@@ -11,5 +11,4 @@ interface GetAttractionListRepository {
     val perSize: Int
 
     fun invoke(page: Int): Flow<List<Attraction>>
-
 }

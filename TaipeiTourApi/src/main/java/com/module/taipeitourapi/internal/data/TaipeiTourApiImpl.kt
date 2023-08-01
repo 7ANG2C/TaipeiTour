@@ -31,7 +31,8 @@ class TaipeiTourApiImpl(private val retrofitProvider: RetrofitProvider) : Taipei
      * @param page 頁碼 (每次回應30筆資料)
      */
     override suspend fun getAllAttractions(
-        language: Language, page: Int
+        language: Language,
+        page: Int
     ): Result<AttractionBundle> {
         return withContext(Dispatchers.Default) {
             kotlin.runCatching {
@@ -71,5 +72,4 @@ class TaipeiTourApiImpl(private val retrofitProvider: RetrofitProvider) : Taipei
             }
         }
     }
-
 }

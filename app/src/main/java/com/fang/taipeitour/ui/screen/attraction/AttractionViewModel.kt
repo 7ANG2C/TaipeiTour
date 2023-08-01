@@ -70,7 +70,8 @@ class AttractionViewModel(
                         Mediator(
                             if (it.size < perSize) {
                                 ListState.NoNewData
-                            } else ListState.SuccessAndNew, it,
+                            } else ListState.SuccessAndNew,
+                            it,
                             page.value
                         )
                     }

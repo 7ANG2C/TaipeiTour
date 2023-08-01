@@ -19,6 +19,5 @@ object ViewModelModule {
             AttractionGuideViewModel(data)
         }
         viewModelOf(::SettingViewModel)
-
     }
 }

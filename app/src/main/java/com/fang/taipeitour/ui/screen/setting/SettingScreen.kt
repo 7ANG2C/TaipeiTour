@@ -47,13 +47,13 @@ import com.fang.taipeitour.model.language.getLocaleString
 import com.fang.taipeitour.model.language.res
 import com.fang.taipeitour.ui.component.CustomImage
 import com.fang.taipeitour.ui.component.screenHeightDp
+import org.koin.core.context.GlobalContext
 import java.lang.Math.PI
 import java.lang.Math.cos
 import java.lang.Math.min
 import java.lang.Math.sin
 import java.lang.Math.sqrt
 import kotlin.math.pow
-import org.koin.core.context.GlobalContext
 
 /**
  * 使用者設定 Screen
@@ -100,7 +100,6 @@ fun SettingScreen(viewModel: SettingViewModel) {
                 Text(
                     "Theme",
                     Modifier.clickable {
-
                     }
                 )
             }
@@ -122,7 +121,6 @@ fun SettingScreen(viewModel: SettingViewModel) {
                                 Text(
                                     "Theme",
                                     Modifier.clickable {
-
                                     }
                                 )
                             }
@@ -148,9 +146,7 @@ fun SettingScreen(viewModel: SettingViewModel) {
         val context = LocalContext.current
         if (isShow.value) {
             ThemedDialog(onDismiss = { isShow.value = false }) {
-                Column(
-
-                ) {
+                Column() {
                     repeat(Language.all.size) {
                         Card(
                             modifier = Modifier.clickable {

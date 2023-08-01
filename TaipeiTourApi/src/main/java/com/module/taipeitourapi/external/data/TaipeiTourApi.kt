@@ -8,14 +8,13 @@ import com.module.taipeitourapi.external.model.response.attration.AttractionBund
  */
 interface TaipeiTourApi {
 
-  /**
-   * 批次數量
-   */
-  val perSize: Int
+    /**
+     * 批次數量
+     */
+    val perSize: Int
 
-  /**
-   * 取得所有熱門景點
-   */
-  suspend fun getAllAttractions(language: Language, page: Int): Result<AttractionBundle>
-
+    /**
+     * 取得所有熱門景點
+     */
+    suspend fun getAllAttractions(language: Language, page: Int): Result<AttractionBundle>
 }

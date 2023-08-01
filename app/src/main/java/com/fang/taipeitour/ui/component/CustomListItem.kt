@@ -9,6 +9,4 @@ fun CustomListItem(
     modifier: Modifier = Modifier,
     content: @Composable AnimatedVisibilityScope.() -> Unit
 ) {
-
-
 }

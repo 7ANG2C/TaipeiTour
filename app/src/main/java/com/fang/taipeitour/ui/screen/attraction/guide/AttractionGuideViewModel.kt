@@ -14,5 +14,4 @@ class AttractionGuideViewModel(
 
     private val _offset = MutableStateFlow<Int?>(null)
     val offset = _offset.asStateFlow()
-
 }

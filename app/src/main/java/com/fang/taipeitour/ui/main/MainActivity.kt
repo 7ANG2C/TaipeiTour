@@ -129,7 +129,6 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
                                             ScreenMenu.SETTING -> SettingScreen(settingViewModel)
                                         }
                                     }
-
                                 }
                             }
                         }
@@ -166,10 +165,10 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
                                 Text("confirmButton")
                             }
                         }, title = {
-                            Text("title")
-                        }, text = {
-                            Text("text")
-                        })
+                                Text("title")
+                            }, text = {
+                                Text("text")
+                            })
                     }
                     BackHandler(
                         // your condition to enable handler
@@ -202,7 +201,6 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
             ) {
-
             }
         }
     }

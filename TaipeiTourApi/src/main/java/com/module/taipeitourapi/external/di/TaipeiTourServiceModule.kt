@@ -22,5 +22,4 @@ object TaipeiTourServiceModule {
         }
         return listOf(module) + overrideModules
     }
-
 }

@@ -64,9 +64,11 @@ fun PullRefresh(
     CompositionLocalProvider(
         LocalOverscrollConfiguration provides null
     ) {
-        Box(modifier = modifier
-            .fillMaxWidth()
-            .pullRefresh(pullState, !isRefreshing)) {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .pullRefresh(pullState, !isRefreshing)
+        ) {
             PullRefreshAnimation(
                 modifier = Modifier
                     .align(Alignment.TopCenter)

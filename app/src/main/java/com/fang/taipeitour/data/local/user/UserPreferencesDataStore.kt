@@ -1,6 +1,5 @@
 package com.fang.taipeitour.data.local.user
 
-import UserPreferences as ProtoUserPreferences
 import android.content.Context
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.DataStore
@@ -8,13 +7,14 @@ import androidx.datastore.core.Serializer
 import androidx.datastore.dataStore
 import androidx.datastore.preferences.protobuf.InvalidProtocolBufferException
 import com.fang.taipeitour.model.DarkMode
-import java.io.InputStream
-import java.io.OutputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
+import java.io.InputStream
+import java.io.OutputStream
+import UserPreferences as ProtoUserPreferences
 
 /**
  *

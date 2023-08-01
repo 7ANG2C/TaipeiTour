@@ -45,7 +45,6 @@ class SettingViewModel(
         viewModelScope.launch {
             repository.seLanguage(l)
         }
-
     }
 
     fun reset() {

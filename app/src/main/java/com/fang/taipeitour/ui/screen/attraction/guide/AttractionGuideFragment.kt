@@ -213,7 +213,6 @@ class AttractionGuideFragment : Fragment() {
                         )
                     )
             )
-
         }
     }
 
@@ -441,7 +440,7 @@ class AttractionGuideFragment : Fragment() {
                     )
                 ).height(toolbarHeight),
                 navigationIcon = {
-                    val context= LocalContext.current
+                    val context = LocalContext.current
                     IconButton(
                         onClick = {
                             (context as? OnCloseListener)?.onClose()

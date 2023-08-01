@@ -5,5 +5,4 @@ class SettingFlavorBehaviorImpl : SettingFlavorBehavior {
     override fun invoke(): List<ExperimentalSetting> {
         return emptyList()
     }
-
 }
