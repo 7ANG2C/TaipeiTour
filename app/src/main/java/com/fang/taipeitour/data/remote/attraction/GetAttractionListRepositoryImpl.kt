@@ -1,6 +1,5 @@
 package com.fang.taipeitour.data.remote.attraction
 
-import com.module.taipeitourapi.external.model.request.Language as ServiceLanguage
 import com.fang.taipeitour.data.local.UserPreferencesRepository
 import com.fang.taipeitour.model.attraction.Attraction
 import com.fang.taipeitour.model.attraction.Category
@@ -11,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
+import com.module.taipeitourapi.external.model.request.Language as ServiceLanguage
 
 /**
  * 取得所有景點 repository implementation

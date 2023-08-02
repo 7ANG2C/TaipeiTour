@@ -35,7 +35,6 @@ class SettingViewModel(
             initialValue = Language.default
         )
 
-
     fun setLanguage(l: Language) {
         viewModelScope.launch {
             repository.seLanguage(l)

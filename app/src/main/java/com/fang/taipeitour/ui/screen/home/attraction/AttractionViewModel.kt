@@ -11,5 +11,4 @@ class AttractionViewModel(
 
     private val _attractionState = MutableStateFlow(attraction)
     val attractionState = _attractionState.asStateFlow()
-
 }

@@ -41,7 +41,6 @@ class HomeViewModel(
         enum class State {
             NoNewData, Fail, SuccessAndNew
         }
-
     }
 
     sealed class Item {

@@ -159,10 +159,10 @@ class MainActivity : AppCompatActivity(), OnCloseListener {
                                 Text("confirmButton")
                             }
                         }, title = {
-                            Text("title")
-                        }, text = {
-                            Text("text")
-                        })
+                                Text("title")
+                            }, text = {
+                                Text("text")
+                            })
                     }
                     BackHandler(
                         // your condition to enable handler

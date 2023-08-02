@@ -176,7 +176,6 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel = viewMod
                 }
             }
 
-
 //            Snackbar(Modifier.align(Alignment.BottomCenter)) {
 //                Text(text = "Error")
 //            }
@@ -218,7 +217,6 @@ private fun Indicator(
         }
     }
 }
-
 
 @Composable
 private fun AttractionItem(
