@@ -7,8 +7,6 @@ Hello Taipei, enjoy Taipei!
 - 專案架構
 - 程式碼檢查
 
-## [規劃文件](https://docs.google.com/spreadsheets/d/1QpEoIRHtYI7vEpig8LWy-YfU5gadsuVDNbBDz73-r6g/edit#gid=0 "DOC")
-
 ## 專案架構
 - 使用 Kotlin 開發
 - MVVM [部分參考](https://github.com/android/architecture-samples "Android Architecture Samples")
