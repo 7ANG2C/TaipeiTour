@@ -4,8 +4,10 @@ Hello Taipei, enjoy Taipei!
 # Overview
 - 規劃文件
 - 建置環境
-- 專案架構
-- 程式碼檢查
+- [專案架構](#專案架構)
+- [程式碼檢查](#程式碼檢查)
+
+## [規劃文件](https://docs.google.com/spreadsheets/d/1QpEoIRHtYI7vEpig8LWy-YfU5gadsuVDNbBDz73-r6g/edit#gid=0 "DOC")
 
 ## 專案架構
 - 使用 Kotlin 開發
