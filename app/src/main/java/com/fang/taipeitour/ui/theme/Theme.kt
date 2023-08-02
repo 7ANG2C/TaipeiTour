@@ -2,6 +2,7 @@ package com.fang.taipeitour.ui.theme
 
 import android.app.Activity
 import android.os.Build
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -62,9 +63,11 @@ fun TaipeiTourTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    Crossfade(colorScheme) { color ->
+        MaterialTheme(
+            colorScheme = color,
+            typography = Typography,
+            content = content
+        )
+    }
 }

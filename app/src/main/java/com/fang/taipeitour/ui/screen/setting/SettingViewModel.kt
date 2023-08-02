@@ -2,28 +2,54 @@ package com.fang.taipeitour.ui.screen.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fang.taipeitour.datastore.user.UserPreferencesDataStore
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOn
+import com.fang.taipeitour.data.local.UserPreferencesRepository
+import com.fang.taipeitour.model.DarkMode
+import com.fang.taipeitour.model.language.Language
+import com.fang.taipeitour.util.sharingStartedWhileSubscribed
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingViewModel(
-    private val userPreferencesDataStore: UserPreferencesDataStore
+    private val repository: UserPreferencesRepository,
+    private val settingFlavorBehavior: SettingFlavorBehavior
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<Setting?>(null)
-    val state = _state.asStateFlow()
+    val darkModeState = repository.getDarkMode()
+        .mapLatest {
+            it ?: DarkMode.default
+        }
+        .catch { emit(DarkMode.default) }
+        .stateIn(
+            scope = viewModelScope,
+            started = sharingStartedWhileSubscribed(),
+            initialValue = DarkMode.default
+        )
 
-    init {
+    val languageState = repository.getLanguage()
+        .catch { emit(Language.default) }
+        .stateIn(
+            scope = viewModelScope,
+            started = sharingStartedWhileSubscribed(),
+            initialValue = Language.default
+        )
+
+    fun setLanguage(l: Language) {
         viewModelScope.launch {
-            userPreferencesDataStore.invoke()
-                .flowOn(Dispatchers.Default)
-                .collectLatest {
-                    _state.value = null
-                }
+            repository.seLanguage(l)
+        }
+    }
+
+    fun toggleDarkMode() {
+        viewModelScope.launch {
+            repository.toggleDarkMode()
+        }
+    }
+
+    fun reset() {
+        viewModelScope.launch {
+            repository.reset()
         }
     }
 }

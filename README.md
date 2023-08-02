@@ -19,8 +19,6 @@ Hello Taipei, enjoy Taipei!
 ## Third-Party
 - [coil](https://developer.android.com/jetpack/compose/graphics/images/loading#internet-loading "coil")
 
-## CI/CD
-
 ## 程式碼檢查
 - 每個 commit 檢查
 - 使用 [spotless](https://github.com/diffplug/spotless "spotless") 檢查 code style
