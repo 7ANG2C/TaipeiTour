@@ -1,17 +1,24 @@
 package com.fang.taipeitour.ui.screen.home.attraction
 
+import android.app.DownloadManager
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.GeolocationPermissions
+import android.webkit.URLUtil
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
+import android.webkit.WebSettings.LOAD_CACHE_ELSE_NETWORK
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
@@ -43,12 +50,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,6 +72,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
@@ -72,13 +80,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import com.fang.taipeitour.R
-import com.fang.taipeitour.extension.logD
+import com.fang.taipeitour.model.Invoke
 import com.fang.taipeitour.model.attraction.Attraction
+import com.fang.taipeitour.ui.component.AutoSizeText
 import com.fang.taipeitour.ui.component.ImageSlider
-import com.fang.taipeitour.ui.component.dsl.stateValue
 import com.fang.taipeitour.ui.theme.TaipeiTourTheme
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
+import com.fang.taipeitour.util.logD
+
+interface A : java.io.Serializable {
+    val sfsdf: Invoke
+}
 
 /**
  * 景點導覽
@@ -86,18 +97,26 @@ import org.koin.core.parameter.parametersOf
 class AttractionFragment : Fragment() {
 
     companion object {
-        private const val ARG_ID = "id"
-        fun createIntent(id: Attraction): Fragment {
+        private const val ARG_ATTRACTION = "id"
+        private const val ARG_ATTRACTIfON = "id2"
+        fun createIntent(attraction: Attraction): Fragment {
             return AttractionFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(ARG_ID, id)
+                    putParcelable(ARG_ATTRACTION, attraction)
+
                 }
             }
         }
     }
 
-    private val viewModel by viewModel<AttractionViewModel> {
-        parametersOf(requireArguments().getParcelable<Attraction>(ARG_ID))
+//    private val viewModel by viewModel<AttractionViewModel> {
+//        parametersOf(requireArguments().getParcelable<Attraction>(ARG_ATTRACTION))
+//    }
+
+    var close: Invoke = {}
+
+    private val attraction by lazy {
+        mutableStateOf(requireArguments().getParcelable<Attraction>(ARG_ATTRACTION)!!)
     }
 
     override fun onCreateView(
@@ -105,11 +124,14 @@ class AttractionFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+//        val aaa = (requireArguments().getSerializable(ARG_ATTRACTIfON) as A)
+
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                CollapsingToolbarParallaxEffect(
+                CollapsingToolbar(
                     Modifier
+
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surface)
                 )
@@ -129,14 +151,14 @@ class AttractionFragment : Fragment() {
     private val titleFontScaleEnd = 0.66f
 
     @Composable
-    fun CollapsingToolbarParallaxEffect(modifier: Modifier = Modifier) {
+    fun CollapsingToolbar(modifier: Modifier = Modifier) {
         val scroll = rememberScrollState(0)
 
         val headerHeightPx = with(LocalDensity.current) { headerHeight.toPx() }
         val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.toPx() }
 
         Box(modifier = modifier) {
-            val isShow = remember {
+            val isShow = rememberSaveable {
                 mutableStateOf(false)
             }
             Body(
@@ -154,7 +176,8 @@ class AttractionFragment : Fragment() {
             )
             IconButton(
                 onClick = {
-                    (context as? OnCloseListener)?.onClose()
+//                    aaa.sfsdf()
+                    close()
                 },
                 modifier = Modifier
                     .padding(20.dp)
@@ -195,9 +218,10 @@ class AttractionFragment : Fragment() {
         ) {
             ImageSlider(
                 modifier = Modifier,
-                images = viewModel.attractionState.stateValue().images.map { it.src }.orEmpty(),
+                images = attraction.value?.images?.map { it.src }.orEmpty(),
                 noImageRes = R.drawable.no_image_holder2,
-                contentScale = ContentScale.Inside,
+                contentScale = ContentScale.FillBounds,
+                true
             ) {}
             Box(
                 Modifier
@@ -222,9 +246,9 @@ class AttractionFragment : Fragment() {
             modifier = modifier.verticalScroll(scroll)
         ) {
             Spacer(Modifier.height(headerHeight))
-            val state = viewModel.attractionState.collectAsState().value
+            val state = attraction.value
             Text(
-                text = state.originalUrl.takeIf { it.isNotBlank() } ?: "--",
+                text = state?.originalUrl.takeIf { it?.isNotBlank() == true } ?: "--",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Justify,
@@ -234,26 +258,16 @@ class AttractionFragment : Fragment() {
                         onClick()
                     }
             )
-            Text(
-                text = state.officialSite.takeIf { it.isNotBlank() } ?: "--",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Justify,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .clickable {
-                        onClick()
-                    }
-            )
+
             state.introduction.split("\r\n\r\n").forEach {
-                logD("werrwe", it)
                 Row {
                     repeat(3) {
                         Box(
                             modifier = Modifier
-                                .size(8.dp)
+                                .size(6.dp)
+                                .padding(horizontal = 8.dp)
                                 .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.6f))
+                                .background(MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f))
                         )
                     }
                 }
@@ -270,53 +284,71 @@ class AttractionFragment : Fragment() {
 
     @Composable
     private fun Web(isShow: Boolean, click: () -> Unit) {
-
-        val mUrl = viewModel.attractionState.collectAsState().value.originalUrl
+        val mUrl = attraction.value.originalUrl
         if (isShow) {
             val webViewChromeClient = object : WebChromeClient() {
+                override fun onGeolocationPermissionsShowPrompt(
+                    origin: String?,
+                    callback: GeolocationPermissions.Callback
+                ) {
+//                    super.onGeolocationPermissionsShowPrompt(origin, callback);
+                    callback.invoke(origin, true, false);
+                    logD("rewfewe", "123")
+                }
+
                 override fun onProgressChanged(view: WebView?, newProgress: Int) {
                     // 回調網頁內容加載進度
 //                    onProgressChange(newProgress)
                     super.onProgressChanged(view, newProgress)
+                    logD("onProgressChanged_C", "onProgressChanged", newProgress)
+                }
+
+                override fun onReceivedTitle(view: WebView?, title: String?) {
+                    super.onReceivedTitle(view, title)
+                    // onReceivedTitle, 捷運中山站街區_心中山線形公園 | 臺北旅遊網
+                    logD("onProgressChanged_C", "onReceivedTitle", title)
                 }
             }
             val webViewClient = object : WebViewClient() {
-                override fun onPageStarted(
-                    view: WebView?,
-                    url: String?,
-                    favicon: Bitmap?
-                ) {
-                    super.onPageStarted(view, url, favicon)
-//                    onProgressChange(-1)
+
+                override fun onPageCommitVisible(view: WebView?, url: String?) {
+                    super.onPageCommitVisible(view, url)
+                    logD("onProgressChanged_", "onPageCommitVisible")
                 }
 
-                override fun onPageFinished(view: WebView?, url: String?) {
-                    super.onPageFinished(view, url)
-//                    onProgressChange(100)
+                override fun shouldOverrideKeyEvent(view: WebView?, event: KeyEvent?): Boolean {
+                    logD("onProgressChanged_", "shouldOverrideKeyEvent")
+                    return super.shouldOverrideKeyEvent(view, event)
+
                 }
 
                 override fun shouldOverrideUrlLoading(
-                    view: WebView?,
-                    request: WebResourceRequest?
+                    view: WebView,
+                    request: WebResourceRequest
                 ): Boolean {
-                    if (null == request?.url) return false
-                    val showOverrideUrl = request.url.toString()
-                    try {
-                        if (!showOverrideUrl.startsWith("") &&
-                            !showOverrideUrl.startsWith("")
-                        ) {
-                            // 處理非 http https 開頭
-                            Intent(Intent.ACTION_VIEW, Uri.parse(showOverrideUrl)).apply {
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                view?.context?.applicationContext?.startActivity(this)
-                            }
-                            return true
-                        }
-                    } catch (e: Exception) {
-                        // 沒有安裝和找到能打開(「xxxx://openlink.cc....」等)協議的應用
+                    val url = request.url
+                    if (url != null && url.toString().startsWith("https://www.google.com/maps")) {
+                        view.context.startActivity(Intent(Intent.ACTION_VIEW, url))
                         return true
+                    } else if (url.scheme == "intent") {
+                        try {
+                            logD("werwerwer", "try")
+                            val intent = Intent.parseUri(url.toString(), Intent.URI_INTENT_SCHEME)
+                            view.context.startActivity(intent)
+                            return true
+                        } catch (expected: ActivityNotFoundException) {
+                            logD("werwerwer", expected)
+                            return false
+                        }
+                    } else if (request?.url?.scheme == "tel") {
+                        // 如果是电话号码链接，则打开系统的电话应用程序
+                        val intent = Intent(Intent.ACTION_DIAL, request?.url)
+                        startActivity(intent)
+                        return true
+                    } else {
+//                        view.loadUrl(request.url.toString())
+                        return super.shouldOverrideUrlLoading(view, request)
                     }
-                    return super.shouldOverrideUrlLoading(view, request)
                 }
 
                 override fun onReceivedError(
@@ -324,7 +356,10 @@ class AttractionFragment : Fragment() {
                     request: WebResourceRequest?,
                     error: WebResourceError?
                 ) {
+//                    view.pauseTimers()
+//                    view.onPause()
                     super.onReceivedError(view, request, error)
+                    logD("onProgressChanged_", "onReceivedError")
 //                    onReceivedError(error)
                 }
             }
@@ -332,24 +367,84 @@ class AttractionFragment : Fragment() {
             val coroutineScope = rememberCoroutineScope()
             AndroidView(modifier = Modifier.fillMaxSize(), factory = { ctx ->
                 WebView(ctx).apply {
-                    this.webViewClient = webViewClient
-                    this.webChromeClient = webViewChromeClient
+                    this.setDownloadListener {
+
+                            url, userAgent, contentDisposition, mimeType, contentLength ->
+                        logD("Werwerrrrrr",url ,mimeType)
+                        // 在这里处理下载请求
+                        // url: 下载链接
+                        // userAgent: 下载链接的用户代理
+                        // contentDisposition: 下载内容描述
+                        // mimeType: 下载文件的 MIME 类型
+                        // contentLength: 下载文件的大小（字节）
+//                        val request = DownloadManager.Request(Uri.parse(url))
+//                            .setTitle("Download File") // 下载文件的标题
+//                            .setDescription("Downloading") // 下载描述
+//                            .setMimeType(mimeType) // 下载文件的 MIME 类型
+//                            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED) // 显示下载通知
+//                            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(url, null, null)) // 下载文件保存的路径
+//
+//                        val downloadManager = ctx.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+//                        downloadManager.enqueue(request)
+                        val i = Intent(Intent.ACTION_VIEW)
+                        i.data = Uri.parse(url)
+                        startActivity(i)
+                    }
+//                    this.setFindListener()
+//                    this.setAutofillHints()
+//                    this.setBackgroundColor(Color.Black.toArgb())
+
                     this.settings.apply {
+                        this.setGeolocationEnabled(true)
+                        setJavaScriptEnabled(true);
+                        setGeolocationEnabled(true);
+                        val databasePath = ctx.getExternalFilesDir(null)?.path + "/geolocation"
+                        setGeolocationDatabasePath(databasePath)
+                        setDatabaseEnabled(true);
+                        setAllowFileAccessFromFileURLs(true);
+                        setAllowUniversalAccessFromFileURLs(true);
+                        setJavaScriptCanOpenWindowsAutomatically(true);
+                        setDomStorageEnabled(true);
+                        setBuiltInZoomControls(true);
+                        setAllowFileAccess(true);
+                        setAllowContentAccess(true);
+                        setSupportZoom(true);
+
+
+                        setPluginState(WebSettings.PluginState.ON);
+                        setMediaPlaybackRequiresUserGesture(false);
+//                        forceDark = WebSettings.FORCE_DARK_ON // 强制开启夜间模式
                         // 允許 JS 交互
                         javaScriptEnabled = true
                         // 将图片调整到适合webView的大小
-                        useWideViewPort = true
+//                        useWideViewPort = true
                         // 縮放至螢幕大小
-                        loadWithOverviewMode = true
-                        // 縮放操作
-                        setSupportZoom(true)
-                        builtInZoomControls = true
-                        displayZoomControls = true
+//                        loadWithOverviewMode = true
+//                        setUseWideViewPort(true); //将图片调整到适合webview的大小
+//                        setLoadWithOverviewMode(false); // 缩放至屏幕的大小
+                        //缩放操作
+                        setSupportZoom(true); //支持缩放，默认为true。是下面那个的前提。
+                        builtInZoomControls = true; //设置内置的缩放控件。若为false，则该WebView不可缩放
+                        displayZoomControls = false; //隐藏原生的缩放控件
+
+
                         // 是否支援通過 JS 開啟新窗口
                         javaScriptCanOpenWindowsAutomatically = true
-                        // 不加載緩存內容
-                        cacheMode = WebSettings.LOAD_NO_CACHE
+                        cacheMode = LOAD_CACHE_ELSE_NETWORK
                     }
+                    this.webViewClient = webViewClient
+                    this.webChromeClient = webViewChromeClient
+//                    fun getHistoryUrls(): List<String> {
+//                        val historyUrls: MutableList<String> = mutableListOf()
+//                        val backStackEntryCount = webView.copyBackForwardList().size
+//                        for (i in 0 until backStackEntryCount) {
+//                            val historyItem = webView.copyBackForwardList().getItemAtIndex(i)
+//                            val url = historyItem.url
+//                            historyUrls.add(url)
+//                        }
+//                        return historyUrls
+//                    }
+
                     webView = this
                     loadUrl(mUrl)
                 }
@@ -444,7 +539,8 @@ class AttractionFragment : Fragment() {
                     val context = LocalContext.current
                     IconButton(
                         onClick = {
-                            (context as? OnCloseListener)?.onClose()
+                            close()
+//                            (context as? OnCloseListener)?.onClose()
                         },
                         modifier = Modifier
                             .padding(16.dp)
@@ -468,14 +564,17 @@ class AttractionFragment : Fragment() {
         scroll: ScrollState,
         modifier: Modifier = Modifier
     ) {
-        var titleHeightPx by remember { mutableStateOf(0f) }
-        var titleWidthPx by remember { mutableStateOf(0f) }
+        var titleHeightPx by rememberSaveable { mutableStateOf(0f) }
+        var titleWidthPx by rememberSaveable { mutableStateOf(0f) }
 
-        Text(
-            text = viewModel.attractionState.stateValue().name,
-            fontSize = 30.sp,
+        AutoSizeText(
+            text = attraction.value?.name ?: "",
+            targetFontSize = 28.sp,
+            minFontSize = 2.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = modifier
                 .graphicsLayer {
                     val collapseRange: Float = (headerHeight.toPx() - toolbarHeight.toPx())
@@ -540,7 +639,7 @@ class AttractionFragment : Fragment() {
     @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Composable
     fun DefaultPreview() {
-        CollapsingToolbarParallaxEffect(
+        CollapsingToolbar(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
@@ -566,4 +665,5 @@ class AttractionFragment : Fragment() {
         onReceivedError: (error: WebResourceError?) -> Unit = {}
     ) {
     }
+
 }

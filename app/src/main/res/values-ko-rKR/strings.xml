@@ -1,7 +1,12 @@
 <resources>
-    <string name="app_name">遊台北</string>
-    <string name="app_ver">TaipeiTour</string>
-    <string name="home">home</string>
-    <string name="setting">Settings</string>
-    <string name="language">韓國</string>
+    <string name="app_name">타이페이 투어</string>
+    <string name="home">끌어당</string>
+    <string name="setting">환경</string>
+    <string name="user_name">리사</string>
+    <string name="app_ver">앱 버전</string>
+    <string name="leave_dialog_title">좋은 여행</string>
+    <string name="leave_dialog_text">다음에 보자 ㅋㅋㅋㅋㅋ</string>
+    <string name="leave_dialog_confirm">뒤쪽에</string>
+    <string name="language">한국인</string>
+    <string name="experimental_setting">실험 설정</string>
 </resources>

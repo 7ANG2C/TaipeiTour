@@ -25,35 +25,24 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val repository: GetAttractionListRepository
 ) : ViewModel() {
-    private class Page(val value: Int)
+    private class RequestPage(val value: Int)
 
     private data class Mediator(
-        val state: AttractionData.State,
         val list: List<Attraction>,
+        val state: AttractionData.State,
         val page: Int,
     )
 
-    data class AttractionData(
-        val state: State,
-        val items: List<Item>,
-        val page: Int,
-    ) {
-        enum class State {
-            NoNewData, Fail, SuccessAndNew
-        }
+    private companion object {
+        const val FIRST_REQUEST_PAGE = 1
     }
 
-    sealed class Item {
-        data class Data(val attraction: Attraction) : Item()
-        object Loading : Item()
-    }
+    private val dataSizePerPage = repository.dataSizePerPage
 
-    private val perSize = repository.perSize
+    private val requestPageState = MutableStateFlow<RequestPage?>(null)
 
-    private val pageState = MutableStateFlow<Page?>(null)
-
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshingState = _isRefreshing.asStateFlow()
+    private val _isRefreshingState = MutableStateFlow(false)
+    val isRefreshingState = _isRefreshingState.asStateFlow()
 
     private val _dataState = MutableStateFlow<AttractionData?>(null)
     val dataState = _dataState.asStateFlow()
@@ -63,69 +52,69 @@ class HomeViewModel(
 
     init {
         viewModelScope.launch {
-            pageState.filterNotNull().flatMapLatest { page ->
+            requestPageState.filterNotNull().flatMapLatest { page ->
                 repository.invoke(page.value)
                     .flowOn(Dispatchers.IO)
                     .mapLatest {
                         Mediator(
-                            if (it.size < perSize) {
-                                AttractionData.State.NoNewData
-                            } else AttractionData.State.SuccessAndNew,
-                            it,
-                            page.value
+                            list = it,
+                            state = if (it.size < dataSizePerPage) {
+                                AttractionData.State.SUCCESS_WITH_NO_MORE_DATA
+                            } else AttractionData.State.SUCCESS,
+                            page = page.value
                         )
                     }
                     .catch {
                         Mediator(
-                            AttractionData.State.Fail, emptyList(), page.value
+                            list = emptyList(), AttractionData.State.FAILURE, page.value
                         )
                     }
             }
                 .scan(null) { acc: Mediator?, new: Mediator ->
-                    if (acc == null || new.page == 1) {
+                    if (acc == null || new.page == FIRST_REQUEST_PAGE) {
                         new
                     } else {
                         new.copy(list = acc.list + new.list)
                     }
                 }
                 .filterNotNull()
-                .flowOn(Dispatchers.Default)
-                .collectLatest { mediator ->
-                    _isRefreshing.value = false
-                    _dataState.value = AttractionData(
-                        mediator.state,
-                        when (mediator.state) {
-                            AttractionData.State.NoNewData -> {
-                                mediator.list.map { Item.Data(it) }
-                            }
-                            AttractionData.State.Fail -> {
-                                mediator.list.map { Item.Data(it) }
-                            }
-                            AttractionData.State.SuccessAndNew -> {
-                                mediator.list.map { Item.Data(it) } + Item.Loading
-                            }
-                        },
-                        mediator.page
+                .mapLatest { mediator ->
+                    val loadingItem = if (mediator.state == AttractionData.State.SUCCESS) {
+                        Item.Loading
+                    } else null
+                    AttractionData(
+                        items = mediator.list.map { Item.Data(it) } + listOfNotNull(loadingItem),
+                        state = mediator.state,
+                        page = mediator.page
                     )
+                }
+                .flowOn(Dispatchers.Default)
+                .collectLatest { data ->
+                    setRefreshingState(false)
+                    _dataState.value = data
                 }
         }
         refresh()
     }
 
     fun refresh() {
-        _isRefreshing.value = true
-        pageState.value = Page(1)
+        setRefreshingState(true)
+        requestPageState.value = RequestPage(1)
     }
 
     fun loadMore() {
-        pageState.update { old ->
-            old?.let {
-                Page(it.value + 1)
+        requestPageState.update { old ->
+            old?.value?.plus(1)?.let {
+                RequestPage(it)
             }
         }
     }
 
     fun setAttractionGuide(attraction: Attraction?) {
         _attractionState.value = attraction
+    }
+
+    private fun setRefreshingState(isRefreshing: Boolean) {
+        _isRefreshingState.value = isRefreshing
     }
 }

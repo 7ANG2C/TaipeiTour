@@ -17,9 +17,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fang.taipeitour.R
+import com.fang.taipeitour.model.Invoke
 
 @Composable
-fun TopBar(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) {
+fun TopBar(modifier: Modifier = Modifier, text: String, onClick: Invoke) {
     Surface(
         modifier = modifier,
         shadowElevation = 4.dp,
@@ -44,7 +45,7 @@ fun TopBar(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) {
                 text = text,
                 modifier = Modifier
                     .align(Alignment.Center),
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium
             )

@@ -1,7 +1,12 @@
 <resources>
-    <string name="app_name">遊台北</string>
-    <string name="app_ver">TaipeiTour</string>
-    <string name="home">home</string>
-    <string name="setting">Settings</string>
-    <string name="language">泰國</string>
+    <string name="app_name">ทัวร์ไทเป</string>
+    <string name="home">บ้าน</string>
+    <string name="setting">การตั้งค่า</string>
+    <string name="user_name">LaLisa</string>
+    <string name="app_ver">เวอร์ชันแอป</string>
+    <string name="leave_dialog_title">การเดินทางที่ดี</string>
+    <string name="leave_dialog_text">เจอกันคราวหน้า!</string>
+    <string name="leave_dialog_confirm">ออกจาก</string>
+    <string name="language">แบบไทย</string>
+    <string name="experimental_setting">การตั้งค่าการทดลอง</string>
 </resources>

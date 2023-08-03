@@ -1,7 +1,12 @@
 <resources>
-    <string name="app_name">遊台北</string>
-    <string name="app_ver">TaipeiTour</string>
-    <string name="home">home</string>
-    <string name="setting">Settings</string>
-    <string name="language">越南</string>
+    <string name="app_name">Lịch Đài Bắc</string>
+    <string name="home">TRANG CHỦ</string>
+    <string name="setting">CÀI ĐẶT</string>
+    <string name="user_name">Lisà</string>
+    <string name="app_ver">Phiên Bản</string>
+    <string name="leave_dialog_title">CHUYẾN TỐT ĐẸP</string>
+    <string name="leave_dialog_text">Hẹn gặp lại bạn lần sau!</string>
+    <string name="leave_dialog_confirm">Rời khỏi</string>
+    <string name="language">Tiếng Việt</string>
+    <string name="experimental_setting">Cài đặt thử nghiệm</string>
 </resources>

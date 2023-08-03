@@ -21,7 +21,7 @@ class GetAttractionListRepositoryImpl(
     private val userPreferencesRepository: UserPreferencesRepository
 ) : GetAttractionListRepository {
 
-    override val perSize = 30
+    override val dataSizePerPage = 30
 
     override fun invoke(page: Int) = userPreferencesRepository.getLanguage()
         .mapLatest { language ->

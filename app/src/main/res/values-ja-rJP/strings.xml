@@ -1,7 +1,12 @@
 <resources>
-    <string name="app_name">遊台北</string>
-    <string name="app_ver">TaipeiTour</string>
-    <string name="home">home</string>
-    <string name="setting">Settings</string>
-    <string name="language">日文</string>
+    <string name="app_name">台北ツアー</string>
+    <string name="home">主に</string>
+    <string name="setting">設定</string>
+    <string name="user_name">リサ</string>
+    <string name="app_ver">アプリのョン</string>
+    <string name="leave_dialog_title">素敵な旅</string>
+    <string name="leave_dialog_text">次回会いましょう ^^</string>
+    <string name="leave_dialog_confirm">退出</string>
+    <string name="language">日本語</string>
+    <string name="experimental_setting">実験環境</string>
 </resources>

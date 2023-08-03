@@ -20,5 +20,6 @@ enum class Language(val locale: Locale, val key: String) {
         fun findByKeyOrDefault(key: String, default: Language = this.default): Language {
             return all.find { it.key == key } ?: default
         }
+        operator fun get(index: Int) = all[index]
     }
 }

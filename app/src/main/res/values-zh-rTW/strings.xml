@@ -1,7 +1,12 @@
 <resources>
-    <string name="app_name">臺北</string>
-    <string name="app_ver">App Ver. </string>
+    <string name="app_name">臺北記</string>
     <string name="home">主頁</string>
     <string name="setting">設定</string>
+    <string name="user_name">麗莎</string>
+    <string name="app_ver">應用版本</string>
+    <string name="leave_dialog_title">旅途愉快</string>
+    <string name="leave_dialog_text">期待下次再見到您~</string>
+    <string name="leave_dialog_confirm">離開</string>
     <string name="language">繁體中文</string>
+    <string name="experimental_setting">新功能搶先看</string>
 </resources>

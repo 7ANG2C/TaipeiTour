@@ -3,12 +3,12 @@ package com.fang.taipeitour.ui.screen.setting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fang.taipeitour.data.local.UserPreferencesRepository
+import com.fang.taipeitour.extension.stateIn
 import com.fang.taipeitour.model.DarkMode
 import com.fang.taipeitour.model.language.Language
-import com.fang.taipeitour.util.sharingStartedWhileSubscribed
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.stateIn
+
 import kotlinx.coroutines.launch
 
 class SettingViewModel(
@@ -23,7 +23,6 @@ class SettingViewModel(
         .catch { emit(DarkMode.default) }
         .stateIn(
             scope = viewModelScope,
-            started = sharingStartedWhileSubscribed(),
             initialValue = DarkMode.default
         )
 
@@ -31,7 +30,6 @@ class SettingViewModel(
         .catch { emit(Language.default) }
         .stateIn(
             scope = viewModelScope,
-            started = sharingStartedWhileSubscribed(),
             initialValue = Language.default
         )
 

@@ -11,7 +11,7 @@ interface GetAttractionListRepository {
     /**
      * 批次數量
      */
-    val perSize: Int
+    val dataSizePerPage: Int
 
     fun invoke(page: Int): Flow<List<Attraction>>
 }

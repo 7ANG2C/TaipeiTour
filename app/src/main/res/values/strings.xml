@@ -1,7 +1,12 @@
 <resources>
     <string name="app_name">Taipei Tour</string>
-    <string name="app_ver">App Ver. </string>
     <string name="home">HOME</string>
     <string name="setting">SETTING</string>
+    <string name="user_name">Lisa</string>
+    <string name="app_ver">App Version</string>
+    <string name="leave_dialog_title">NICE TRIP</string>
+    <string name="leave_dialog_text">See ya next time!</string>
+    <string name="leave_dialog_confirm">Leave</string>
     <string name="language">English</string>
+    <string name="experimental_setting">Experimental Setting</string>
 </resources>

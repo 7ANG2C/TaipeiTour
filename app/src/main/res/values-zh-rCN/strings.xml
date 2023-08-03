@@ -1,7 +1,12 @@
 <resources>
-    <string name="app_name">遊台北</string>
-    <string name="app_ver">TaipeiTour</string>
-    <string name="home">home</string>
-    <string name="setting">Settings</string>
-    <string name="language">檢中</string>
+    <string name="app_name">中国台北游</string>
+    <string name="home">主页</string>
+    <string name="setting">设置</string>
+    <string name="user_name">丽莎</string>
+    <string name="app_ver">版本号码</string>
+    <string name="leave_dialog_title">顺飞不送</string>
+    <string name="leave_dialog_text">咱下次见!</string>
+    <string name="leave_dialog_confirm">退出</string>
+    <string name="language">简体中文</string>
+    <string name="experimental_setting">实验性设置</string>
 </resources>

@@ -40,8 +40,10 @@ fun ImageSlider(
     images: List<String>,
     noImageRes: Int,
     contentScale: ContentScale,
+    showLoading: Boolean,
     ratio: Double = 0.75,
     onPageSelect: Action<Int>,
+
 ) {
     Surface(
         modifier = modifier,
@@ -85,6 +87,7 @@ fun ImageSlider(
                         .width(width)
                         .height(height),
                     loading = {
+                              if(showLoading) {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -94,6 +97,8 @@ fun ImageSlider(
                         ) {
                             Loading(isFancy = false)
                         }
+                              }
+
                     },
                     error = {
                         Column(

@@ -29,16 +29,16 @@ fun Loading(
             if (isFancy) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(42.dp),
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                    color = Color.Transparent,
                     strokeWidth = 2.dp,
-                    trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                    trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
                 )
             }
             CircularProgressIndicator(
                 modifier = Modifier.size(32.dp),
                 color = MaterialTheme.colorScheme.inversePrimary,
-                strokeWidth = 4.dp,
-                trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                strokeWidth = 3.dp,
+                trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
             )
         }
     }

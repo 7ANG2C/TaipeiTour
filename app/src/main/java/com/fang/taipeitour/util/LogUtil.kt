@@ -1,4 +1,4 @@
-package com.fang.taipeitour.extension
+package com.fang.taipeitour.util
 
 import android.util.Log
 import com.fang.taipeitour.BuildConfig

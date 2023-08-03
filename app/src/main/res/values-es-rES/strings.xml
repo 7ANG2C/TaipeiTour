@@ -1,7 +1,12 @@
 <resources>
-    <string name="app_name">遊台北</string>
-    <string name="app_ver">TaipeiTour</string>
-    <string name="home">home</string>
-    <string name="setting">Settings</string>
-    <string name="language">西班牙</string>
+    <string name="app_name">Tour de Taipéi</string>
+    <string name="home">HOGAR</string>
+    <string name="setting">CONFIGURACIÓN</string>
+    <string name="user_name">Lisa</string>
+    <string name="app_ver">App Versión</string>
+    <string name="leave_dialog_title">BUEN VIAJE</string>
+    <string name="leave_dialog_text">Hasta la próxima :)</string>
+    <string name="leave_dialog_confirm">Dejar</string>
+    <string name="language">Español</string>
+    <string name="experimental_setting">Escenario Experimental</string>
 </resources>

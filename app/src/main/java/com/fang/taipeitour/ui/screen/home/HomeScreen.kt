@@ -1,7 +1,9 @@
 package com.fang.taipeitour.ui.screen.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateFloatAsState
@@ -38,6 +40,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,6 +55,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -59,128 +63,193 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fang.taipeitour.R
 import com.fang.taipeitour.model.Action
+import com.fang.taipeitour.model.Invoke
 import com.fang.taipeitour.model.attraction.Attraction
+import com.fang.taipeitour.model.language.getLocaleString
+import com.fang.taipeitour.ui.component.FragmentContainer
 import com.fang.taipeitour.ui.component.ImageSlider
 import com.fang.taipeitour.ui.component.Loading
 import com.fang.taipeitour.ui.component.PullRefresh
+import com.fang.taipeitour.ui.component.TopBar
+import com.fang.taipeitour.ui.component.dsl.LocalLanguage
 import com.fang.taipeitour.ui.component.dsl.stateValue
 import com.fang.taipeitour.ui.component.noImageHolderRes
+import com.fang.taipeitour.ui.screen.home.attraction.A
+import com.fang.taipeitour.ui.screen.home.attraction.AttractionFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * 全部景點 Screen
  */
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel = viewModel()) {
-    Box(modifier) {
-        val isRefreshing = viewModel.isRefreshingState.stateValue()
-        val data = viewModel.dataState.stateValue()
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = koinViewModel(),
+    onClick: Invoke
+) {
+    Column {
+        TopBar(Modifier, text = LocalLanguage.current.getLocaleString(res = R.string.home), onClick)
+        Box(modifier) {
+            val isRefreshing = viewModel.isRefreshingState.stateValue()
+            val data = viewModel.dataState.stateValue()
 
-        val lazyColumnState = rememberLazyListState()
-        PullRefresh(
-            isRefreshing = isRefreshing,
-            onRefresh = { viewModel.refresh() }
-        ) {
-            LazyColumn(
-                modifier = Modifier.padding(12.dp),
-                state = lazyColumnState,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+            val lazyColumnState = rememberLazyListState()
+            PullRefresh(
+                isRefreshing = isRefreshing,
+                onRefresh = { viewModel.refresh() }
             ) {
-                items(
-                    data?.items?.filterIsInstance<HomeViewModel.Item.Data>()
-                        .orEmpty().map { it.attraction }
-                ) { item ->
-                    AttractionItem(item) {
-                        viewModel.setAttractionGuide(it)
+                LazyColumn(
+                    modifier = Modifier.padding(12.dp),
+                    state = lazyColumnState,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(
+                        data?.attractions.orEmpty()
+                    ) { item ->
+                        AttractionItem(item) {
+                            viewModel.setAttractionGuide(it)
+                        }
                     }
-                }
-                data?.items?.singleOrNull { it == HomeViewModel.Item.Loading }?.let {
-                    item {
-                        Loading(isFancy = true)
+                    data?.loadingItem?.let {
+                        item {
+                            Loading(isFancy = true)
+                        }
                     }
                 }
             }
-        }
 
-        lazyColumnState.ReachBottom {
-            viewModel.loadMore()
-        }
+            lazyColumnState.ReachBottom {
+                viewModel.loadMore()
+            }
 
-        val scope = rememberCoroutineScope()
-        val isScrollUp = lazyColumnState.isScrollUp()
-        FloatingActionButton(
-            onClick = {
-                if (isScrollUp) {
-                    scope.launch {
-                        lazyColumnState.animateScrollToItem(0)
-                    }
-                }
-            },
-            modifier = Modifier
-                .padding(18.dp)
-                .align(Alignment.BottomEnd),
-            containerColor = MaterialTheme.colorScheme.tertiary
-        ) {
-            AnimatedContent(
-                targetState = isScrollUp,
-                transitionSpec = {
-                    val animationSpec = tween<IntOffset>(800)
-                    val fadeAnimationSpec = tween<Float>(800)
-                    val enterTransition = slideInVertically(animationSpec) { height ->
-                        height
-                    } + fadeIn(fadeAnimationSpec)
-                    val exitTransition = slideOutVertically(animationSpec) { height ->
-                        -height
-                    } + fadeOut(fadeAnimationSpec)
-                    (enterTransition with exitTransition).using(SizeTransform(clip = true))
-                }
-            ) { isScrollUp ->
-                if (isScrollUp) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_scroll_up),
-                        contentDescription = null,
-                        modifier = Modifier.wrapContentSize(),
-                        tint = MaterialTheme.colorScheme.onTertiary
-                    )
-                } else {
-                    Column(
-                        modifier = Modifier.wrapContentSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        data?.items?.size?.let {
-                            Text(
-                                "${lazyColumnState.layoutInfo.visibleItemsInfo.lastOrNull()?.index}",
-                                color = MaterialTheme.colorScheme.onTertiary,
-                                fontSize = 12.sp
-                            )
+            val scope = rememberCoroutineScope()
+            val isScrollUp = lazyColumnState.isScrollUp()
+            val sfdsfd =   remember {
+                mutableStateOf( lazyColumnState.layoutInfo)
+            }
+            FloatingActionButton(
+                onClick = {
+                    if (isScrollUp) {
+                        scope.launch {
+                            lazyColumnState.animateScrollToItem(0)
                         }
-                        Divider(
-                            Modifier
-                                .height(1.dp)
-                                .width(24.dp),
-                            color = MaterialTheme.colorScheme.onTertiary
+                    }
+                },
+                modifier = Modifier
+                    .padding(18.dp)
+                    .align(Alignment.BottomEnd),
+                containerColor = MaterialTheme.colorScheme.tertiary
+            ) {
+                AnimatedContent(
+                    targetState = isScrollUp && !data?.items.isNullOrEmpty(),
+                    transitionSpec = {
+                        val animationSpec = tween<IntOffset>(800)
+                        val fadeAnimationSpec = tween<Float>(800)
+                        val enterTransition = slideInVertically(animationSpec) { height ->
+                            height
+                        } + fadeIn(fadeAnimationSpec)
+                        val exitTransition = slideOutVertically(animationSpec) { height ->
+                            -height
+                        } + fadeOut(fadeAnimationSpec)
+                        (enterTransition with exitTransition).using(SizeTransform(clip = true))
+                    }
+                ) { isScrollUp ->
+                    if (isScrollUp) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_scroll_up),
+                            contentDescription = null,
+                            modifier = Modifier.wrapContentSize(),
+                            tint = MaterialTheme.colorScheme.onTertiary
                         )
-                        data?.items?.size?.let {
-                            Text(
-                                "$it",
-                                color = MaterialTheme.colorScheme.onTertiary,
-                                fontSize = 12.sp
+                    } else {
+
+                        Column(
+                            modifier = Modifier.wrapContentSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            sfdsfd.value.visibleItemsInfo.lastOrNull()?.index?.let {
+                                Text(
+                                    it.toString(),
+                                    color = MaterialTheme.colorScheme.onTertiary,
+                                    fontSize = 12.sp
+                                )
+                            }
+                            Divider(
+                                Modifier
+                                    .height(1.dp)
+                                    .width(24.dp),
+                                color = MaterialTheme.colorScheme.onTertiary
                             )
+                            data?.attractions?.size?.let {
+                                Text(
+                                    "$it",
+                                    color = MaterialTheme.colorScheme.onTertiary,
+                                    fontSize = 12.sp
+                                )
+                            }
                         }
                     }
                 }
+
             }
 
-//            Snackbar(Modifier.align(Alignment.BottomCenter)) {
-//                Text(text = "Error")
-//            }
+            when (data?.state) {
+                AttractionData.State.SUCCESS_WITH_NO_MORE_DATA -> Snackbar(
+                    Modifier.align(
+                        Alignment.BottomCenter
+                    )
+                ) {
+                    Text(text = "Error")
+                }
+                AttractionData.State.FAILURE -> Snackbar(Modifier.align(Alignment.BottomCenter)) {
+                    Text(text = "Error")
+                }
+                else -> {}
+            }
+
         }
     }
+
+    val attraction = viewModel.attractionState.stateValue()
+    val scale by animateFloatAsState(
+        targetValue = if (attraction != null) 1f else .9f,
+        tween(400)
+//                        animationSpec = spring(
+//                            dampingRatio = Spring.DampingRatioMediumBouncy,
+//                        )
+    )
+    Crossfade(
+        targetState = attraction,
+        animationSpec = tween(400)
+    ) { _attraction ->
+        _attraction?.let {
+            FragmentContainer(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .scale(scale),
+                fragment = AttractionFragment.createIntent(it)
+                    .apply {
+                        (this as AttractionFragment).close ={
+                            viewModel.setAttractionGuide(null)
+                        }
+                    },
+                update = { /* no need update */ }
+            )
+        }
+    }
+
+    if (attraction != null) {
+        BackHandler {
+            viewModel.setAttractionGuide(null)
+        }
+    }
+
+
 }
 
 @Composable
@@ -249,7 +318,8 @@ private fun AttractionItem(
                     .fillMaxSize(),
                 images = item.images.map { it.src },
                 noImageRes = noImageHolderRes,
-                contentScale = ContentScale.FillWidth
+                contentScale = ContentScale.FillWidth,
+                false
             ) {
                 ppage = it
             }
@@ -278,7 +348,7 @@ private fun AttractionItem(
                     modifier = Modifier.rotate(rotationAngle),
                     painter = painterResource(id = R.drawable.ic_arrow_drop),
                     contentDescription = null,
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.tertiary
                 )
             }
             AnimatedVisibility(visible = isExpand) {
