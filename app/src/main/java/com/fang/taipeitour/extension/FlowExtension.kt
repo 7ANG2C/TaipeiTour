@@ -1,7 +1,5 @@
 package com.fang.taipeitour.extension
 
-import android.util.Log
-import com.fang.taipeitour.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted

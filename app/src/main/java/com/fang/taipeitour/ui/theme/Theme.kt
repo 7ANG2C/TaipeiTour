@@ -31,7 +31,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun TaipeiTourTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false,  // available on Android 12+
+    dynamicColor: Boolean = false, // available on Android 12+
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

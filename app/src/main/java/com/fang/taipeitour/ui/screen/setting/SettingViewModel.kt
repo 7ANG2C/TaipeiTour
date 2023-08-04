@@ -8,7 +8,6 @@ import com.fang.taipeitour.model.DarkMode
 import com.fang.taipeitour.model.language.Language
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapLatest
-
 import kotlinx.coroutines.launch
 
 class SettingViewModel(

@@ -1,19 +1,15 @@
 package com.fang.taipeitour.ui.screen.home.attraction
 
-import android.app.DownloadManager
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.GeolocationPermissions
-import android.webkit.URLUtil
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -103,7 +99,6 @@ class AttractionFragment : Fragment() {
             return AttractionFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_ATTRACTION, attraction)
-
                 }
             }
         }
@@ -131,7 +126,6 @@ class AttractionFragment : Fragment() {
             setContent {
                 CollapsingToolbar(
                     Modifier
-
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surface)
                 )
@@ -292,7 +286,7 @@ class AttractionFragment : Fragment() {
                     callback: GeolocationPermissions.Callback
                 ) {
 //                    super.onGeolocationPermissionsShowPrompt(origin, callback);
-                    callback.invoke(origin, true, false);
+                    callback.invoke(origin, true, false)
                     logD("rewfewe", "123")
                 }
 
@@ -319,7 +313,6 @@ class AttractionFragment : Fragment() {
                 override fun shouldOverrideKeyEvent(view: WebView?, event: KeyEvent?): Boolean {
                     logD("onProgressChanged_", "shouldOverrideKeyEvent")
                     return super.shouldOverrideKeyEvent(view, event)
-
                 }
 
                 override fun shouldOverrideUrlLoading(
@@ -370,7 +363,7 @@ class AttractionFragment : Fragment() {
                     this.setDownloadListener {
 
                             url, userAgent, contentDisposition, mimeType, contentLength ->
-                        logD("Werwerrrrrr",url ,mimeType)
+                        logD("Werwerrrrrr", url, mimeType)
                         // 在这里处理下载请求
                         // url: 下载链接
                         // userAgent: 下载链接的用户代理
@@ -396,23 +389,22 @@ class AttractionFragment : Fragment() {
 
                     this.settings.apply {
                         this.setGeolocationEnabled(true)
-                        setJavaScriptEnabled(true);
-                        setGeolocationEnabled(true);
+                        setJavaScriptEnabled(true)
+                        setGeolocationEnabled(true)
                         val databasePath = ctx.getExternalFilesDir(null)?.path + "/geolocation"
                         setGeolocationDatabasePath(databasePath)
-                        setDatabaseEnabled(true);
-                        setAllowFileAccessFromFileURLs(true);
-                        setAllowUniversalAccessFromFileURLs(true);
-                        setJavaScriptCanOpenWindowsAutomatically(true);
-                        setDomStorageEnabled(true);
-                        setBuiltInZoomControls(true);
-                        setAllowFileAccess(true);
-                        setAllowContentAccess(true);
-                        setSupportZoom(true);
+                        setDatabaseEnabled(true)
+                        setAllowFileAccessFromFileURLs(true)
+                        setAllowUniversalAccessFromFileURLs(true)
+                        setJavaScriptCanOpenWindowsAutomatically(true)
+                        setDomStorageEnabled(true)
+                        setBuiltInZoomControls(true)
+                        setAllowFileAccess(true)
+                        setAllowContentAccess(true)
+                        setSupportZoom(true)
 
-
-                        setPluginState(WebSettings.PluginState.ON);
-                        setMediaPlaybackRequiresUserGesture(false);
+                        setPluginState(WebSettings.PluginState.ON)
+                        setMediaPlaybackRequiresUserGesture(false)
 //                        forceDark = WebSettings.FORCE_DARK_ON // 强制开启夜间模式
                         // 允許 JS 交互
                         javaScriptEnabled = true
@@ -422,11 +414,10 @@ class AttractionFragment : Fragment() {
 //                        loadWithOverviewMode = true
 //                        setUseWideViewPort(true); //将图片调整到适合webview的大小
 //                        setLoadWithOverviewMode(false); // 缩放至屏幕的大小
-                        //缩放操作
-                        setSupportZoom(true); //支持缩放，默认为true。是下面那个的前提。
-                        builtInZoomControls = true; //设置内置的缩放控件。若为false，则该WebView不可缩放
-                        displayZoomControls = false; //隐藏原生的缩放控件
-
+                        // 缩放操作
+                        setSupportZoom(true); // 支持缩放，默认为true。是下面那个的前提。
+                        builtInZoomControls = true; // 设置内置的缩放控件。若为false，则该WebView不可缩放
+                        displayZoomControls = false; // 隐藏原生的缩放控件
 
                         // 是否支援通過 JS 開啟新窗口
                         javaScriptCanOpenWindowsAutomatically = true
@@ -665,5 +656,4 @@ class AttractionFragment : Fragment() {
         onReceivedError: (error: WebResourceError?) -> Unit = {}
     ) {
     }
-
 }

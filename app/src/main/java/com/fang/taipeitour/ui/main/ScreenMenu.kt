@@ -12,5 +12,5 @@ enum class ScreenMenu(@StringRes val titleRes: Int, val icon: Int) {
         val all by lazy { values().toList() }
     }
 
-    val isHome get()= this == HOME
+    val isHome get() = this == HOME
 }

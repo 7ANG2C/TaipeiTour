@@ -1,23 +1,14 @@
 package com.module.taipeitourapi.internal.data
 
-import android.util.Log
 import com.module.taipeitourapi.external.data.RetrofitProvider
 import com.module.taipeitourapi.external.data.TaipeiTourApi
 import com.module.taipeitourapi.external.model.request.Language
-import com.module.taipeitourapi.external.model.response.common.Category
-import com.module.taipeitourapi.external.model.response.common.Image
 import com.module.taipeitourapi.internal.model.attration.Attraction
 import com.module.taipeitourapi.internal.model.attration.AttractionBundle
-import com.module.taipeitourapi.internal.TaipeiTourApiService
 import io.mockk.coEvery
 import io.mockk.mockk
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
-import okhttp3.ConnectionSpec
-import okhttp3.OkHttpClient
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Retrofit
@@ -111,8 +102,8 @@ class TaipeiTourApiImplTest {
 
     private fun createMockRetrofit(): Retrofit {
         return Retrofit.Builder()
-                    .baseUrl("https://www.travel.taipei/open-api/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
+            .baseUrl("https://www.travel.taipei/open-api/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 }

@@ -53,14 +53,14 @@ import com.fang.taipeitour.model.language.getLocaleString
 import com.fang.taipeitour.ui.component.TopBar
 import com.fang.taipeitour.ui.component.dsl.LocalLanguage
 import com.fang.taipeitour.ui.component.screenHeightDp
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.context.GlobalContext
 import java.lang.Math.PI
 import java.lang.Math.cos
 import java.lang.Math.min
 import java.lang.Math.sin
 import java.lang.Math.sqrt
 import kotlin.math.pow
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.context.GlobalContext
 
 /**
  * User Settings Screen
@@ -198,7 +198,6 @@ fun SettingScreen(viewModel: SettingViewModel = koinViewModel(), onClick: Invoke
                 }
             }
         }
-
     }
 }
 
@@ -215,7 +214,6 @@ private fun FlagB() {
         Image(painter = painterResource(id = R.drawable.ic_star), contentDescription = null)
     }
 }
-
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

@@ -87,18 +87,17 @@ fun ImageSlider(
                         .width(width)
                         .height(height),
                     loading = {
-                              if(showLoading) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.inverseOnSurface),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Loading(isFancy = false)
+                        if (showLoading) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.inverseOnSurface),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Loading(isFancy = false)
+                            }
                         }
-                              }
-
                     },
                     error = {
                         Column(

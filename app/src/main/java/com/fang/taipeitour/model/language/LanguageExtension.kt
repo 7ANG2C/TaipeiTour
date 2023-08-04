@@ -21,7 +21,6 @@ fun Language?.getLocaleString(@StringRes res: Int, default: String = ""): String
                 LocalContext.current.createConfigurationContext(config).resources
             localizedResources.getString(res)
         }.getOrDefault(default)
-
     } else ""
 }
 

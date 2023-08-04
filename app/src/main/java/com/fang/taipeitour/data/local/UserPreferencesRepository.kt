@@ -3,7 +3,6 @@ package com.fang.taipeitour.data.local
 import com.fang.taipeitour.data.local.user.UserPreferencesDataStore
 import com.fang.taipeitour.model.DarkMode
 import com.fang.taipeitour.model.language.Language
-import com.fang.taipeitour.util.logD
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapLatest

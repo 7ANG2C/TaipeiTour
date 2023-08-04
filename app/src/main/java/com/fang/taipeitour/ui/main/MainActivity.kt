@@ -1,6 +1,5 @@
 package com.fang.taipeitour.ui.main
 
-import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -140,7 +139,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-
         }
     }
 
@@ -309,7 +307,7 @@ class MainActivity : AppCompatActivity() {
                 // version
                 val ver = language.getLocaleString(R.string.app_ver)
                 Text(
-                    text = "${ver}: ${BuildConfig.VERSION_NAME}",
+                    text = "$ver: ${BuildConfig.VERSION_NAME}",
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Light,
@@ -339,7 +337,8 @@ class MainActivity : AppCompatActivity() {
                 },
                 text = {
                     Text(language.getLocaleString(R.string.leave_dialog_text))
-                })
+                }
+            )
         }
     }
 
@@ -350,5 +349,4 @@ class MainActivity : AppCompatActivity() {
             Text("Preview")
         }
     }
-
 }

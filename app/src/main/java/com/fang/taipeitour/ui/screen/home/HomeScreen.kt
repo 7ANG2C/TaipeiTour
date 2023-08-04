@@ -56,7 +56,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -76,7 +75,6 @@ import com.fang.taipeitour.ui.component.TopBar
 import com.fang.taipeitour.ui.component.dsl.LocalLanguage
 import com.fang.taipeitour.ui.component.dsl.stateValue
 import com.fang.taipeitour.ui.component.noImageHolderRes
-import com.fang.taipeitour.ui.screen.home.attraction.A
 import com.fang.taipeitour.ui.screen.home.attraction.AttractionFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -129,8 +127,8 @@ fun HomeScreen(
 
             val scope = rememberCoroutineScope()
             val isScrollUp = lazyColumnState.isScrollUp()
-            val sfdsfd =   remember {
-                mutableStateOf( lazyColumnState.layoutInfo)
+            val sfdsfd = remember {
+                mutableStateOf(lazyColumnState.layoutInfo)
             }
             FloatingActionButton(
                 onClick = {
@@ -195,7 +193,6 @@ fun HomeScreen(
                         }
                     }
                 }
-
             }
 
             when (data?.state) {
@@ -211,7 +208,6 @@ fun HomeScreen(
                 }
                 else -> {}
             }
-
         }
     }
 
@@ -234,7 +230,7 @@ fun HomeScreen(
                     .scale(scale),
                 fragment = AttractionFragment.createIntent(it)
                     .apply {
-                        (this as AttractionFragment).close ={
+                        (this as AttractionFragment).close = {
                             viewModel.setAttractionGuide(null)
                         }
                     },
@@ -248,8 +244,6 @@ fun HomeScreen(
             viewModel.setAttractionGuide(null)
         }
     }
-
-
 }
 
 @Composable
