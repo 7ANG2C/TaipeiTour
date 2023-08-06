@@ -1,7 +1,9 @@
 # TaipeiTour
 Hello Taipei, enjoy Taipei!
 
+
 # Overview
+- 備註錄影機型
 - 規劃文件
 - 建置環境
 - [專案架構](#專案架構)

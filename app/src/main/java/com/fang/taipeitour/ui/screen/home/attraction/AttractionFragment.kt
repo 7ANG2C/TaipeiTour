@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -257,7 +258,7 @@ class AttractionFragment : Fragment() {
                 // base info section
                 Spacer(Modifier.height(28.dp))
                 SectionTitle(
-                    R.drawable.ic_site_url,
+                    R.drawable.ic_basic_info,
                     LocalLanguage.getLocaleString(R.string.base_info)
                 )
                 Spacer(Modifier.height(10.dp))
@@ -341,12 +342,16 @@ class AttractionFragment : Fragment() {
                                 }
                             }
                         }
-                        Text(
-                            text = text,
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            fontSize = 15.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                        SelectionContainer(
+                            Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                        ) {
+                            Text(
+                                text = text,
+                                modifier = Modifier.fillMaxWidth(),
+                                fontSize = 15.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
 
                 // attraction tag

@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
-import android.view.KeyEvent
 import android.webkit.GeolocationPermissions
 import android.webkit.URLUtil
 import android.webkit.WebChromeClient
@@ -34,13 +33,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -48,6 +46,7 @@ import com.fang.taipeitour.R
 import com.fang.taipeitour.dsl.Invoke
 import com.fang.taipeitour.ui.component.Loading
 import com.fang.taipeitour.ui.component.dsl.BackHandler
+import com.fang.taipeitour.ui.component.dsl.LocalDarkMode
 import com.fang.taipeitour.util.logD
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionRequired
@@ -55,109 +54,108 @@ import com.google.accompanist.permissions.rememberPermissionState
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
-
+fun UrlIntroductionScreen(attractionUrl: String, backHandler: Invoke) {
+    var urlTitle by rememberSaveable {
+        mutableStateOf("1234")
+    }
     var loading by rememberSaveable {
         mutableStateOf("")
     }
-    var thisTitle by rememberSaveable {
-        mutableStateOf("")
-    }
-
     var canGoBack by rememberSaveable {
         mutableStateOf(false)
     }
-
-    var canGoForward by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    val chromeClient = object : WebChromeClient() {
-        override fun onReceivedTitle(view: WebView?, title: String?) {
-            super.onReceivedTitle(view, title)
-            thisTitle = title ?: "-"
-        }
-
-        override fun onProgressChanged(view: WebView?, newProgress: Int) {
-            super.onProgressChanged(view, newProgress)
-            loading = if (newProgress >= 100) {
-                ""
-            } else "$newProgress%"
-        }
-
-        override fun onGeolocationPermissionsShowPrompt(
-            origin: String?,
-            callback: GeolocationPermissions.Callback
-        ) {
-            // 如果有權限，檢查定位有沒有開
-            callback.invoke(origin, true, false)
-        }
-    }
-    val client = object : WebViewClient() {
-        override fun onPageCommitVisible(view: WebView?, url: String?) {
-            super.onPageCommitVisible(view, url)
-            loading = ""
-        }
-
-        override fun shouldOverrideKeyEvent(view: WebView?, event: KeyEvent?): Boolean {
-            logD("onProgressChanged_", "shouldOverrideKeyEvent")
-            return super.shouldOverrideKeyEvent(view, event)
-        }
-
-        override fun shouldOverrideUrlLoading(
-            view: WebView,
-            request: WebResourceRequest
-        ): Boolean {
-            val url = request.url
-            return if (url != null && url.toString().startsWith("https://www.google.com/maps")) {
-                view.context.startActivity(Intent(Intent.ACTION_VIEW, url))
-                true
-            } else if (url.scheme == "intent") {
-                try {
-                    val intent = Intent.parseUri(url.toString(), Intent.URI_INTENT_SCHEME)
-                    view.context.startActivity(intent)
-                    true
-                } catch (expected: ActivityNotFoundException) {
-                    false
-                }
-            } else if (url.scheme == "tel") {
-                val intent = Intent(Intent.ACTION_DIAL, url)
-                view.context.startActivity(intent)
-                true
-            } else {
-                super.shouldOverrideUrlLoading(view, request)
-            }
-        }
-
-        override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
-            super.doUpdateVisitedHistory(view, url, isReload)
-            canGoBack = view.canGoBack()
-            canGoForward = view.canGoForward()
-        }
-
-        override fun onReceivedError(
-            view: WebView?,
-            request: WebResourceRequest?,
-            error: WebResourceError?
-        ) {
-//                    view.pauseTimers()
-//                    view.onPause()
-            super.onReceivedError(view, request, error)
-            logD("onProgressChanged_", "onReceivedError")
-//                    onReceivedError(error)
-        }
-    }
-    var webView: WebView? = null
-    val coroutineScope = rememberCoroutineScope()
-    var sdfsdfa by remember {
-        mutableStateOf(0L)
+    var goBackTrigger by rememberSaveable {
+        mutableStateOf(0)
     }
 
     Column(Modifier.fillMaxSize()) {
+        var canGoForward by rememberSaveable {
+            mutableStateOf(false)
+        }
+        val chromeClient = object : WebChromeClient() {
+            override fun onReceivedTitle(view: WebView?, title: String?) {
+                super.onReceivedTitle(view, title)
+                urlTitle = title.takeIf { it?.isNotBlank() == true } ?: "-"
+            }
+
+            override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                super.onProgressChanged(view, newProgress)
+                loading = if (newProgress >= 100) {
+                    ""
+                } else "$newProgress%"
+            }
+
+            override fun onGeolocationPermissionsShowPrompt(
+                origin: String?,
+                callback: GeolocationPermissions.Callback
+            ) {
+                // 如果有權限，檢查定位有沒有開
+                callback.invoke(origin, true, false)
+            }
+        }
+        val client = object : WebViewClient() {
+            override fun onPageCommitVisible(view: WebView?, url: String?) {
+                super.onPageCommitVisible(view, url)
+                loading = ""
+            }
+
+            override fun shouldOverrideUrlLoading(
+                view: WebView,
+                request: WebResourceRequest
+            ): Boolean {
+                val url = request.url
+                return if (url != null && url.toString()
+                        .startsWith("https://www.google.com/maps")
+                ) {
+                    view.context.startActivity(Intent(Intent.ACTION_VIEW, url))
+                    true
+                } else if (url.scheme == "intent") {
+                    try {
+                        val intent = Intent.parseUri(url.toString(), Intent.URI_INTENT_SCHEME)
+                        view.context.startActivity(intent)
+                        true
+                    } catch (expected: ActivityNotFoundException) {
+                        false
+                    }
+                } else if (url.scheme == "tel") {
+                    val intent = Intent(Intent.ACTION_DIAL, url)
+                    view.context.startActivity(intent)
+                    true
+                } else {
+                    super.shouldOverrideUrlLoading(view, request)
+                }
+            }
+
+            override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
+                super.doUpdateVisitedHistory(view, url, isReload)
+                canGoBack = view.canGoBack()
+                canGoForward = view.canGoForward()
+            }
+
+            override fun onReceivedError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                error: WebResourceError?
+            ) {
+//                    view.pauseTimers()
+//                    view.onPause()
+                super.onReceivedError(view, request, error)
+                logD("onProgressChanged_", "onReceivedError")
+//                    onReceivedError(error)
+            }
+        }
+
+        var reloadTrigger by rememberSaveable {
+            mutableStateOf(0)
+        }
+
+        var goForwardTrigger by rememberSaveable {
+            mutableStateOf(0)
+        }
         Row(
             Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surface)
+                .background(controlBarColor())
         ) {
             IconButton(
                 onClick = {
@@ -168,14 +166,18 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
                 Icon(
                     painter = painterResource(R.drawable.ic_back),
                     contentDescription = null,
-//                    modifier = Modifier
-//                        .padding(20.dp)
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = mainColor()
                 )
             }
-            Text(text = thisTitle, Modifier.weight(1f))
+            Text(
+                text = urlTitle,
+                color = mainColor(),
+                modifier = Modifier.weight(1f),
+                maxLines = 1,
+            )
             Spacer(modifier = Modifier.width(24.dp))
         }
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -185,20 +187,9 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
                 modifier = Modifier.fillMaxSize(),
                 factory = { context ->
                     WebView(context).apply {
-                        tag = sdfsdfa
-                        setOnKeyListener { view, keyCode, event ->
-                            logD("werwerwer", event.action, keyCode)
-//                        if (event.action == KeyEvent.ACTION_DOWN) {
-//                            if (keyCode == KeyEvent.KEYCODE_BACK && this.canGoBack()) { // 表示按返回键
-//                                // 时的操作
-// //                                webview.goBack(); // 后退
-//                                // webview.goForward();//前进
-//                                 true; // 已处理
-//                            }
-//                        }
-                            false
-                        }
-                        setDownloadListener { url, userAgent, description, mimeType, contentLength ->
+                        setDownloadListener { url, _, description, mimeType, _ ->
+                            // 2: userAgent
+                            // 3: contentLength
                             val request = DownloadManager.Request(Uri.parse(url))
                                 .setTitle(System.currentTimeMillis().toString())
                                 .setDescription(description)
@@ -236,25 +227,27 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
                         }
                         webViewClient = client
                         webChromeClient = chromeClient
-//                    fun getHistoryUrls(): List<String> {
-//                        val historyUrls: MutableList<String> = mutableListOf()
-//                        val backStackEntryCount = webView.copyBackForwardList().size
-//                        for (i in 0 until backStackEntryCount) {
-//                            val historyItem = webView.copyBackForwardList().getItemAtIndex(i)
-//                            val url = historyItem.url
-//                            historyUrls.add(url)
-//                        }
-//                        return historyUrls
-//                    }
-
-                        webView = this
-                        loadUrl(mUrl)
+                        loadUrl(attractionUrl)
                     }
                 }
-            ) { we ->
-                if (sdfsdfa != 0L) {
-                    logD("sfsfdsdfs", "12345")
-                    we.goBack()
+            ) { webView ->
+                if (reloadTrigger != 0) {
+                    if (reloadTrigger == 1) {
+                        webView.reload()
+                        reloadTrigger = 0
+                    }
+                }
+                if (goBackTrigger != 0) {
+                    if (goBackTrigger == 1) {
+                        webView.goBack()
+                        goBackTrigger = 0
+                    }
+                }
+                if (goForwardTrigger != 0) {
+                    if (goForwardTrigger == 1) {
+                        webView.goForward()
+                        goForwardTrigger = 0
+                    }
                 }
             }
             if (loading != "") {
@@ -264,7 +257,7 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Loading(isFancy = false)
-                    Text(text = loading)
+                    Text(text = loading, color = controlBarColor())
                 }
             }
         }
@@ -272,13 +265,14 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
         Row(
             Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surface)
+                .background(controlBarColor())
         ) {
+            val context = LocalContext.current
             IconButton(
                 onClick = {
-//                    val i = Intent(Intent.ACTION_VIEW)
-//                    i.data = Uri.parse(url)
-//                    context.startActivity(i)
+                    val i = Intent(Intent.ACTION_VIEW)
+                    i.data = Uri.parse(attractionUrl)
+                    context.startActivity(i)
                 },
                 modifier = Modifier
 
@@ -286,32 +280,36 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
                 Icon(
                     painter = painterResource(R.drawable.ic_browse),
                     contentDescription = null,
-//                    modifier = Modifier
-//                        .padding(20.dp)
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = mainColor()
                 )
             }
             // 分享
             IconButton(
                 onClick = {
-                    backHandler()
+                    context.startActivity(
+                        Intent.createChooser(
+                            Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                val shareText = "快來看!有人發表了評論"
+                                putExtra(Intent.EXTRA_TEXT, shareText)
+                            },
+                            "分享文章"
+                        )
+                    )
                 },
                 modifier = Modifier
-
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_share),
                     contentDescription = null,
-//                    modifier = Modifier
-//                        .padding(20.dp)
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = mainColor()
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
             // 複製網址
             IconButton(
                 onClick = {
-                    webView?.reload()
+                    reloadTrigger = 1
                 },
                 modifier = Modifier
 
@@ -319,15 +317,13 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
                 Icon(
                     painter = painterResource(R.drawable.ic_reload),
                     contentDescription = null,
-//                    modifier = Modifier
-//                        .padding(20.dp)
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = mainColor()
                 )
             }
             // 向前
             IconButton(
                 onClick = {
-                    webView?.goBack()
+                    goBackTrigger = 1
                 },
                 modifier = Modifier,
                 enabled = canGoBack
@@ -336,7 +332,7 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
                     painter = painterResource(R.drawable.ic_go),
                     contentDescription = null,
                     modifier = Modifier.scale(-1f, -1f),
-                    tint = MaterialTheme.colorScheme.onSurface.copy(
+                    tint = mainColor().copy(
                         alpha = if (canGoBack) 1f else 0.5f
                     )
                 )
@@ -344,7 +340,7 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
             // 向後
             IconButton(
                 onClick = {
-                    webView?.goForward()
+                    goForwardTrigger = 1
                 },
                 modifier = Modifier,
                 enabled = canGoForward
@@ -352,7 +348,7 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
                 Icon(
                     painter = painterResource(R.drawable.ic_go),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface.copy(
+                    tint = mainColor().copy(
                         alpha = if (canGoForward) 1f else 0.5f
                     )
                 )
@@ -360,49 +356,26 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
         }
     }
     BackHandler {
-        if (webView?.canGoBack() == true) {
-            webView?.goBack()
+        if (canGoBack) {
+            goBackTrigger = 1
         } else {
             backHandler()
-            // finish()
         }
     }
-//            CustomWebView(
-//                modifier = Modifier.fillMaxSize(),
-//                url = mUrl,
-//                onProgressChange = { progress ->
-//                  rememberWebViewProgress = progress
-//                },
-//                initSettings = { settings ->
-//                    settings?.apply {
-//                        // 允許 JS 交互
-//                        javaScriptEnabled = true
-//                        //将图片调整到适合webView的大小
-//                        useWideViewPort = true
-//                        // 縮放至螢幕大小
-//                        loadWithOverviewMode = true
-//                        // 縮放操作
-//                        setSupportZoom(true)
-//                        builtInZoomControls = true
-//                        displayZoomControls = true
-//                        // 是否支援通過 JS 開啟新窗口
-//                        javaScriptCanOpenWindowsAutomatically = true
-//                        // 不加載緩存內容
-//                        cacheMode = WebSettings.LOAD_NO_CACHE
-//                    }
-//                },
-//                onBack = { webView ->
-//                    if (webView?.canGoBack() == true) {
-//                        webView.goBack()
-//                    } else {
-//                        isShow.value = false
-//                        // finish()
-//                    }
-//                },
-//                onReceivedError = {
-//
-//                }
-//            )
+}
+
+@Composable
+private fun controlBarColor() = if (LocalDarkMode) {
+    MaterialTheme.colorScheme.onSecondary
+} else {
+    MaterialTheme.colorScheme.inverseSurface
+}
+
+@Composable
+private fun mainColor() = if (LocalDarkMode) {
+    MaterialTheme.colorScheme.onPrimaryContainer
+} else {
+    MaterialTheme.colorScheme.secondaryContainer
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
