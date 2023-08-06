@@ -1,6 +1,5 @@
 package com.fang.taipeitour.test.data.remote
 
-import com.module.taipeitourapi.external.model.request.Language as ServiceLanguage
 import com.fang.taipeitour.data.remote.GetAllAttractionRepository
 import com.fang.taipeitour.data.remote.GetAllAttractionRepositoryImpl
 import com.fang.taipeitour.model.language.Language
@@ -16,6 +15,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import com.module.taipeitourapi.external.model.request.Language as ServiceLanguage
 
 @ExperimentalCoroutinesApi
 class GetAllAttractionRepositoryImplTest {
@@ -65,8 +65,4 @@ class GetAllAttractionRepositoryImplTest {
         val result = repository.invoke(1, Language.ENGLISH)
         assert(result.isSuccess)
     }
-
 }
-
-
-
