@@ -8,6 +8,11 @@
     <string name="setting">SETTING</string>
     <string name="base_info">Info</string>
     <string name="attraction_intro">Introduction</string>
+    <string name="web_url">．Web&#160;&#160;&#160;</string>
+    <string name="address">．Add&#160;&#160;&#160;&#160;</string>
+    <string name="tel">．Tel&#160;&#160;&#160;&#160;&#160;</string>
+    <string name="fax">．Fax&#160;&#160;&#160;&#160;</string>
+    <string name="email">．Eml&#160;&#160;&#160;&#160;</string>
     <string name="attraction_tag">Tag</string>
     <string name="user_name">Avril</string>
     <string name="app_ver">App Version</string>

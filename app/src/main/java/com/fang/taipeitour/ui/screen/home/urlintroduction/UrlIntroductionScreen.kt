@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalPermissionsApi::class)
+
 package com.fang.taipeitour.ui.screen.home.urlintroduction
 
 import android.Manifest
@@ -16,6 +18,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,10 +51,12 @@ import com.fang.taipeitour.dsl.Invoke
 import com.fang.taipeitour.ui.component.Loading
 import com.fang.taipeitour.ui.component.dsl.BackHandler
 import com.fang.taipeitour.ui.component.dsl.LocalDarkMode
+import com.fang.taipeitour.util.LocationUtil
 import com.fang.taipeitour.util.logD
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionRequired
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.launch
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
@@ -68,10 +74,15 @@ fun UrlIntroductionScreen(attractionUrl: String, backHandler: Invoke) {
         mutableStateOf(0)
     }
 
+    var showPermissionDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+    val context = LocalContext.current
     Column(Modifier.fillMaxSize()) {
         var canGoForward by rememberSaveable {
             mutableStateOf(false)
         }
+
         val chromeClient = object : WebChromeClient() {
             override fun onReceivedTitle(view: WebView?, title: String?) {
                 super.onReceivedTitle(view, title)
@@ -89,7 +100,8 @@ fun UrlIntroductionScreen(attractionUrl: String, backHandler: Invoke) {
                 origin: String?,
                 callback: GeolocationPermissions.Callback
             ) {
-                // 如果有權限，檢查定位有沒有開
+                logD("werwwerwer", "aaaa")
+                showPermissionDialog = true
                 callback.invoke(origin, true, false)
             }
         }
@@ -103,7 +115,41 @@ fun UrlIntroductionScreen(attractionUrl: String, backHandler: Invoke) {
                 view: WebView,
                 request: WebResourceRequest
             ): Boolean {
+                logD("werwwerwer", "shouldOverrideUrlLoading")
                 val url = request.url
+                val urlString = url.toString()
+                val scheme = url.scheme
+//                logD("werwerwerwer", url.scheme, " //// ", urlString)
+//                return if (!urlString.startsWith("http")) {
+//                    val intent = Intent(Intent.ACTION_VIEW)
+//                    intent.data = url
+//                    view.context.startActivity(intent)
+//                    true
+//                } else if (url != null && url.toString()
+//                        .startsWith("https://www.google.com/maps")
+//                ) {
+//                    view.context.startActivity(Intent(Intent.ACTION_VIEW, url))
+//                    true
+//                } else {
+//                    super.shouldOverrideUrlLoading(view, request)
+//                }
+
+//                val intent = Intent(Intent.ACTION_VIEW)
+//                intent.data = url
+//                view.context.startActivity(intent)
+//                return true
+//                logD("werwerwerwer", url.scheme)
+//                if (url == null || url.toString()
+//                        .startsWith("http://") || url.startsWith("https://")
+//                ) false else try {
+//                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+//                    view.context.startActivity(intent)
+//                    true
+//                } catch (e: Exception) {
+//                    Log.i(TAG, "shouldOverrideUrlLoading Exception:$e")
+//                    true
+//                }
+
                 return if (url != null && url.toString()
                         .startsWith("https://www.google.com/maps")
                 ) {
@@ -115,6 +161,7 @@ fun UrlIntroductionScreen(attractionUrl: String, backHandler: Invoke) {
                         view.context.startActivity(intent)
                         true
                     } catch (expected: ActivityNotFoundException) {
+
                         false
                     }
                 } else if (url.scheme == "tel") {
@@ -122,7 +169,14 @@ fun UrlIntroductionScreen(attractionUrl: String, backHandler: Invoke) {
                     view.context.startActivity(intent)
                     true
                 } else {
-                    super.shouldOverrideUrlLoading(view, request)
+                    try {
+                        super.shouldOverrideUrlLoading(view, request)
+
+                    } catch (expected: ActivityNotFoundException) {
+
+                        super.shouldOverrideUrlLoading(view, request)
+
+                    }
                 }
             }
 
@@ -137,6 +191,7 @@ fun UrlIntroductionScreen(attractionUrl: String, backHandler: Invoke) {
                 request: WebResourceRequest?,
                 error: WebResourceError?
             ) {
+                logD("werwwerwer", "onReceivedError")
 //                    view.pauseTimers()
 //                    view.onPause()
                 super.onReceivedError(view, request, error)
@@ -355,6 +410,31 @@ fun UrlIntroductionScreen(attractionUrl: String, backHandler: Invoke) {
             }
         }
     }
+    if (showPermissionDialog) {
+        val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (!permissionState.hasPermission) {
+            PermissionRequired(
+                permissionState = permissionState,
+                permissionNotGrantedContent = {
+
+                    Button(onClick = { permissionState.launchPermissionRequest() }) {
+                        Text("Request permission.")
+                    }
+                },
+                permissionNotAvailableContent = {
+                    // Permission Denied
+                    showPermissionDialog = false
+                },
+                content = {
+                    // Permission Granted
+                    showPermissionDialog = false
+                }
+            )
+        } else if (!LocationUtil.isLocationEnabled(context)) {
+            Toast.makeText(context, "你沒開定位欸", Toast.LENGTH_LONG).show()
+        }
+    }
+
     BackHandler {
         if (canGoBack) {
             goBackTrigger = 1
@@ -373,9 +453,9 @@ private fun controlBarColor() = if (LocalDarkMode) {
 
 @Composable
 private fun mainColor() = if (LocalDarkMode) {
-    MaterialTheme.colorScheme.onPrimaryContainer
+    MaterialTheme.colorScheme.onSurface
 } else {
-    MaterialTheme.colorScheme.secondaryContainer
+    MaterialTheme.colorScheme.surfaceVariant
 }
 
 @OptIn(ExperimentalPermissionsApi::class)

@@ -8,6 +8,11 @@
     <string name="setting">設定</string>
     <string name="base_info">基本資訊</string>
     <string name="attraction_intro">景點介紹</string>
+    <string name="web_url">．網站&#160;&#160;&#160;&#160;</string>
+    <string name="address">．地址&#160;&#160;&#160;&#160;</string>
+    <string name="tel">．電話&#160;&#160;&#160;&#160;</string>
+    <string name="fax">．傳真&#160;&#160;&#160;&#160;</string>
+    <string name="email">．信箱&#160;&#160;&#160;&#160;</string>
     <string name="attraction_tag">主題標籤</string>
     <string name="user_name">方箏</string>
     <string name="app_ver">應用版本</string>

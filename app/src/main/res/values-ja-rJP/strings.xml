@@ -8,6 +8,11 @@
     <string name="setting">設定</string>
     <string name="base_info">基本情報</string>
     <string name="attraction_intro">アトラクシ</string>
+    <string name="web_url">．サイ&#160;&#160;&#160;&#160;</string>
+    <string name="address">．住所&#160;&#160;&#160;&#160;</string>
+    <string name="tel">．電話&#160;&#160;&#160;&#160;</string>
+    <string name="fax">．クス&#160;&#160;&#160;&#160;</string>
+    <string name="email">．ルボ&#160;&#160;&#160;&#160;</string>
     <string name="attraction_tag">ハッシュタ</string>
     <string name="user_name">アラタ</string>
     <string name="app_ver">アプリのョン</string>

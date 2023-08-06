@@ -8,6 +8,11 @@
     <string name="setting">设置</string>
     <string name="base_info">基本资讯</string>
     <string name="attraction_intro">景点介绍</string>
+    <string name="web_url">．网站&#160;&#160;&#160;&#160;</string>
+    <string name="address">．地址&#160;&#160;&#160;&#160;</string>
+    <string name="tel">．电话&#160;&#160;&#160;&#160;</string>
+    <string name="fax">．传真&#160;&#160;&#160;&#160;</string>
+    <string name="email">．信箱&#160;&#160;&#160;&#160;</string>
     <string name="attraction_tag">主题标签</string>
     <string name="user_name">叶师傅</string>
     <string name="app_ver">版本号码</string>

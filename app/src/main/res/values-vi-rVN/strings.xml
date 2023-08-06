@@ -8,6 +8,11 @@
     <string name="setting">CÀI ĐẶT</string>
     <string name="base_info">Thông cơ bản</string>
     <string name="attraction_intro">Lam thắng cảnh</string>
+    <string name="web_url">．Wêb&#160;&#160;&#160;</string>
+    <string name="address">．Add&#160;&#160;&#160;&#160;</string>
+    <string name="tel">．Têl&#160;&#160;&#160;&#160;&#160;</string>
+    <string name="fax">．Fầx&#160;&#160;&#160;&#160;</string>
+    <string name="email">．Eml&#160;&#160;&#160;&#160;</string>
     <string name="attraction_tag">Thẻ bắt đầu bằng</string>
     <string name="user_name">Tiên</string>
     <string name="app_ver">Phiên Bản</string>

@@ -8,6 +8,11 @@
     <string name="setting">การตั้งค่า</string>
     <string name="base_info">ข้อมูลพื้นฐาน</string>
     <string name="attraction_intro">สถานที่ท่องเที่ยว</string>
+    <string name="web_url">．Web&#160;&#160;&#160;</string>
+    <string name="address">．Add&#160;&#160;&#160;&#160;</string>
+    <string name="tel">．Tel&#160;&#160;&#160;&#160;&#160;</string>
+    <string name="fax">．Fax&#160;&#160;&#160;&#160;</string>
+    <string name="email">．Eml&#160;&#160;&#160;&#160;</string>
     <string name="attraction_tag">แฮชแท็ก</string>
     <string name="user_name">LaLisa</string>
     <string name="app_ver">เวอร์ชันแอป</string>

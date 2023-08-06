@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -77,6 +78,7 @@ import com.fang.taipeitour.ui.component.dsl.BackHandler
 import com.fang.taipeitour.ui.component.dsl.LocalDarkMode
 import com.fang.taipeitour.ui.component.dsl.LocalLanguage
 import com.fang.taipeitour.ui.component.dsl.screenHeightDp
+import com.fang.taipeitour.ui.component.gradientBackground
 import com.fang.taipeitour.ui.screen.home.urlintroduction.UrlIntroductionScreen
 import com.google.accompanist.flowlayout.FlowRow
 
@@ -173,19 +175,51 @@ class AttractionFragment : Fragment() {
             }
 
             // selected page hint
+//            Box(
+//                modifier = Modifier
+//                    .align(Alignment.TopEnd)
+//                    .height(topBarHeight)
+//                    .padding(end = 16.dp),
+//            ) {
+//
+//            }
+
+            // back
+            val interactionSource = remember { MutableInteractionSource() }
             Box(
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
+                    .fillMaxWidth()
                     .height(topBarHeight)
-                    .padding(end = 16.dp),
+                    .gradientBackground(
+                        listOf(
+                            getImageGradientColor().copy(alpha = 0.3f),
+                            Color.Transparent,
+                        ), 270f
+                    )
             ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_back),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null
+                        ) {
+                            onDismiss?.invoke()
+                        }
+                        .padding(start = titlePaddingStart),
+                    tint = Color.White
+                )
                 Text(
                     text = if (attraction.images.isEmpty()) {
                         "1/1"
                     } else {
                         "${selectedPage + 1}/${attraction.images.size}"
                     },
-                    modifier = Modifier.align(Alignment.CenterEnd),
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = titlePaddingStart),
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
@@ -193,36 +227,20 @@ class AttractionFragment : Fragment() {
                 )
             }
 
-            // back
-            val interactionSource = remember { MutableInteractionSource() }
-            Box(
-                modifier = Modifier
-                    .clickable(
-                        interactionSource = interactionSource,
-                        indication = null
-                    ) {
-                        onDismiss?.invoke()
-                    }
-                    .size(topBarHeight)
-                    .padding(start = 6.dp),
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_back),
-                    contentDescription = null,
-                    modifier = Modifier.align(Alignment.Center),
-                    tint = Color.White
-                )
+            val topBarBottom by rememberSaveable {
+                mutableStateOf(headerHeightPx - topBarHeightPx)
             }
 
+            val showTopBar by remember {
+                derivedStateOf {
+                    scrollState.value >= topBarBottom
+                }
+            }
             // top bar
-            TopBar(
-                scrollState = scrollState,
-                headerHeightPx = headerHeightPx,
-                topBarHeightPx = topBarHeightPx
-            )
+            TopBar(showTopBar = showTopBar)
 
             // title
-            Title(scroll = scrollState, text = attraction.name)
+            Title(scroll = scrollState, text = attraction.name, showTopBar = showTopBar)
 
             // Url Introduction Screen
             Crossfade(targetState = showUrlIntroduction) { show ->
@@ -267,13 +285,13 @@ class AttractionFragment : Fragment() {
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
-                    val webTitle = "．Web  "
+                    val webTitle = R.string.web_url
                     listOf(
-                        "．Add   " to attraction.address,
+                        R.string.address to attraction.address,
                         webTitle to attraction.originalUrl,
-                        "．Tel    " to attraction.tel,
-                        "．Fax   " to attraction.fax,
-                        "．Eml   " to attraction.email,
+                        R.string.tel to attraction.tel,
+                        R.string.fax to attraction.fax,
+                        R.string.email to attraction.email,
                     ).forEachIndexed { i, (title, content) ->
                         if (content.isNotBlank()) {
                             if (i != 0) {
@@ -281,7 +299,7 @@ class AttractionFragment : Fragment() {
                             }
                             Row(Modifier.fillMaxWidth()) {
                                 Text(
-                                    text = title,
+                                    text = LocalLanguage.getLocaleString(title),
                                     fontSize = 15.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
@@ -343,7 +361,9 @@ class AttractionFragment : Fragment() {
                             }
                         }
                         SelectionContainer(
-                            Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
                         ) {
                             Text(
                                 text = text,
@@ -467,6 +487,7 @@ class AttractionFragment : Fragment() {
                 showLoading = true,
                 onPageSelect = onPageSelect
             )
+            val alpha = if (LocalDarkMode) 0.8f else 0.4f
             Box(
                 Modifier
                     .fillMaxSize()
@@ -474,7 +495,7 @@ class AttractionFragment : Fragment() {
                         brush = Brush.verticalGradient(
                             colors = listOf(
                                 Color.Transparent,
-                                MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+                                getImageGradientColor().copy(alpha = alpha),
                             ),
                             startY = headerHeightPx * 0.8f
                         )
@@ -487,23 +508,11 @@ class AttractionFragment : Fragment() {
     @Composable
     private fun TopBar(
         modifier: Modifier = Modifier,
-        scrollState: ScrollState,
-        headerHeightPx: Float,
-        topBarHeightPx: Float,
+        showTopBar: Boolean
     ) {
-        val toolbarBottom by rememberSaveable {
-            mutableStateOf(headerHeightPx - topBarHeightPx)
-        }
-
-        val showToolbar by remember {
-            derivedStateOf {
-                scrollState.value >= toolbarBottom
-            }
-        }
-
         AnimatedVisibility(
             modifier = modifier,
-            visible = showToolbar,
+            visible = showTopBar,
             enter = fadeIn(animationSpec = tween(300)),
             exit = fadeOut(animationSpec = tween(300))
         ) {
@@ -536,7 +545,7 @@ class AttractionFragment : Fragment() {
                             painter = painterResource(R.drawable.ic_back),
                             contentDescription = null,
                             modifier = Modifier.align(Alignment.Center),
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -550,21 +559,26 @@ class AttractionFragment : Fragment() {
     private fun Title(
         modifier: Modifier = Modifier,
         scroll: ScrollState,
-        text: String
+        text: String,
+        showTopBar: Boolean
     ) {
         var titleHeightPx by rememberSaveable { mutableStateOf(0f) }
         var titleWidthPx by rememberSaveable { mutableStateOf(0f) }
 
+        val color = MaterialTheme.colorScheme.onSurface
+        val textColor = if (LocalDarkMode) {
+            remember { mutableStateOf(color) }
+        } else {
+            animateColorAsState(
+                if (showTopBar) color else MaterialTheme.colorScheme.onPrimary
+            )
+        }
         AutoSizeText(
             text = text,
             targetFontSize = 28.sp,
-            minFontSize = 2.sp,
+            minFontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
-            color = if (LocalDarkMode) {
-                Color.White
-            } else {
-                MaterialTheme.colorScheme.inverseSurface
-            },
+            color = textColor.value,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = modifier
@@ -573,9 +587,9 @@ class AttractionFragment : Fragment() {
                     val collapseRange = (headerHeight.toPx() - topBarHeight.toPx())
                     val collapseFraction = (scroll.value / collapseRange).coerceIn(0f, 1f)
 
-                    val scaleXY = lerp(1f.dp, 0.66f.dp, collapseFraction)
+                    val scale = lerp(1f.dp, 0.66f.dp, collapseFraction)
 
-                    val titleExtraStartPadding = titleWidthPx.toDp() * (1 - scaleXY.value) / 2f
+                    val titleExtraStartPadding = titleWidthPx.toDp() * (1 - scale.value) / 2f
 
                     val paddingMedium = 16.dp
                     val titleY1stInterpolatedPoint = lerp(
@@ -616,8 +630,8 @@ class AttractionFragment : Fragment() {
 
                     translationY = titleY.toPx()
                     translationX = titleX.toPx()
-                    scaleX = scaleXY.value
-                    scaleY = scaleXY.value
+                    scaleX = scale.value
+                    scaleY = scale.value
                 }
                 .onGloballyPositioned {
                     titleHeightPx = it.size.height.toFloat()
@@ -625,4 +639,11 @@ class AttractionFragment : Fragment() {
                 }
         )
     }
+}
+
+@Composable
+private fun getImageGradientColor() = if (LocalDarkMode) {
+    MaterialTheme.colorScheme.surface
+} else {
+    MaterialTheme.colorScheme.onSurface
 }

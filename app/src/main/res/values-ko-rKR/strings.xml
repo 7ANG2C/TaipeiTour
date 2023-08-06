@@ -8,6 +8,11 @@
     <string name="setting">환경</string>
     <string name="base_info">기본 정보</string>
     <string name="attraction_intro">어트랙션</string>
+    <string name="web_url">．이트&#160;&#160;&#160;&#160;</string>
+    <string name="address">．주소&#160;&#160;&#160;&#160;</string>
+    <string name="tel">．전화&#160;&#160;&#160;&#160;</string>
+    <string name="fax">．팩스&#160;&#160;&#160;&#160;</string>
+    <string name="email">．사서&#160;&#160;&#160;&#160;</string>
     <string name="attraction_tag">해시태그</string>
     <string name="user_name">박시진</string>
     <string name="app_ver">앱 버전</string>

@@ -4,13 +4,9 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class AttractionViewModel(
+class UrlIntroductionViewModel(
 
-//    attraction: Attraction
 ) : ViewModel() {
-
-//    private val _attractionState = MutableStateFlow(attraction)
-//    val attractionState = _attractionState.asStateFlow()
 
     private val _show = MutableStateFlow(false)
     val show = _show.asStateFlow()

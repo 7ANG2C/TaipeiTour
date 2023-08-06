@@ -345,7 +345,7 @@ private fun Indicator(
         val size = 6
         val space = 4
         val count = 5
-        val width = size * count + space * (count - 1)
+        val width = (size * count) + (space * (count - 1))
         val state = rememberLazyListState()
         LazyRow(state = state, modifier = modifier.widthIn(max = width.dp)) {
             items(pageCount) {
