@@ -1,6 +1,5 @@
 package com.fang.taipeitour.model
 
-import androidx.compose.material3.ColorScheme as MaterialScheme
 import com.fang.taipeitour.ui.theme.color.AppleDark
 import com.fang.taipeitour.ui.theme.color.AppleLight
 import com.fang.taipeitour.ui.theme.color.BiscuitDark
@@ -11,6 +10,7 @@ import com.fang.taipeitour.ui.theme.color.GrapeDark
 import com.fang.taipeitour.ui.theme.color.GrapeLight
 import com.fang.taipeitour.ui.theme.color.TreeDark
 import com.fang.taipeitour.ui.theme.color.TreeLight
+import androidx.compose.material3.ColorScheme as MaterialScheme
 
 /**
  * @property key data store storage, DO NOT modify
@@ -31,5 +31,4 @@ enum class ColorScheme(val light: MaterialScheme, val dark: MaterialScheme, val 
     }
 
     val next get() = all.getOrNull(ordinal + 1) ?: default
-
 }

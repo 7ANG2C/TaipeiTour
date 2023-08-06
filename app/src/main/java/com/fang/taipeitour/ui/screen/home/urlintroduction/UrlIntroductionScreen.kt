@@ -82,8 +82,7 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
             super.onProgressChanged(view, newProgress)
             loading = if (newProgress >= 100) {
                 ""
-            } else "${newProgress}%"
-
+            } else "$newProgress%"
         }
 
         override fun onGeolocationPermissionsShowPrompt(
@@ -192,7 +191,7 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
 //                        if (event.action == KeyEvent.ACTION_DOWN) {
 //                            if (keyCode == KeyEvent.KEYCODE_BACK && this.canGoBack()) { // 表示按返回键
 //                                // 时的操作
-////                                webview.goBack(); // 后退
+// //                                webview.goBack(); // 后退
 //                                // webview.goForward();//前进
 //                                 true; // 已处理
 //                            }
@@ -213,8 +212,6 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
                             val downloadManager =
                                 context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
                             downloadManager.enqueue(request)
-
-
                         }
 
                         settings.apply {
@@ -406,7 +403,6 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
 //
 //                }
 //            )
-
 }
 
 @OptIn(ExperimentalPermissionsApi::class)

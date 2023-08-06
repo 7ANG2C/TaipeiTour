@@ -58,7 +58,6 @@ import com.fang.taipeitour.dsl.Action
 import com.fang.taipeitour.dsl.ComposableInvoke
 import com.fang.taipeitour.dsl.Invoke
 import com.fang.taipeitour.model.language.getLocaleString
-
 import com.fang.taipeitour.ui.component.dsl.LocalLanguage
 import com.fang.taipeitour.ui.component.dsl.LocalStaticPreferences
 import com.fang.taipeitour.ui.component.dsl.stateValue

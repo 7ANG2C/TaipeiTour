@@ -18,6 +18,4 @@ class AttractionViewModel(
     fun set(it: Boolean) {
         _show.value = it
     }
-
 }
-

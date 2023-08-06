@@ -22,5 +22,4 @@ class MainViewModel(
             scope = viewModelScope,
             initialValue = null
         )
-
 }

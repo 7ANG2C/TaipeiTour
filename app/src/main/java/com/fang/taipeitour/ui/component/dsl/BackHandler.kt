@@ -53,5 +53,4 @@ fun BackHandler(onBack: Invoke) {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
-
 }

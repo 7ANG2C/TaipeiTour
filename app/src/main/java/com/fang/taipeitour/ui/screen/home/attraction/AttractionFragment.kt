@@ -620,5 +620,4 @@ class AttractionFragment : Fragment() {
                 }
         )
     }
-
 }

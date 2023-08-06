@@ -9,10 +9,8 @@ import com.module.taipeitourapi.external.model.response.attration.AttractionBund
 import com.module.taipeitourapi.external.model.response.common.Category
 import com.module.taipeitourapi.external.model.response.common.Image
 import com.module.taipeitourapi.internal.TaipeiTourApiService
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
 
 /**
  * TaipeiTourApi default implementation
@@ -47,36 +45,36 @@ class TaipeiTourApiImpl(private val retrofitProvider: RetrofitProvider) : Taipei
                     Log.d("werwerew", it.toString())
                 }
                 .mapCatching { bundle ->
-                val attractions = bundle.attractions.map { attraction ->
-                    Attraction(
-                        id = attraction.id.orEmpty(),
-                        name = attraction.name.orEmpty(),
-                        introduction = attraction.introduction.orEmpty(),
-                        zipCode = attraction.zipCode.orEmpty(),
-                        distric = attraction.distric.orEmpty(),
-                        address = attraction.address.orEmpty(),
-                        officialSite = attraction.officialSite.orEmpty(),
-                        originalUrl = attraction.originalUrl.orEmpty(),
-                        tel = attraction.tel.orEmpty(),
-                        fax = attraction.fax.orEmpty(),
-                        email = attraction.email.orEmpty(),
-                        modified = attraction.modified.orEmpty(),
-                        categories = attraction.categories.map {
-                            Category(it.id, it.name)
-                        },
-                        targets = attraction.targets.map {
-                            Category(it.id, it.name)
-                        },
-                        images = attraction.images.map {
-                            Image(it.src, it.ext)
-                        },
+                    val attractions = bundle.attractions.map { attraction ->
+                        Attraction(
+                            id = attraction.id.orEmpty(),
+                            name = attraction.name.orEmpty(),
+                            introduction = attraction.introduction.orEmpty(),
+                            zipCode = attraction.zipCode.orEmpty(),
+                            distric = attraction.distric.orEmpty(),
+                            address = attraction.address.orEmpty(),
+                            officialSite = attraction.officialSite.orEmpty(),
+                            originalUrl = attraction.originalUrl.orEmpty(),
+                            tel = attraction.tel.orEmpty(),
+                            fax = attraction.fax.orEmpty(),
+                            email = attraction.email.orEmpty(),
+                            modified = attraction.modified.orEmpty(),
+                            categories = attraction.categories.map {
+                                Category(it.id, it.name)
+                            },
+                            targets = attraction.targets.map {
+                                Category(it.id, it.name)
+                            },
+                            images = attraction.images.map {
+                                Image(it.src, it.ext)
+                            },
+                        )
+                    }
+                    AttractionBundle(
+                        total = bundle.total,
+                        attractions = attractions
                     )
                 }
-                AttractionBundle(
-                    total = bundle.total,
-                    attractions = attractions
-                )
-            }
         }
     }
 }

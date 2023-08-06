@@ -132,7 +132,7 @@ fun HomeScreen(
                                 item = item,
                                 noImageHolderRes = noImageHolder
                             ) {
-                                redirectAttraction = AttractionArgument(it,noImageHolder)
+                                redirectAttraction = AttractionArgument(it, noImageHolder)
                             }
                             Spacer(modifier = Modifier.height(16.dp))
                         }
@@ -295,7 +295,6 @@ fun HomeScreen(
                     )
                 }
             }
-
         }
     }
 
@@ -322,7 +321,6 @@ fun HomeScreen(
             )
         }
     }
-
 }
 
 private fun getNoImageHolderRes() = listOf(
