@@ -1,6 +1,5 @@
 package com.module.taipeitourapi.external.model.response.attration
 
-import com.google.gson.annotations.SerializedName
 import com.module.taipeitourapi.external.model.response.common.Category
 import com.module.taipeitourapi.external.model.response.common.Image
 

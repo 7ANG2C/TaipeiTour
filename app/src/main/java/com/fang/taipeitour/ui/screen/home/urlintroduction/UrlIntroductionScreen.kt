@@ -69,7 +69,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun UrlIntroductionScreen(
     viewModel: UrlIntroductionViewModel = koinViewModel(),
-    attractionUrl: String, backHandler: Invoke
+    attractionUrl: String,
+    backHandler: Invoke
 ) {
     var canGoBack by rememberSaveable {
         mutableStateOf(false)
@@ -161,11 +162,11 @@ fun UrlIntroductionScreen(
                                         true
                                     }
                                     !urlString.startsWith("http") -> {
-                                            val intent = if (scheme == "intent") {
-                                                Intent.parseUri(urlString, Intent.URI_INTENT_SCHEME)
-                                            } else {
-                                                Intent(Intent.ACTION_VIEW, uri)
-                                            }
+                                        val intent = if (scheme == "intent") {
+                                            Intent.parseUri(urlString, Intent.URI_INTENT_SCHEME)
+                                        } else {
+                                            Intent(Intent.ACTION_VIEW, uri)
+                                        }
                                         kotlin.runCatching {
                                             context.startActivity(intent)
                                         }.fold(onSuccess = { true }, onFailure = { false })
@@ -175,14 +176,15 @@ fun UrlIntroductionScreen(
                             }
 
                             override fun doUpdateVisitedHistory(
-                                view: WebView, url: String?, isReload: Boolean
+                                view: WebView,
+                                url: String?,
+                                isReload: Boolean
                             ) {
                                 super.doUpdateVisitedHistory(view, url, isReload)
                                 viewModel.setUrl(url.orEmpty())
                                 canGoBack = view.canGoBack()
                                 canGoForward = view.canGoForward()
                             }
-
                         }
 
                         webChromeClient = object : WebChromeClient() {
@@ -254,7 +256,7 @@ fun UrlIntroductionScreen(
             val urlState = viewModel.urlState.stateValue()
             IconBtn(res = R.drawable.ic_browse) {
 
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlState))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlState))
                 kotlin.runCatching {
                     context.startActivity(intent)
                 }
@@ -307,7 +309,10 @@ fun UrlIntroductionScreen(
 
 @Composable
 private fun TopBar(
-    modifier: Modifier, urlTitle: String, loadingProgress: Int, backHandler: Invoke
+    modifier: Modifier,
+    urlTitle: String,
+    loadingProgress: Int,
+    backHandler: Invoke
 ) {
     Box(modifier) {
         Row(
@@ -433,7 +438,6 @@ private fun RequestPermission(
             )
         }
     }
-
 }
 
 @Composable

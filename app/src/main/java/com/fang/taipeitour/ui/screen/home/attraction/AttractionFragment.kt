@@ -63,13 +63,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
@@ -191,7 +188,8 @@ class AttractionFragment : Fragment() {
                         listOf(
                             getImageGradientColor().copy(alpha = 0.3f),
                             Color.Transparent,
-                        ), 270f
+                        ),
+                        270f
                     )
             ) {
                 Icon(
@@ -487,10 +485,8 @@ class AttractionFragment : Fragment() {
                         null
                     }
                 )
-
             }
         }
-
     }
 
     @Composable

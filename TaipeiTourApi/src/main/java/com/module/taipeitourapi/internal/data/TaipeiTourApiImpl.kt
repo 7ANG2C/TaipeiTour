@@ -1,7 +1,5 @@
 package com.module.taipeitourapi.internal.data
 
-import android.util.Log
-import com.google.gson.annotations.SerializedName
 import com.module.taipeitourapi.external.data.RetrofitProvider
 import com.module.taipeitourapi.external.data.TaipeiTourApi
 import com.module.taipeitourapi.external.model.request.Language
