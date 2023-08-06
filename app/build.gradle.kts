@@ -96,7 +96,8 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
     implementation(libs.coil.compose)
-    testImplementation(libs.koin.test)
+    testImplementation(libs.mockk)
+    testImplementation(libs.coroutines.test)
 }
 
 protobuf {

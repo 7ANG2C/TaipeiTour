@@ -18,16 +18,22 @@ Hello Taipei, enjoy Taipei!
 - 使用 koin 作為 dependency injection
 - debug/release flavor 可以提供不同實作
 
+## 畫面重點
+- Main
+- 主頁
+  - guide
+  - 網頁
+- setting
+
 ## Third-Party
 - [coil](https://developer.android.com/jetpack/compose/graphics/images/loading#internet-loading "coil")
 
 ## 程式碼檢查
-- 每個 commit 檢查
 - 使用 [spotless](https://github.com/diffplug/spotless "spotless") 檢查 code style
     - `./gradlew spotlessCheck` 檢查程式碼
     - `./gradlew spotlessApply` 修正程式碼
 
-## 建置環境
+## 開發環境
 - Android Studio Giraffe | 2022.3.1
 - Build #AI-223.8836.35.2231.10406996, built on June 29, 2023
 - Runtime version: 17.0.6+0-17.0.6b829.9-10027231 aarch64
