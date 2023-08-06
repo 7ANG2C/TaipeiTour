@@ -65,7 +65,7 @@ import com.fang.taipeitour.ui.component.dsl.LocalColorScheme
 import com.fang.taipeitour.ui.component.dsl.LocalDarkMode
 import com.fang.taipeitour.ui.component.dsl.LocalLanguage
 import com.fang.taipeitour.ui.component.dsl.stateValue
-import com.fang.taipeitour.ui.component.gradientBackground
+import com.fang.taipeitour.ui.component.dsl.gradientBackground
 import org.koin.androidx.compose.koinViewModel
 
 /**

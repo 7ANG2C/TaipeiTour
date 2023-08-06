@@ -5,7 +5,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
 val BiscuitLight = lightColorScheme(
-    primary = Color(0xFF7C6436), // oridginal 0xFF775A00
+    primary = Color(0xFF7C6436), // original 0xFF775A00
     onPrimary = Color(0xFFFFFFFF),
     primaryContainer = Color(0xFFFFDF99),
     onPrimaryContainer = Color(0xFF251A00),

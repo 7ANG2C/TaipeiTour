@@ -5,9 +5,6 @@ import androidx.annotation.DrawableRes
 import com.fang.taipeitour.model.attraction.Attraction
 import kotlinx.parcelize.Parcelize
 
-/**
- * Mediator Class For Home Screen
- */
 @Parcelize
 data class AttractionArgument(
     val attraction: Attraction,

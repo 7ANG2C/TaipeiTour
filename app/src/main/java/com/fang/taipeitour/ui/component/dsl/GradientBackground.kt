@@ -1,4 +1,4 @@
-package com.fang.taipeitour.ui.component
+package com.fang.taipeitour.ui.component.dsl
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind

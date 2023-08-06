@@ -89,7 +89,9 @@ class MainActivity : AppCompatActivity() {
                                 MenuDrawer {
                                     menuState = it
                                     coroutineScope.launch {
-                                        drawerState.animateTo(DrawerValue.Closed, tween(500))
+                                        drawerState.animateTo(
+                                            DrawerValue.Closed, tween(500)
+                                        )
                                     }
                                 }
                             }
@@ -101,7 +103,9 @@ class MainActivity : AppCompatActivity() {
                                 animationSpec = tween(400)
                             ) { menu ->
                                 val scale by animateFloatAsState(
-                                    targetValue = if (drawerState.targetValue == DrawerValue.Open) 0.9f else 1f,
+                                    targetValue = if (drawerState.targetValue == DrawerValue.Open) {
+                                        0.9f
+                                    } else 1f,
                                     animationSpec = tween(durationMillis = 300)
                                 )
                                 Box(
