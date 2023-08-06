@@ -33,5 +33,4 @@ class RetrofitProviderImplTest {
         val expectedBaseUrl = "https://www.travel.taipei/open-api/"
         assertEquals(expectedBaseUrl, baseUrl)
     }
-
 }
