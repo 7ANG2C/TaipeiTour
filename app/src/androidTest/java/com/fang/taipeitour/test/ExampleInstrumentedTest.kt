@@ -1,4 +1,4 @@
-package com.fang.taipeitour
+package com.fang.taipeitour.test
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
