@@ -2,7 +2,7 @@
 <resources>
 
     <style name="Theme.TaipeiTour" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:screenOrientation">portrait</item>
+<!--        no custom style yet-->
     </style>
 
     <style name="SplashTheme" parent="Theme.TaipeiTour">

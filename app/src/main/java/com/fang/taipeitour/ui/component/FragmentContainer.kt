@@ -24,16 +24,16 @@ fun <T : Fragment> FragmentContainer(
 ) {
     val localView = LocalView.current
     val currentContext = LocalContext.current
-    val containerId by remember {
-        mutableStateOf(View.generateViewId())
-    }
-
     val fragmentManager = remember(localView) {
         runCatching {
             localView.findFragment<T>().childFragmentManager
         }.getOrDefault(
             (currentContext as? FragmentActivity)?.supportFragmentManager
         )
+    }
+
+    val containerId by remember {
+        mutableStateOf(View.generateViewId())
     }
 
     @Suppress("UNCHECKED_CAST")

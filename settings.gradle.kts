@@ -18,6 +18,7 @@ pluginManagement {
     }
 }
 
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -26,9 +27,6 @@ dependencyResolutionManagement {
     }
 }
 
-include(
-    ":app",
-    ":TaipeiTourApi"
-)
+include(":app", ":TaipeiTourApi")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

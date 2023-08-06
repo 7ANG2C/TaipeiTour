@@ -22,9 +22,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.isUnspecified
+import com.fang.taipeitour.dsl.Action
 
 @Composable
-internal fun AutoSizeText(
+fun AutoSizeText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
@@ -37,10 +38,10 @@ internal fun AutoSizeText(
     textDecoration: TextDecoration? = null,
     textAlign: TextAlign? = null,
     lineHeight: TextUnit = TextUnit.Unspecified,
-    onTextLayout: (TextLayoutResult) -> Unit = {},
+    onTextLayout: Action<TextLayoutResult> = {},
     style: TextStyle = LocalTextStyle.current,
-    maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     BoxWithConstraints {
         var shrunkFontSize = targetFontSize
@@ -71,12 +72,14 @@ internal fun AutoSizeText(
 
         var paragraph = calculateIntrinsics()
         var canShrink = minFontSize.isUnspecified || shrunkFontSize > minFontSize
-        var shouldShrink = paragraph.height > constraints.maxHeight || paragraph.width > constraints.maxWidth || paragraph.lineCount > maxLines
+        var shouldShrink =
+            paragraph.height > constraints.maxHeight || paragraph.width > constraints.maxWidth || paragraph.lineCount > maxLines
         while (canShrink && shouldShrink) {
             shrunkFontSize *= 0.9
             paragraph = calculateIntrinsics()
             canShrink = minFontSize.isUnspecified || shrunkFontSize > minFontSize
-            shouldShrink = paragraph.height > constraints.maxHeight || paragraph.width > constraints.maxWidth || paragraph.lineCount > maxLines
+            shouldShrink =
+                paragraph.height > constraints.maxHeight || paragraph.width > constraints.maxWidth || paragraph.lineCount > maxLines
         }
         Text(
             text = text,

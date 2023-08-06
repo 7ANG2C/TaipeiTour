@@ -11,20 +11,21 @@ lifecycle-runtime-ktx = "2.6.1"
 activity-compose = "1.7.2"
 compose-bom = "2023.06.01"
 # custom
-composeMaterial = "1.4.3"
-protobuf = "3.23.4"
 coroutine = "1.7.1"
-appcompat = "1.6.1"
 datastore = "1.0.0"
+compose-material = "1.4.3"
+swiperefresh = "0.30.1"
+flowlayout = "0.24.12-rc"
+permissions = "0.16.1"
+protobuf = "3.23.4"
 retrofit = "2.9.0"
 koin = "3.4.2"
-koinAndroid = "3.4.2"
-koinCompose = "3.4.5"
-spotless = "6.7.2"
+koin-android = "3.4.2"
+koin-compose = "3.4.5"
 coil = "2.4.0"
-accompanist = "0.30.1"
+spotless = "6.7.2"
 # plugin ver
-protobufGradle = "0.9.1"
+protobuf-gradle = "0.9.1"
 # Build
 minSdk = "24"
 compileSdk = "33"
@@ -47,20 +48,21 @@ material3 = { group = "androidx.compose.material3", name = "material3" }
 # custom
 coroutine-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutine" }
 coroutine-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutine" }
-androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
-accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
-androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "composeMaterial" }
+androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "compose-material" }
+accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "swiperefresh" }
+accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "flowlayout" }
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "permissions" }
 protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
 retrofit-core = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
-koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinCompose" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-android" }
+koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin-compose" }
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
-spotless-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+spotless-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
@@ -68,7 +70,7 @@ org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.re
 # custom
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-parcelize = { id = "kotlin-parcelize", version.ref = "org-jetbrains-kotlin-android" }
-protobuf = { id = "com.google.protobuf", version.ref = "protobufGradle" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf-gradle" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 [bundles]

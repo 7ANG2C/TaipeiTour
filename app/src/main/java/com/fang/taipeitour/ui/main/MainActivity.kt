@@ -9,7 +9,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,7 +37,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -56,11 +54,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fang.taipeitour.BuildConfig
 import com.fang.taipeitour.R
-import com.fang.taipeitour.model.Action
-import com.fang.taipeitour.model.ComposableInvoke
-import com.fang.taipeitour.model.Invoke
+import com.fang.taipeitour.dsl.Action
+import com.fang.taipeitour.dsl.ComposableInvoke
+import com.fang.taipeitour.dsl.Invoke
 import com.fang.taipeitour.model.language.getLocaleString
+
 import com.fang.taipeitour.ui.component.dsl.LocalLanguage
+import com.fang.taipeitour.ui.component.dsl.LocalStaticPreferences
 import com.fang.taipeitour.ui.component.dsl.stateValue
 import com.fang.taipeitour.ui.screen.home.HomeScreen
 import com.fang.taipeitour.ui.screen.setting.SettingScreen
@@ -75,66 +75,68 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             val viewModel = koinViewModel<MainViewModel>()
-            val language = viewModel.languageState.collectAsState().value
-            CompositionLocalProvider(LocalLanguage provides language) {
-                val darkTheme =
-                    viewModel.darkModeState.stateValue()?.enabled ?: isSystemInDarkTheme()
-                var menuState by rememberSaveable {
-                    mutableStateOf(ScreenMenu.HOME)
-                }
-                Screen(modifier = Modifier.fillMaxSize(), darkTheme = { darkTheme }) {
-                    val drawerState = rememberDrawerState(DrawerValue.Closed)
-                    ModalNavigationDrawer(
-                        modifier = Modifier.fillMaxSize(),
-                        drawerState = drawerState,
-                        gesturesEnabled = drawerState.isOpen,
-                        drawerContent = {
-                            val coroutineScope = rememberCoroutineScope()
-                            MenuDrawer {
-                                menuState = it
-                                coroutineScope.launch {
-                                    drawerState.animateTo(DrawerValue.Closed, tween(500))
-                                }
-                            }
-                        }
-                    ) {
-
-                        // main content
-                        Crossfade(
-                            targetState = menuState,
-                            animationSpec = tween(400)
-                        ) { menu ->
-                            val scaleAlpha by animateFloatAsState(
-                                targetValue = if (drawerState.targetValue == DrawerValue.Open) 0.9f else 1f,
-                                animationSpec = tween(durationMillis = 300)
-                            )
-                            Box(Modifier.scale(scaleAlpha)) {
+            viewModel.preferencesState.stateValue()?.let { preferences ->
+                CompositionLocalProvider(LocalStaticPreferences provides preferences) {
+                    var menuState by rememberSaveable {
+                        mutableStateOf(ScreenMenu.HOME)
+                    }
+                    Screen(modifier = Modifier.fillMaxSize()) {
+                        val drawerState = rememberDrawerState(DrawerValue.Closed)
+                        ModalNavigationDrawer(
+                            modifier = Modifier.fillMaxSize(),
+                            drawerState = drawerState,
+                            gesturesEnabled = drawerState.isOpen,
+                            drawerContent = {
                                 val coroutineScope = rememberCoroutineScope()
-                                when (menu) {
-                                    ScreenMenu.HOME -> HomeScreen() {
+                                MenuDrawer {
+                                    menuState = it
+                                    coroutineScope.launch {
+                                        drawerState.animateTo(DrawerValue.Closed, tween(500))
+                                    }
+                                }
+                            }
+                        ) {
+
+                            // main content
+                            Crossfade(
+                                targetState = menuState,
+                                animationSpec = tween(400)
+                            ) { menu ->
+                                val scale by animateFloatAsState(
+                                    targetValue = if (drawerState.targetValue == DrawerValue.Open) 0.9f else 1f,
+                                    animationSpec = tween(durationMillis = 300)
+                                )
+                                Box(
+                                    Modifier
+                                        .fillMaxSize()
+                                        .scale(scale)
+                                ) {
+                                    val coroutineScope = rememberCoroutineScope()
+                                    val onMenuClicked: Invoke = {
                                         coroutineScope.launch { drawerState.open() }
                                     }
-                                    ScreenMenu.SETTING -> SettingScreen() {
-                                        coroutineScope.launch { drawerState.open() }
+                                    when (menu) {
+                                        ScreenMenu.HOME -> HomeScreen(onMenuClicked = onMenuClicked)
+                                        ScreenMenu.SETTING -> SettingScreen(onMenuClicked = onMenuClicked)
                                     }
                                 }
                             }
                         }
-                    }
-                    var showLeaveDialog by rememberSaveable {
-                        mutableStateOf(false)
-                    }
-                    LeaveDialog(showLeaveDialog) {
-                        showLeaveDialog = false
-                    }
-                    val coroutineScope = rememberCoroutineScope()
-                    BackHandler {
-                        when {
-                            drawerState.isOpen -> coroutineScope.launch {
-                                drawerState.close()
+                        var showLeaveDialog by rememberSaveable {
+                            mutableStateOf(false)
+                        }
+                        LeaveDialog(showLeaveDialog) {
+                            showLeaveDialog = false
+                        }
+                        val coroutineScope = rememberCoroutineScope()
+                        BackHandler {
+                            when {
+                                drawerState.isOpen -> coroutineScope.launch {
+                                    drawerState.close()
+                                }
+                                menuState != ScreenMenu.HOME -> menuState = ScreenMenu.HOME
+                                else -> showLeaveDialog = true
                             }
-                            !menuState.isHome -> menuState = ScreenMenu.HOME
-                            else -> showLeaveDialog = true
                         }
                     }
                 }
@@ -145,10 +147,9 @@ class MainActivity : AppCompatActivity() {
     @Composable
     private fun Screen(
         modifier: Modifier,
-        darkTheme: () -> Boolean,
         content: ComposableInvoke
     ) {
-        TaipeiTourTheme(darkTheme = darkTheme()) {
+        TaipeiTourTheme {
             Surface(modifier = modifier, content = content)
         }
     }
@@ -158,9 +159,12 @@ class MainActivity : AppCompatActivity() {
      */
     @Composable
     private fun MenuDrawer(onMenuSelected: Action<ScreenMenu>) {
-        ModalDrawerSheet(modifier = Modifier.fillMaxWidth(0.7f)) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                val language = LocalLanguage.current
+        ModalDrawerSheet {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .padding(16.dp)
+            ) {
                 // avatar
                 Row(
                     modifier = Modifier.padding(vertical = 40.dp),
@@ -176,7 +180,7 @@ class MainActivity : AppCompatActivity() {
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
-                        text = language.getLocaleString(R.string.user_name),
+                        text = LocalLanguage.getLocaleString(R.string.user_name),
                         fontStyle = MaterialTheme.typography.titleMedium.fontStyle,
                         color = MaterialTheme.colorScheme.secondary,
                         fontSize = 24.sp,
@@ -203,9 +207,7 @@ class MainActivity : AppCompatActivity() {
                                     modifier = Modifier.size(24.dp)
                                 )
                                 Text(
-                                    text = LocalLanguage.current.getLocaleString(
-                                        res = menu.titleRes
-                                    ),
+                                    text = LocalLanguage.getLocaleString(menu.titleRes),
                                     color = MaterialTheme.colorScheme.primary,
                                     fontSize = 16.sp,
                                     modifier = Modifier.padding(12.dp),
@@ -305,7 +307,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 // version
-                val ver = language.getLocaleString(R.string.app_ver)
+                val ver = LocalLanguage.getLocaleString(R.string.app_ver)
                 Text(
                     text = "$ver: ${BuildConfig.VERSION_NAME}",
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
@@ -319,7 +321,6 @@ class MainActivity : AppCompatActivity() {
     @Composable
     private fun LeaveDialog(showLeaveDialog: Boolean, dismissDialog: Invoke) {
         if (showLeaveDialog) {
-            val language = LocalLanguage.current
             AlertDialog(
                 onDismissRequest = dismissDialog,
                 confirmButton = {
@@ -329,14 +330,14 @@ class MainActivity : AppCompatActivity() {
                             finish()
                         }
                     ) {
-                        Text(language.getLocaleString(R.string.leave_dialog_confirm))
+                        Text(LocalLanguage.getLocaleString(R.string.leave_dialog_confirm))
                     }
                 },
                 title = {
-                    Text("${language.getLocaleString(R.string.leave_dialog_title)} \uD83D\uDE80")
+                    Text("${LocalLanguage.getLocaleString(R.string.leave_dialog_title)} \uD83D\uDE80")
                 },
                 text = {
-                    Text(language.getLocaleString(R.string.leave_dialog_text))
+                    Text(LocalLanguage.getLocaleString(R.string.leave_dialog_text))
                 }
             )
         }
@@ -345,7 +346,7 @@ class MainActivity : AppCompatActivity() {
     @Preview(showBackground = true)
     @Composable
     private fun Preview() {
-        Screen(modifier = Modifier.fillMaxWidth(), { true }) {
+        Screen(modifier = Modifier.fillMaxWidth()) {
             Text("Preview")
         }
     }

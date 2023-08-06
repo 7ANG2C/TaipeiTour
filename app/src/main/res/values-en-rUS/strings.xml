@@ -1,12 +1,20 @@
 <resources>
     <string name="app_name">Taipei Tour</string>
     <string name="home">HOME</string>
+    <string name="empty_attraction">Empty Attraction</string>
+    <string name="no_more_attraction">No More Attraction</string>
+    <string name="get_attractions_error">Get Attractions Error</string>
+    <string name="retry">Retry</string>
     <string name="setting">SETTING</string>
+    <string name="base_info">Info</string>
+    <string name="attraction_intro">Introduction</string>
+    <string name="attraction_tag">Tag</string>
     <string name="user_name">Lisa</string>
     <string name="app_ver">App Version</string>
     <string name="leave_dialog_title">NICE TRIP</string>
     <string name="leave_dialog_text">See ya next time!</string>
     <string name="leave_dialog_confirm">Leave</string>
     <string name="language">English</string>
-    <string name="experimental_setting">Experimental Setting</string>
+    <string name="general_setting">General</string>
+    <string name="preview_function">Preview</string>
 </resources>

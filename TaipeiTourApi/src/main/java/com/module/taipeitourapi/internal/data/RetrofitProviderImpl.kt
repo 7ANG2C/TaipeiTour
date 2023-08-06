@@ -17,8 +17,8 @@ class RetrofitProviderImpl : RetrofitProvider {
             .connectionSpecs(
                 listOf(ConnectionSpec.COMPATIBLE_TLS, ConnectionSpec.CLEARTEXT)
             )
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
             .build()
         return Retrofit.Builder()
             .baseUrl("https://www.travel.taipei/open-api/")

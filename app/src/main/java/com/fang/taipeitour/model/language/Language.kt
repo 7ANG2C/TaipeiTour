@@ -2,6 +2,9 @@ package com.fang.taipeitour.model.language
 
 import java.util.Locale
 
+/**
+ * @property key data store storage, DO NOT modify
+ */
 enum class Language(val locale: Locale, val key: String) {
     TAIWAN(Locale.TAIWAN, "tw"),
     CHINA(Locale.CHINA, "cn"),
@@ -15,11 +18,8 @@ enum class Language(val locale: Locale, val key: String) {
     ;
 
     companion object {
-        val default = TAIWAN
+        val default = ENGLISH
         val all by lazy { values().toList() }
-        fun findByKeyOrDefault(key: String, default: Language = this.default): Language {
-            return all.find { it.key == key } ?: default
-        }
-        operator fun get(index: Int) = all[index]
+        operator fun get(key: String) = all.find { it.key == key }
     }
 }

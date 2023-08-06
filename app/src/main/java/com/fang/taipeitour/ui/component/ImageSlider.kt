@@ -28,7 +28,8 @@ import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.compose.SubcomposeAsyncImage
 import com.fang.taipeitour.R
-import com.fang.taipeitour.model.Action
+import com.fang.taipeitour.dsl.Action
+import com.fang.taipeitour.ui.component.dsl.screenWidthDp
 
 /**
  * @param ratio height / width
@@ -38,12 +39,11 @@ import com.fang.taipeitour.model.Action
 fun ImageSlider(
     modifier: Modifier,
     images: List<String>,
-    noImageRes: Int,
+    noImageHolderRes: Int,
     contentScale: ContentScale,
     showLoading: Boolean,
     ratio: Double = 0.75,
     onPageSelect: Action<Int>,
-
 ) {
     Surface(
         modifier = modifier,
@@ -59,9 +59,9 @@ fun ImageSlider(
                 )
             ).apply { setToSaturation(0.6f) }
         )
-        if (images.isEmpty()) {
+        if (images.isEmpty() && noImageHolderRes != 0) {
             Image(
-                painter = painterResource(id = noImageRes),
+                painter = painterResource(noImageHolderRes),
                 contentDescription = null,
                 contentScale = contentScale,
                 colorFilter = colorFilter

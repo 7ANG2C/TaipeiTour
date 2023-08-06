@@ -17,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fang.taipeitour.R
-import com.fang.taipeitour.model.Invoke
+import com.fang.taipeitour.dsl.Invoke
 
 @Composable
 fun TopBar(modifier: Modifier = Modifier, text: String, onClick: Invoke) {
@@ -47,7 +47,7 @@ fun TopBar(modifier: Modifier = Modifier, text: String, onClick: Invoke) {
                     .align(Alignment.Center),
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.SemiBold
             )
         }
     }

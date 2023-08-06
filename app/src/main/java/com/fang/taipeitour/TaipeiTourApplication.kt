@@ -1,7 +1,7 @@
 package com.fang.taipeitour
 
 import android.app.Application
-import com.fang.taipeitour.di.DataStoreModule
+import com.fang.taipeitour.di.CoreModule
 import com.fang.taipeitour.di.RepositoryModule
 import com.fang.taipeitour.di.ViewModelModule
 import com.module.taipeitourapi.external.di.TaipeiTourServiceModule
@@ -22,7 +22,7 @@ class TaipeiTourApplication : Application() {
             modules(
                 TaipeiTourServiceModule.invoke() +
                     ViewModelModule() +
-                    DataStoreModule.invoke() +
+                    CoreModule.invoke() +
                     RepositoryModule.invoke()
             )
         }

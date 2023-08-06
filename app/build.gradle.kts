@@ -82,30 +82,27 @@ dependencies {
 
     // custom
     implementation(projects.taipeiTourApi)
-//    implementation(libs.androidx.appcompat)
     implementation(libs.coroutine.android)
+    implementation(libs.androidx.datastore)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.accompanist.flowlayout)
+    implementation(libs.accompanist.swiperefresh)
+    implementation(libs.accompanist.permissions)
+    implementation(libs.protobuf.javalite)
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.gson)
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
-    implementation(libs.retrofit.core)
-    implementation(libs.retrofit.gson)
-    implementation(libs.accompanist.swiperefresh)
-    implementation(libs.androidx.datastore)
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.protobuf.javalite)
-    testImplementation(libs.koin.test)
     implementation(libs.coil.compose)
-    implementation(libs.androidx.compose.material)
+    testImplementation(libs.koin.test)
 }
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:${libs.versions.protobuf.get()}"
+        artifact = "com.google.protobuf:protoc:3.23.4"
     }
-
-    // Generates the java Protobuf-lite code for the Protobufs in this project. See
-    // https://github.com/google/protobuf-gradle-plugin#customizing-protobuf-compilation
-    // for more information.
     generateProtoTasks {
         all().forEach { task ->
             task.builtins {

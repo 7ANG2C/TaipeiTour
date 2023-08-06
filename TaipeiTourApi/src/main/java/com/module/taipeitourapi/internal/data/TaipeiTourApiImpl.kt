@@ -1,5 +1,6 @@
 package com.module.taipeitourapi.internal.data
 
+import android.util.Log
 import com.module.taipeitourapi.external.data.RetrofitProvider
 import com.module.taipeitourapi.external.data.TaipeiTourApi
 import com.module.taipeitourapi.external.model.request.Language
@@ -8,8 +9,10 @@ import com.module.taipeitourapi.external.model.response.attration.AttractionBund
 import com.module.taipeitourapi.external.model.response.common.Category
 import com.module.taipeitourapi.external.model.response.common.Image
 import com.module.taipeitourapi.internal.TaipeiTourApiService
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 
 /**
  * TaipeiTourApi default implementation
@@ -39,7 +42,11 @@ class TaipeiTourApiImpl(private val retrofitProvider: RetrofitProvider) : Taipei
                 withContext(Dispatchers.IO) {
                     service.getAllAttractions(language.requestCode, page)
                 }
-            }.mapCatching { bundle ->
+            }
+                .onFailure {
+                    Log.d("werwerew", it.toString())
+                }
+                .mapCatching { bundle ->
                 val attractions = bundle.attractions.map { attraction ->
                     Attraction(
                         id = attraction.id.orEmpty(),

@@ -1,328 +1,386 @@
 package com.fang.taipeitour.ui.screen.setting
 
-import android.view.MotionEvent
-import androidx.compose.animation.core.Spring.StiffnessHigh
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.with
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.unit.sp
 import com.fang.taipeitour.R
-import com.fang.taipeitour.model.Action
-import com.fang.taipeitour.model.Invoke
+import com.fang.taipeitour.dsl.Action
+import com.fang.taipeitour.dsl.Invoke
+import com.fang.taipeitour.flavor.PreviewFunction
 import com.fang.taipeitour.model.language.Language
-import com.fang.taipeitour.model.language.flag
 import com.fang.taipeitour.model.language.getLocaleString
+import com.fang.taipeitour.ui.component.CustomDialog
 import com.fang.taipeitour.ui.component.TopBar
+import com.fang.taipeitour.ui.component.dsl.LocalColorScheme
+import com.fang.taipeitour.ui.component.dsl.LocalDarkMode
 import com.fang.taipeitour.ui.component.dsl.LocalLanguage
-import com.fang.taipeitour.ui.component.screenHeightDp
+import com.fang.taipeitour.ui.component.dsl.stateValue
+import com.fang.taipeitour.ui.component.gradientBackground
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.context.GlobalContext
-import java.lang.Math.PI
-import java.lang.Math.cos
-import java.lang.Math.min
-import java.lang.Math.sin
-import java.lang.Math.sqrt
-import kotlin.math.pow
 
 /**
  * User Settings Screen
  */
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SettingScreen(viewModel: SettingViewModel = koinViewModel(), onClick: Invoke) {
-    Column(
-        modifier = Modifier
-            .background(gradient)
-            .fillMaxSize()
-    ) {
-        var isShow by remember {
-            mutableStateOf(false)
+fun SettingScreen(
+    viewModel: SettingViewModel = koinViewModel(),
+    onMenuClicked: Invoke,
+) {
+    var showLanguageDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    // Main Content
+    Column(Modifier.fillMaxSize()) {
+        Crossfade(targetState = LocalLanguage) {
+            TopBar(
+                modifier = Modifier.fillMaxWidth(),
+                text = it.getLocaleString(R.string.setting),
+                onClick = onMenuClicked
+            )
         }
-        val language = LocalLanguage.current
-        TopBar(Modifier, text = language.getLocaleString(R.string.setting), onClick)
+
         Column(
-            modifier = Modifier.padding(16.dp)
-
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 32.dp, vertical = 20.dp)
         ) {
-            AnimatedButton({
-//            if (!it) { isShow = true }
-            }) {
-
-                Row(modifier = Modifier.padding(16.dp)) {
-                    Spacer(modifier = Modifier.weight(1f))
-                    language?.flag?.let {
-                        Image(
-                            painter = painterResource(language.flag),
-                            contentDescription = null,
-                            Modifier.size(48.dp)
-                        )
-                    }
+            // General
+            SectionTitle(LocalLanguage.getLocaleString(R.string.general_setting))
+            Spacer(modifier = Modifier.height(12.dp))
+            SettingCard(
+                targetState = LocalLanguage,
+                scrollEffect = true,
+                onClick = {
+                    showLanguageDialog = true
+                }
+            ) {
+                when (it) {
+                    Language.TAIWAN -> FlagTw()
+                    Language.CHINA -> FlagCn()
+                    Language.ENGLISH -> FlagEn()
+                    Language.JAPAN -> FlagJp()
+                    Language.KOREA -> FlagKo()
+                    Language.SPAN -> FlagEs()
+                    Language.INDONESIA -> FlagId()
+                    Language.THAILAND -> FlagTh()
+                    Language.VIETNAM -> FlagVn()
                 }
             }
-//        ElevatedCard(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//        ) {
-//
-//            Row(modifier = Modifier.padding(16.dp)) {
-//                Spacer(modifier = Modifier.weight(1f))
-//                language?.flag?.let {
-//                    Image(
-//                        painter = painterResource(language.flag),
-//                        contentDescription = null,
-//                        Modifier.size(48.dp)
-//                    )
-//                }
-//            }
-//        }
             Spacer(modifier = Modifier.height(16.dp))
-
-            ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-                Row(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        "DarkMode",
-                        Modifier.clickable {
-                            viewModel.toggleDarkMode()
-                        }
+            SettingCard(
+                targetState = LocalDarkMode,
+                onClick = {
+                    viewModel.toggleDarkMode()
+                }
+            ) { isDark ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .gradientBackground(
+                            if (isDark) listOf(
+                                Color(0xFF250C69),
+                                Color(0xFF121164),
+                                Color(0xFF142B69),
+                            ) else listOf(
+                                Color(0xFFFFF2CA),
+                                Color(0xFFFFFACA),
+                                Color(0xFFE5F2FF),
+                            ),
+                            272f
+                        ),
+                ) {
+                    Image(
+                        painter = painterResource(
+                            if (isDark) R.drawable.ic_dark_mode else R.drawable.ic_light_mode
+                        ),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .align(Alignment.Center)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-//        AnimatedButton()
-            val settingList = remember {
-                mutableStateOf(GlobalContext.get().get<SettingFlavorBehavior>().invoke())
-            }
+            Spacer(modifier = Modifier.height(28.dp))
 
-            if (settingList.value.isNotEmpty()) {
-                Text(language.getLocaleString(R.string.experimental_setting))
-                settingList.value.forEach {
-
-                    when (it) {
-                        ExperimentalSetting.ColorScheme -> {
-                            ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-                                Row(modifier = Modifier.padding(16.dp)) {
-                                    Text(
-                                        "Color",
-                                        Modifier.clickable {
-                                        }
-                                    )
-                                }
+            // Preview
+            viewModel.previewFunctions.stateValue().takeIf { it.isNotEmpty() }?.let { previews ->
+                val title = LocalLanguage.getLocaleString(R.string.preview_function)
+                SectionTitle("$title \u2728")
+                Spacer(modifier = Modifier.height(12.dp))
+                previews.forEach { preview ->
+                    when (preview) {
+                        PreviewFunction.COLOR_SCHEME -> SettingCard(
+                            targetState = LocalColorScheme,
+                            onClick = {
+                                viewModel.toggleColorScheme()
+                            }
+                        ) {
+                            val background: List<Color>
+                            val tint: Color
+                            if (LocalDarkMode) {
+                                background = listOf(
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.tertiary,
+                                )
+                                tint = MaterialTheme.colorScheme.inversePrimary
+                            } else {
+                                background = listOf(
+                                    MaterialTheme.colorScheme.primaryContainer,
+                                    MaterialTheme.colorScheme.tertiaryContainer,
+                                )
+                                tint = MaterialTheme.colorScheme.primary
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .gradientBackground(background, 300f)
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_color_scheme),
+                                    contentDescription = null,
+                                    tint = tint,
+                                    modifier = Modifier.align(Alignment.Center)
+                                )
                             }
                         }
 
-                        ExperimentalSetting.Clear -> {
-                            ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-                                Row(modifier = Modifier.padding(16.dp)) {
-                                    Text(
-                                        "clear",
-                                        Modifier.clickable {
-                                            viewModel.reset()
-                                        }
-                                    )
-                                }
+                        PreviewFunction.RESET_USER_PREFERENCE -> SettingCard(
+                            targetState = viewModel.isEmpty.stateValue(),
+                            onClick = {
+                                viewModel.resetUserPreferences()
+                            }
+                        ) { isEmpty ->
+                            val background: Color
+                            val tint: Color
+                            if ((LocalDarkMode && isEmpty) || (!LocalDarkMode && !isEmpty)) {
+                                background = MaterialTheme.colorScheme.secondary
+                                tint = MaterialTheme.colorScheme.inversePrimary
+                            } else {
+                                background = MaterialTheme.colorScheme.onSecondary
+                                tint = MaterialTheme.colorScheme.primary
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(background)
+                            ) {
+                                Icon(
+                                    painter = painterResource(
+                                        if (isEmpty) R.drawable.ic_clean else R.drawable.ic_dirty
+                                    ),
+                                    contentDescription = null,
+                                    tint = tint,
+                                    modifier = Modifier.align(Alignment.Center)
+                                )
                             }
                         }
                     }
-                }
-            }
-
-            val context = LocalContext.current
-            if (isShow) {
-                ThemedDialog(onDismiss = { isShow = false }) {
-                    Column() {
-                        repeat(Language.all.size) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .clickable {
-                                        viewModel.setLanguage(Language[it])
-                                        isShow = false
-                                    }
-                                    .background(MaterialTheme.colorScheme.tertiary.copy(alpha = (0.1f)))
-                                    .padding(vertical = 8.dp, horizontal = 16.dp),
-                            ) {
-
-                                Image(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(id = Language[it].flag),
-                                    contentDescription = null,
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = Language[it].getLocaleString(R.string.language),
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
+                    if (preview != previews.lastOrNull()) {
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }
         }
     }
-}
 
-@Composable
-private fun FlagA() {
-    Box(modifier = Modifier.background(Color((0xff123456)))) {
-        Image(painter = painterResource(id = R.drawable.ic_star), contentDescription = null)
-    }
-}
-
-@Composable
-private fun FlagB() {
-    Box(modifier = Modifier.background(Color((0xff123456)))) {
-        Image(painter = painterResource(id = R.drawable.ic_star), contentDescription = null)
-    }
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun AnimatedButton(incoke: Action<Boolean>, content: @Composable ColumnScope.() -> Unit) {
-    val selected = remember { mutableStateOf<Boolean?>(null) }
-    val scale = animateFloatAsState(
-        if (selected.value == true) 0.9f else 1f,
-        spring(stiffness = StiffnessHigh)
+    // Select Language Dialog
+    LanguageDialog(
+        onDismissRequest = { showLanguageDialog = false },
+        isShow = showLanguageDialog,
+        onLanguageSelected = {
+            viewModel.setLanguage(it)
+        }
     )
-    selected.value?.let(incoke)
-    ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .scale(scale.value)
-            .pointerInteropFilter {
-                when (it.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        selected.value = true
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        selected.value = false
-                    }
-                }
-                true
-            }
-    ) {
-        content()
-    }
-//    Column(
-//        verticalArrangement = Arrangement.Center,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        Button(
-//            onClick = { },
-//            modifier = Modifier
-//                .scale(scale.value)
-//                .height(40.dp)
-//                .width(200.dp)
-//                .pointerInteropFilter(
-//                    RequestDisallowInterceptTouchEvent(
-//                    )
-//                ) {
-//                    when (it.action) {
-//                        MotionEvent.ACTION_DOWN -> {
-//                            selected.value = true
-//                        }
-//                        MotionEvent.ACTION_UP -> {
-//                            selected.value = false
-//                        }
-//                    }
-//                    true
-//                }
-//        ) {
-//            Text(text = "Explore", fontSize = 15.sp, color = Color.White)
-//        }
-//    }
 }
 
-val gradient
-    @Composable get() = Brush.linearGradient(
-        0.0f to MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-        500.0f to MaterialTheme.colorScheme.tertiary.copy(alpha = 0.1f),
-        start = Offset.Zero,
-        end = Offset.Infinite
-    )
-
-fun Modifier.gradientBackground(colors: List<Color>, angle: Float) = this.then(
-    Modifier.drawBehind {
-        val angleRad = angle / 180f * PI
-        val x = cos(angleRad).toFloat() // Fractional x
-        val y = sin(angleRad).toFloat() // Fractional y
-
-        val radius = sqrt((size.width.pow(2) + size.height.pow(2)).toDouble()).toFloat() / 2f
-        val offset = center + Offset(x * radius, y * radius)
-
-        val exactOffset = Offset(
-            x = min(offset.x.coerceAtLeast(0f), size.width),
-            y = size.height - min(offset.y.coerceAtLeast(0f), size.height)
-        )
-
-        drawRect(
-            brush = Brush.linearGradient(
-                colors = colors,
-                start = Offset(size.width, size.height) - exactOffset,
-                end = exactOffset
-            ),
-            size = size
-        )
-    }
-)
-
 @Composable
-private fun ThemedDialog(onDismiss: Invoke, content: @Composable BoxScope.() -> Unit) {
-    Dialog(onDismissRequest = { onDismiss() }) {
-        val dialogRound = RoundedCornerShape(32.dp)
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(0.dp, (screenHeightDp * 0.9f).dp),
-            shape = MaterialTheme.shapes.extraLarge,
-//            color = MaterialTheme.colorScheme.background
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
-                contentAlignment = Alignment.Center,
-                content = content
+private fun SectionTitle(text: String) {
+    Crossfade(targetState = text) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(SpanStyle(fontSize = 12.sp)) {
+                        append(" ▍")
+                    }
+                    withStyle(SpanStyle(fontSize = 16.sp)) {
+                        append(it)
+                    }
+                },
+                color = MaterialTheme.colorScheme.secondary
             )
         }
     }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun <S> SettingCard(
+    targetState: S,
+    scrollEffect: Boolean = false,
+    onClick: Invoke,
+    content: @Composable ColumnScope.(S) -> Unit
+) {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.medium)
+            .clickable {
+                onClick.invoke()
+            }
+            .aspectRatio(5f),
+        elevation = CardDefaults.elevatedCardElevation(
+            defaultElevation = 2.dp,
+            pressedElevation = 1.dp
+        ),
+    ) {
+        AnimatedContent(
+            targetState = targetState,
+            transitionSpec = {
+                val animationSpec = tween<IntOffset>(800)
+                val fadeAnimationSpec = tween<Float>(800)
+                val enterTransition = if (scrollEffect) {
+                    slideInVertically(animationSpec) { height ->
+                        height
+                    } + fadeIn(fadeAnimationSpec)
+                } else {
+                    fadeIn(fadeAnimationSpec)
+                }
+                val exitTransition = if (scrollEffect) {
+                    slideOutVertically(animationSpec) { height ->
+                        -height
+                    } + fadeOut(fadeAnimationSpec)
+                } else {
+                    fadeOut(fadeAnimationSpec)
+                }
+                (enterTransition with exitTransition).using(SizeTransform(clip = true))
+            }
+        ) {
+            content(it)
+        }
+    }
+}
+
+@Composable
+private fun LanguageDialog(
+    onDismissRequest: Invoke,
+    isShow: Boolean,
+    onLanguageSelected: Action<Language>,
+) {
+    if (isShow) {
+        CustomDialog(onDismiss = onDismissRequest) {
+            LazyColumn {
+                items(Language.all) { language ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable {
+                                onLanguageSelected.invoke(language)
+                                onDismissRequest.invoke()
+                            }
+                            .background(
+                                if (language == LocalLanguage) {
+                                    MaterialTheme.colorScheme.secondary
+                                } else {
+                                    Color.Transparent
+                                }
+                            )
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = painterResource(
+                                when (language) {
+                                    Language.TAIWAN -> R.drawable.flag_tw
+                                    Language.CHINA -> R.drawable.flag_cn
+                                    Language.ENGLISH -> R.drawable.flag_us
+                                    Language.JAPAN -> R.drawable.flag_jp
+                                    Language.KOREA -> R.drawable.flag_kr
+                                    Language.SPAN -> R.drawable.flag_es
+                                    Language.INDONESIA -> R.drawable.flag_id
+                                    Language.THAILAND -> R.drawable.flag_th
+                                    Language.VIETNAM -> R.drawable.flag_vn
+                                }
+                            ),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = language.getLocaleString(R.string.language),
+                            color = if (language == LocalLanguage) {
+                                MaterialTheme.colorScheme.onSecondary
+                            } else {
+                                MaterialTheme.colorScheme.secondary
+                            },
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                    if (language != Language.all.lastOrNull()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun Preview() {
+    SettingScreen {}
 }

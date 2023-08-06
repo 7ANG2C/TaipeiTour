@@ -1,12 +1,20 @@
 <resources>
     <string name="app_name">Lịch Đài Bắc</string>
     <string name="home">TRANG CHỦ</string>
+    <string name="empty_attraction">Chưa có điểm nào</string>
+    <string name="no_more_attraction">Tất cả các được</string>
+    <string name="get_attractions_error">Nhận lỗi trí</string>
+    <string name="retry">Thửlại</string>
     <string name="setting">CÀI ĐẶT</string>
+    <string name="base_info">Thông cơ bản</string>
+    <string name="attraction_intro">Lam thắng cảnh</string>
+    <string name="attraction_tag">Thẻ bắt đầu bằng</string>
     <string name="user_name">Lisà</string>
     <string name="app_ver">Phiên Bản</string>
     <string name="leave_dialog_title">CHUYẾN TỐT ĐẸP</string>
     <string name="leave_dialog_text">Hẹn gặp lại bạn lần sau!</string>
     <string name="leave_dialog_confirm">Rời khỏi</string>
     <string name="language">Tiếng Việt</string>
-    <string name="experimental_setting">Cài đặt thử nghiệm</string>
+    <string name="general_setting">Tổng quan</string>
+    <string name="preview_function">Cài đặt nghiệm</string>
 </resources>

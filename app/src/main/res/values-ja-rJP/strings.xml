@@ -1,12 +1,20 @@
 <resources>
     <string name="app_name">台北ツアー</string>
     <string name="home">主に</string>
+    <string name="empty_attraction">アトラクション</string>
+    <string name="no_more_attraction">ションを取得しました</string>
+    <string name="get_attractions_error">位置エラーを取得する</string>
+    <string name="retry">試行する</string>
     <string name="setting">設定</string>
+    <string name="base_info">基本情報</string>
+    <string name="attraction_intro">アトラクシ</string>
+    <string name="attraction_tag">ハッシュタ</string>
     <string name="user_name">リサ</string>
     <string name="app_ver">アプリのョン</string>
     <string name="leave_dialog_title">素敵な旅</string>
     <string name="leave_dialog_text">次回会いましょう ^^</string>
     <string name="leave_dialog_confirm">退出</string>
     <string name="language">日本語</string>
-    <string name="experimental_setting">実験環境</string>
+    <string name="general_setting">全般的</string>
+    <string name="preview_function">プレビュー</string>
 </resources>

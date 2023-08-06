@@ -1,12 +1,20 @@
 <resources>
     <string name="app_name">Tur Taipei</string>
     <string name="home">RUMAH</string>
+    <string name="empty_attraction">Belum ada atraksi</string>
+    <string name="no_more_attraction">Semua diperoleh</string>
+    <string name="get_attractions_error">Mendapatkan Kesalahan</string>
+    <string name="retry">Mencoba</string>
     <string name="setting">PENGATURAN</string>
+    <string name="base_info">Informasi dasar</string>
+    <string name="attraction_intro">Atraksi</string>
+    <string name="attraction_tag">Tagar</string>
     <string name="user_name">Lisa</string>
     <string name="app_ver">Versi Aplikasi</string>
     <string name="leave_dialog_title">PERJALANAN YANG</string>
     <string name="leave_dialog_text">Sampai jumpa lain waktu :D</string>
     <string name="leave_dialog_confirm">Meninggalkan</string>
     <string name="language">Bahasa Indonesia</string>
-    <string name="experimental_setting">Pengaturan Eksperimental</string>
+    <string name="general_setting">Umum</string>
+    <string name="preview_function">Pratinjau</string>
 </resources>

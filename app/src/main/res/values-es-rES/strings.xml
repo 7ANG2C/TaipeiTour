@@ -1,12 +1,20 @@
 <resources>
     <string name="app_name">Tour de Taipéi</string>
     <string name="home">HOGAR</string>
+    <string name="empty_attraction">Aún no atracciones</string>
+    <string name="no_more_attraction">Todas las atracciones</string>
+    <string name="get_attractions_error">Error de ubicación</string>
+    <string name="retry">Rever</string>
     <string name="setting">CONFIGURACIÓN</string>
+    <string name="base_info">Información básica</string>
+    <string name="attraction_intro">Atracciones</string>
+    <string name="attraction_tag">Etiquetas</string>
     <string name="user_name">Lisa</string>
     <string name="app_ver">App Versión</string>
     <string name="leave_dialog_title">BUEN VIAJE</string>
     <string name="leave_dialog_text">Hasta la próxima :)</string>
     <string name="leave_dialog_confirm">Dejar</string>
     <string name="language">Español</string>
-    <string name="experimental_setting">Escenario Experimental</string>
+    <string name="general_setting">General</string>
+    <string name="preview_function">Avance</string>
 </resources>
