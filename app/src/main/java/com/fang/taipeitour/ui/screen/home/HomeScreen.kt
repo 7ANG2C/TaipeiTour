@@ -193,7 +193,7 @@ fun HomeScreen(
                     ) { isScrollUp ->
                         if (isScrollUp) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_scroll_up),
+                                painter = painterResource(R.drawable.ic_scroll_up),
                                 contentDescription = null,
                                 modifier = Modifier.wrapContentSize(),
                                 tint = MaterialTheme.colorScheme.onTertiary
@@ -243,7 +243,7 @@ fun HomeScreen(
                             modifier = Modifier.padding(end = 8.dp)
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_close),
+                                painter = painterResource(R.drawable.ic_close),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.surface
                             )
@@ -441,7 +441,7 @@ private fun AttractionItem(
             ) {
                 Icon(
                     modifier = Modifier.rotate(rotationAngle),
-                    painter = painterResource(id = R.drawable.ic_arrow_drop),
+                    painter = painterResource(R.drawable.ic_arrow_drop),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
                 )
@@ -452,7 +452,7 @@ private fun AttractionItem(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_location),
+                            painter = painterResource(R.drawable.ic_location),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSecondaryContainer,
                         )
@@ -466,7 +466,7 @@ private fun AttractionItem(
                     Spacer(modifier = Modifier.padding(4.dp))
                     Row {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_introduction),
+                            painter = painterResource(R.drawable.ic_introduction),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSecondaryContainer,
                         )

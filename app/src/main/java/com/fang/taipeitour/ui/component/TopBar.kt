@@ -31,7 +31,7 @@ fun TopBar(modifier: Modifier = Modifier, text: String, onClick: Invoke) {
                 .padding(16.dp),
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_menu),
+                painter = painterResource(R.drawable.ic_menu),
                 contentDescription = "menu",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier

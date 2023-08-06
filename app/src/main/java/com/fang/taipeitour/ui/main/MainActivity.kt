@@ -57,6 +57,7 @@ import com.fang.taipeitour.R
 import com.fang.taipeitour.dsl.Action
 import com.fang.taipeitour.dsl.ComposableInvoke
 import com.fang.taipeitour.dsl.Invoke
+import com.fang.taipeitour.model.language.Language
 import com.fang.taipeitour.model.language.getLocaleString
 import com.fang.taipeitour.ui.component.dsl.LocalLanguage
 import com.fang.taipeitour.ui.component.dsl.LocalStaticPreferences
@@ -169,8 +170,19 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.padding(vertical = 40.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    val avatar = when(LocalLanguage) {
+                        Language.TAIWAN -> R.drawable.avatar_tw
+                        Language.CHINA -> R.drawable.avatar_cn
+                        Language.ENGLISH -> R.drawable.avatar_en
+                        Language.JAPAN -> R.drawable.avatar_jp
+                        Language.KOREA -> R.drawable.avatar_ko
+                        Language.SPAN -> R.drawable.avatar_es
+                        Language.INDONESIA ->R.drawable.avatar_id
+                        Language.THAILAND -> R.drawable.avatar_th
+                        Language.VIETNAM -> R.drawable.avatar_vn
+                    }
                     Image(
-                        painter = painterResource(id = R.drawable.avatar),
+                        painter = painterResource(avatar),
                         contentDescription = "avatar image",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -200,7 +212,7 @@ class MainActivity : AppCompatActivity() {
                             ) {
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Icon(
-                                    painter = painterResource(id = menu.icon),
+                                    painter = painterResource(menu.icon),
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(24.dp)

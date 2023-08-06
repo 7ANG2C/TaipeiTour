@@ -108,7 +108,7 @@ fun ImageSlider(
                             verticalArrangement = Arrangement.Center
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_error),
+                                painter = painterResource(R.drawable.ic_error),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.error,
                             )

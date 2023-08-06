@@ -166,7 +166,7 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
                 modifier = Modifier
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_back),
+                    painter = painterResource(R.drawable.ic_back),
                     contentDescription = null,
 //                    modifier = Modifier
 //                        .padding(20.dp)
@@ -284,7 +284,7 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
 
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_browse),
+                    painter = painterResource(R.drawable.ic_browse),
                     contentDescription = null,
 //                    modifier = Modifier
 //                        .padding(20.dp)
@@ -300,7 +300,7 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
 
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_share),
+                    painter = painterResource(R.drawable.ic_share),
                     contentDescription = null,
 //                    modifier = Modifier
 //                        .padding(20.dp)
@@ -317,7 +317,7 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
 
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_reload),
+                    painter = painterResource(R.drawable.ic_reload),
                     contentDescription = null,
 //                    modifier = Modifier
 //                        .padding(20.dp)
@@ -333,7 +333,7 @@ fun UrlIntroductionScreen(mUrl: String, backHandler: Invoke) {
                 enabled = canGoBack
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_go),
+                    painter = painterResource(R.drawable.ic_go),
                     contentDescription = null,
                     modifier = Modifier.scale(-1f, -1f),
                     tint = MaterialTheme.colorScheme.onSurface.copy(

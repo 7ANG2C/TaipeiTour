@@ -206,7 +206,7 @@ class AttractionFragment : Fragment() {
                     .padding(start = 6.dp),
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_back),
+                    painter = painterResource(R.drawable.ic_back),
                     contentDescription = null,
                     modifier = Modifier.align(Alignment.Center),
                     tint = Color.White
@@ -397,7 +397,7 @@ class AttractionFragment : Fragment() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
-                    .padding(vertical = 6.dp),
+                    .padding(top = 6.dp, bottom = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val color = MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)
@@ -528,7 +528,7 @@ class AttractionFragment : Fragment() {
                             .size(24.dp),
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_back),
+                            painter = painterResource(R.drawable.ic_back),
                             contentDescription = null,
                             modifier = Modifier.align(Alignment.Center),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
