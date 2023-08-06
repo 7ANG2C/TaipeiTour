@@ -3,13 +3,9 @@ package com.module.taipeitourapi.test.internal.data
 import com.module.taipeitourapi.internal.TaipeiTourApiService
 import com.module.taipeitourapi.internal.data.RetrofitProviderImpl
 import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertTrue
-import okhttp3.ConnectionSpec
-import okhttp3.OkHttpClient
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import retrofit2.Retrofit
 
 class RetrofitProviderImplTest {
 

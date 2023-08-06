@@ -2,12 +2,12 @@ package com.module.taipeitourapi.test.internal.data
 
 import com.module.taipeitourapi.external.data.RetrofitProvider
 import com.module.taipeitourapi.external.model.request.Language
+import com.module.taipeitourapi.internal.TaipeiTourApiService
+import com.module.taipeitourapi.internal.data.TaipeiTourApiImpl
 import com.module.taipeitourapi.internal.model.attration.Attraction
 import com.module.taipeitourapi.internal.model.attration.AttractionBundle
 import com.module.taipeitourapi.internal.model.common.Category
 import com.module.taipeitourapi.internal.model.common.Image
-import com.module.taipeitourapi.internal.TaipeiTourApiService
-import com.module.taipeitourapi.internal.data.TaipeiTourApiImpl
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,7 +29,9 @@ class TaipeiTourApiImplTest {
         api = TaipeiTourApiImpl(retrofitProvider)
 
         coEvery { retrofitProvider.invoke() } returns mockk()
-        coEvery { retrofitProvider.invoke().create(TaipeiTourApiService::class.java) } returns service
+        coEvery {
+            retrofitProvider.invoke().create(TaipeiTourApiService::class.java)
+        } returns service
     }
 
     @Test
@@ -58,7 +60,7 @@ class TaipeiTourApiImplTest {
         coEvery { service.getAllAttractions("en", 1) } returns expectedBundle
 
         val result = api.getAllAttractions(Language.ENGLISH, 1)
-        assert( result.isSuccess)
+        assert(result.isSuccess)
     }
 
     @Test
@@ -66,6 +68,6 @@ class TaipeiTourApiImplTest {
         coEvery { service.getAllAttractions("en", 1) } throws Exception("API error")
 
         val result = api.getAllAttractions(Language.ENGLISH, 1)
-        assert( result.isFailure)
+        assert(result.isFailure)
     }
 }
