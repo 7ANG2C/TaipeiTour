@@ -14,6 +14,11 @@
     <string name="fax">．팩스&#160;&#160;&#160;&#160;</string>
     <string name="email">．사서&#160;&#160;&#160;&#160;</string>
     <string name="attraction_tag">해시태그</string>
+    <string name="location_title">위치</string>
+    <string name="location_msg">이 웹사이트는 귀하의 현재 위치 정보를 확인하려고 합니다. 계속하시겠습니까?</string>
+    <string name="confirm">확인</string>
+    <string name="cancel">취소</string>
+    <string name="location_plz">위치를 활성화해 주세요.</string>
     <string name="user_name">박시진</string>
     <string name="app_ver">앱 버전</string>
     <string name="leave_dialog_title">좋은 여행</string>

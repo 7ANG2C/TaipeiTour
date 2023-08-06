@@ -36,6 +36,8 @@ class GetAllAttractionRepositoryImpl(
                     zipCode = attraction.zipCode,
                     distric = attraction.distric,
                     address = attraction.address,
+                    northLatitude = attraction.northLatitude,
+                    eastLongitude = attraction.eastLongitude,
                     officialSite = attraction.officialSite,
                     originalUrl = attraction.originalUrl,
                     tel = attraction.tel,

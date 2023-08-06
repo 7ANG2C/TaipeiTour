@@ -14,6 +14,11 @@
     <string name="fax">．Fax&#160;&#160;&#160;&#160;</string>
     <string name="email">．Eml&#160;&#160;&#160;&#160;</string>
     <string name="attraction_tag">Tagar</string>
+    <string name="location_title">Lokasi</string>
+    <string name="location_msg">Situs web ini ingin memeriksa informasi lokasi Anda saat ini. Ingin melanjutkan?</string>
+    <string name="confirm">Konfirmasi</string>
+    <string name="cancel">Batalkan</string>
+    <string name="location_plz">Harap aktifkan lokasi.</string>
     <string name="user_name">Gusti Ayu</string>
     <string name="app_ver">Versi Aplikasi</string>
     <string name="leave_dialog_title">PERJALANAN YANG</string>

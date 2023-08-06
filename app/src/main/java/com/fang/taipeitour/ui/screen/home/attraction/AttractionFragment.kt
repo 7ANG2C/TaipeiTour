@@ -1,10 +1,13 @@
 package com.fang.taipeitour.ui.screen.home.attraction
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
@@ -56,13 +59,17 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
@@ -72,7 +79,7 @@ import com.fang.taipeitour.dsl.Action
 import com.fang.taipeitour.dsl.Invoke
 import com.fang.taipeitour.model.attraction.Attraction
 import com.fang.taipeitour.model.language.getLocaleString
-import com.fang.taipeitour.ui.component.AutoSizeText
+import com.fang.taipeitour.ui.component.AutoSizedText
 import com.fang.taipeitour.ui.component.ImageSlider
 import com.fang.taipeitour.ui.component.dsl.BackHandler
 import com.fang.taipeitour.ui.component.dsl.LocalDarkMode
@@ -174,16 +181,6 @@ class AttractionFragment : Fragment() {
                 selectedPage = it
             }
 
-            // selected page hint
-//            Box(
-//                modifier = Modifier
-//                    .align(Alignment.TopEnd)
-//                    .height(topBarHeight)
-//                    .padding(end = 16.dp),
-//            ) {
-//
-//            }
-
             // back
             val interactionSource = remember { MutableInteractionSource() }
             Box(
@@ -211,6 +208,7 @@ class AttractionFragment : Fragment() {
                         .padding(start = titlePaddingStart),
                     tint = Color.White
                 )
+                // selected page hint
                 Text(
                     text = if (attraction.images.isEmpty()) {
                         "1/1"
@@ -245,7 +243,7 @@ class AttractionFragment : Fragment() {
             // Url Introduction Screen
             Crossfade(targetState = showUrlIntroduction) { show ->
                 if (show) {
-                    UrlIntroductionScreen(attraction.originalUrl) {
+                    UrlIntroductionScreen(attractionUrl = attraction.originalUrl) {
                         showUrlIntroduction = false
                     }
                 }
@@ -285,49 +283,41 @@ class AttractionFragment : Fragment() {
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
-                    val webTitle = R.string.web_url
-                    listOf(
-                        R.string.address to attraction.address,
-                        webTitle to attraction.originalUrl,
-                        R.string.tel to attraction.tel,
-                        R.string.fax to attraction.fax,
-                        R.string.email to attraction.email,
-                    ).forEachIndexed { i, (title, content) ->
-                        if (content.isNotBlank()) {
-                            if (i != 0) {
-                                Spacer(modifier = Modifier.height(8.dp))
-                            }
-                            Row(Modifier.fillMaxWidth()) {
-                                Text(
-                                    text = LocalLanguage.getLocaleString(title),
-                                    fontSize = 15.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                                Text(
-                                    text = content,
-                                    modifier = if (title == webTitle) {
-                                        Modifier
-                                            .weight(1f)
-                                            .clip(RoundedCornerShape(4.dp))
-                                            .clickable {
-                                                showUrlIntroduction()
-                                            }
-                                    } else {
-                                        Modifier.weight(1f)
-                                    },
-                                    fontSize = 15.sp,
-                                    color = if (title == webTitle) {
-                                        Color(0xFF3974E9)
-                                    } else {
-                                        MaterialTheme.colorScheme.onSurfaceVariant
-                                    },
-                                    textDecoration = if (title == webTitle) {
-                                        TextDecoration.Underline
-                                    } else {
-                                        null
-                                    }
-                                )
-                            }
+                    val context = LocalContext.current
+                    BasicInfoRow(titleRes = R.string.address, content = attraction.address) {
+                        val uriString =
+                            "geo:${attraction.northLatitude},${attraction.eastLongitude}"
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uriString))
+                        intent.setPackage("com.google.android.apps.maps")
+                        kotlin.runCatching {
+                            context.startActivity(intent)
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    BasicInfoRow(
+                        titleRes = R.string.web_url,
+                        content = attraction.originalUrl,
+                        isWebsite = true
+                    ) {
+                        showUrlIntroduction()
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    BasicInfoRow(titleRes = R.string.tel, content = attraction.tel) {
+                        val intent = Intent(Intent.ACTION_DIAL)
+                        intent.data = Uri.parse("tel:${attraction.tel}")
+                        kotlin.runCatching {
+                            context.startActivity(intent)
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    BasicInfoRow(titleRes = R.string.fax, content = attraction.fax)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    BasicInfoRow(titleRes = R.string.email, content = attraction.email) {
+                        val uriString = "mailto:${attraction.email}"
+                        val intent = Intent(Intent.ACTION_SENDTO)
+                        intent.data = Uri.parse(uriString)
+                        kotlin.runCatching {
+                            context.startActivity(intent)
                         }
                     }
                 }
@@ -464,6 +454,46 @@ class AttractionFragment : Fragment() {
     }
 
     @Composable
+    private fun BasicInfoRow(
+        @StringRes titleRes: Int,
+        content: String,
+        isWebsite: Boolean = false,
+        onClick: Invoke? = null
+    ) {
+        if (content.isNotBlank()) {
+            Row(Modifier.fillMaxWidth()) {
+                Text(
+                    text = LocalLanguage.getLocaleString(titleRes),
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+
+                Text(
+                    text = content + if (!isWebsite && onClick != null) "↗" else "",
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .clickable {
+                            onClick?.invoke()
+                        },
+                    fontSize = 15.sp,
+                    color = if (isWebsite) {
+                        Color(0xFF3974E9)
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                    textDecoration = if (isWebsite) {
+                        TextDecoration.Underline
+                    } else {
+                        null
+                    }
+                )
+
+            }
+        }
+
+    }
+
+    @Composable
     private fun Header(
         modifier: Modifier = Modifier,
         scrollPosition: Int,
@@ -573,7 +603,7 @@ class AttractionFragment : Fragment() {
                 if (showTopBar) color else MaterialTheme.colorScheme.onPrimary
             )
         }
-        AutoSizeText(
+        AutoSizedText(
             text = text,
             targetFontSize = 28.sp,
             minFontSize = 14.sp,

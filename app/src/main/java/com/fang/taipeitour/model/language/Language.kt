@@ -18,7 +18,7 @@ enum class Language(val locale: Locale, val key: String) {
     ;
 
     companion object {
-        val default = ENGLISH
+        val default = JAPAN
         val all by lazy { values().toList() }
         operator fun get(key: String) = all.find { it.key == key }
     }

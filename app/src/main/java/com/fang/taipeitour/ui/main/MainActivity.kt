@@ -21,10 +21,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
@@ -170,14 +168,14 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.padding(vertical = 40.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val avatar = when(LocalLanguage) {
+                    val avatar = when (LocalLanguage) {
                         Language.TAIWAN -> R.drawable.avatar_tw
                         Language.CHINA -> R.drawable.avatar_cn
                         Language.ENGLISH -> R.drawable.avatar_en
                         Language.JAPAN -> R.drawable.avatar_jp
                         Language.KOREA -> R.drawable.avatar_ko
                         Language.SPAN -> R.drawable.avatar_es
-                        Language.INDONESIA ->R.drawable.avatar_id
+                        Language.INDONESIA -> R.drawable.avatar_id
                         Language.THAILAND -> R.drawable.avatar_th
                         Language.VIETNAM -> R.drawable.avatar_vn
                     }
@@ -231,91 +229,9 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-                if (BuildConfig.DEBUG) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        Text(text = "primary", color = MaterialTheme.colorScheme.primary)
-                        Text(text = "onPrimary", color = MaterialTheme.colorScheme.onPrimary)
-                        Text(
-                            text = "primaryContainer",
-                            color = MaterialTheme.colorScheme.primaryContainer
-                        )
-                        Text(
-                            text = "onPrimaryContainer",
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                        Text(
-                            text = "inversePrimary",
-                            color = MaterialTheme.colorScheme.inversePrimary
-                        )
 
-                        Text(text = "secondary", color = MaterialTheme.colorScheme.secondary)
-                        Text(text = "onSecondary", color = MaterialTheme.colorScheme.onSecondary)
-                        Text(
-                            text = "secondaryContainer",
-                            color = MaterialTheme.colorScheme.secondaryContainer
-                        )
-                        Text(
-                            text = "onSecondaryContainer",
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-
-                        Text(text = "tertiary", color = MaterialTheme.colorScheme.tertiary)
-                        Text(text = "onTertiary", color = MaterialTheme.colorScheme.onTertiary)
-                        Text(
-                            text = "tertiaryContainer",
-                            color = MaterialTheme.colorScheme.tertiaryContainer
-                        )
-                        Text(
-                            text = "onTertiaryContainer",
-                            color = MaterialTheme.colorScheme.onTertiaryContainer
-                        )
-
-                        Text(text = "background", color = MaterialTheme.colorScheme.background)
-                        Text(text = "onBackground", color = MaterialTheme.colorScheme.onBackground)
-                        Text(text = "surface", color = MaterialTheme.colorScheme.surface)
-                        Text(text = "onSurface", color = MaterialTheme.colorScheme.onSurface)
-                        Text(
-                            text = "surfaceVariant",
-                            color = MaterialTheme.colorScheme.surfaceVariant
-                        )
-                        Text(
-                            text = "onSurfaceVariant",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(text = "surfaceTint", color = MaterialTheme.colorScheme.surfaceTint)
-                        Text(
-                            text = "inverseSurface",
-                            color = MaterialTheme.colorScheme.inverseSurface
-                        )
-                        Text(
-                            text = "inverseOnSurface",
-                            color = MaterialTheme.colorScheme.inverseOnSurface
-                        )
-                        Text(text = "error", color = MaterialTheme.colorScheme.error)
-                        Text(text = "onError", color = MaterialTheme.colorScheme.onError)
-                        Text(
-                            text = "errorContainer",
-                            color = MaterialTheme.colorScheme.errorContainer
-                        )
-                        Text(
-                            text = "onErrorContainer",
-                            color = MaterialTheme.colorScheme.onErrorContainer
-                        )
-                        Text(text = "outline", color = MaterialTheme.colorScheme.outline)
-                        Text(
-                            text = "outlineVariant",
-                            color = MaterialTheme.colorScheme.outlineVariant
-                        )
-                        Text(text = "scrim", color = MaterialTheme.colorScheme.scrim)
-                    }
-                } else {
-                    // space divide
-                    Spacer(modifier = Modifier.weight(1f))
-                }
+                // space divide
+                Spacer(modifier = Modifier.weight(1f))
 
                 // version
                 val ver = LocalLanguage.getLocaleString(R.string.app_ver)

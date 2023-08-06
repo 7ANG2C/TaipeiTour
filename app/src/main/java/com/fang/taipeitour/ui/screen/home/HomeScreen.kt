@@ -73,7 +73,7 @@ import com.fang.taipeitour.dsl.Action
 import com.fang.taipeitour.dsl.Invoke
 import com.fang.taipeitour.model.attraction.Attraction
 import com.fang.taipeitour.model.language.getLocaleString
-import com.fang.taipeitour.ui.component.AutoSizeText
+import com.fang.taipeitour.ui.component.AutoSizedText
 import com.fang.taipeitour.ui.component.FragmentContainer
 import com.fang.taipeitour.ui.component.ImageSlider
 import com.fang.taipeitour.ui.component.Loading
@@ -424,7 +424,7 @@ private fun AttractionItem(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            AutoSizeText(
+            AutoSizedText(
                 text = item.name,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 targetFontSize = 16.sp,

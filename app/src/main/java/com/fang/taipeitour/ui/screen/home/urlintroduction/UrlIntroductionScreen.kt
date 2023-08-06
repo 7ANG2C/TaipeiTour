@@ -1,26 +1,21 @@
-@file:OptIn(ExperimentalPermissionsApi::class)
-
 package com.fang.taipeitour.ui.screen.home.urlintroduction
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.DownloadManager
-import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import android.webkit.GeolocationPermissions
 import android.webkit.URLUtil
 import android.webkit.WebChromeClient
-import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,7 +23,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,447 +33,425 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.DialogProperties
+import androidx.core.content.getSystemService
+import androidx.lifecycle.Lifecycle
 import com.fang.taipeitour.R
 import com.fang.taipeitour.dsl.Invoke
-import com.fang.taipeitour.ui.component.Loading
+import com.fang.taipeitour.model.language.getLocaleString
 import com.fang.taipeitour.ui.component.dsl.BackHandler
 import com.fang.taipeitour.ui.component.dsl.LocalDarkMode
+import com.fang.taipeitour.ui.component.dsl.LocalLanguage
+import com.fang.taipeitour.ui.component.dsl.stateValue
 import com.fang.taipeitour.util.LocationUtil
-import com.fang.taipeitour.util.logD
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionRequired
+import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
-import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalPermissionsApi::class)
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun UrlIntroductionScreen(attractionUrl: String, backHandler: Invoke) {
-    var urlTitle by rememberSaveable {
-        mutableStateOf("1234")
-    }
-    var loading by rememberSaveable {
-        mutableStateOf("")
-    }
+fun UrlIntroductionScreen(
+    viewModel: UrlIntroductionViewModel = koinViewModel(),
+    attractionUrl: String, backHandler: Invoke
+) {
     var canGoBack by rememberSaveable {
         mutableStateOf(false)
     }
     var goBackTrigger by rememberSaveable {
-        mutableStateOf(0)
-    }
-
-    var showPermissionDialog by rememberSaveable {
         mutableStateOf(false)
     }
-    val context = LocalContext.current
+    var isResume by rememberSaveable {
+        mutableStateOf<Boolean?>(null)
+    }
     Column(Modifier.fillMaxSize()) {
-        var canGoForward by rememberSaveable {
+        TopBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(getControlBarBgColor()),
+            urlTitle = viewModel.titleState.stateValue(),
+            loadingProgress = viewModel.loadingState.stateValue(),
+            backHandler = backHandler
+        )
+
+        var reloadTrigger by rememberSaveable {
             mutableStateOf(false)
         }
 
-        val chromeClient = object : WebChromeClient() {
-            override fun onReceivedTitle(view: WebView?, title: String?) {
-                super.onReceivedTitle(view, title)
-                urlTitle = title.takeIf { it?.isNotBlank() == true } ?: "-"
-            }
-
-            override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                super.onProgressChanged(view, newProgress)
-                loading = if (newProgress >= 100) {
-                    ""
-                } else "$newProgress%"
-            }
-
-            override fun onGeolocationPermissionsShowPrompt(
-                origin: String?,
-                callback: GeolocationPermissions.Callback
-            ) {
-                logD("werwwerwer", "aaaa")
-                showPermissionDialog = true
-                callback.invoke(origin, true, false)
-            }
+        var canGoForward by rememberSaveable {
+            mutableStateOf(false)
         }
-        val client = object : WebViewClient() {
-            override fun onPageCommitVisible(view: WebView?, url: String?) {
-                super.onPageCommitVisible(view, url)
-                loading = ""
-            }
-
-            override fun shouldOverrideUrlLoading(
-                view: WebView,
-                request: WebResourceRequest
-            ): Boolean {
-                logD("werwwerwer", "shouldOverrideUrlLoading")
-                val url = request.url
-                val urlString = url.toString()
-                val scheme = url.scheme
-//                logD("werwerwerwer", url.scheme, " //// ", urlString)
-//                return if (!urlString.startsWith("http")) {
-//                    val intent = Intent(Intent.ACTION_VIEW)
-//                    intent.data = url
-//                    view.context.startActivity(intent)
-//                    true
-//                } else if (url != null && url.toString()
-//                        .startsWith("https://www.google.com/maps")
-//                ) {
-//                    view.context.startActivity(Intent(Intent.ACTION_VIEW, url))
-//                    true
-//                } else {
-//                    super.shouldOverrideUrlLoading(view, request)
-//                }
-
-//                val intent = Intent(Intent.ACTION_VIEW)
-//                intent.data = url
-//                view.context.startActivity(intent)
-//                return true
-//                logD("werwerwerwer", url.scheme)
-//                if (url == null || url.toString()
-//                        .startsWith("http://") || url.startsWith("https://")
-//                ) false else try {
-//                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-//                    view.context.startActivity(intent)
-//                    true
-//                } catch (e: Exception) {
-//                    Log.i(TAG, "shouldOverrideUrlLoading Exception:$e")
-//                    true
-//                }
-
-                return if (url != null && url.toString()
-                        .startsWith("https://www.google.com/maps")
-                ) {
-                    view.context.startActivity(Intent(Intent.ACTION_VIEW, url))
-                    true
-                } else if (url.scheme == "intent") {
-                    try {
-                        val intent = Intent.parseUri(url.toString(), Intent.URI_INTENT_SCHEME)
-                        view.context.startActivity(intent)
-                        true
-                    } catch (expected: ActivityNotFoundException) {
-
-                        false
-                    }
-                } else if (url.scheme == "tel") {
-                    val intent = Intent(Intent.ACTION_DIAL, url)
-                    view.context.startActivity(intent)
-                    true
-                } else {
-                    try {
-                        super.shouldOverrideUrlLoading(view, request)
-
-                    } catch (expected: ActivityNotFoundException) {
-
-                        super.shouldOverrideUrlLoading(view, request)
-
-                    }
-                }
-            }
-
-            override fun doUpdateVisitedHistory(view: WebView, url: String?, isReload: Boolean) {
-                super.doUpdateVisitedHistory(view, url, isReload)
-                canGoBack = view.canGoBack()
-                canGoForward = view.canGoForward()
-            }
-
-            override fun onReceivedError(
-                view: WebView?,
-                request: WebResourceRequest?,
-                error: WebResourceError?
-            ) {
-                logD("werwwerwer", "onReceivedError")
-//                    view.pauseTimers()
-//                    view.onPause()
-                super.onReceivedError(view, request, error)
-                logD("onProgressChanged_", "onReceivedError")
-//                    onReceivedError(error)
-            }
-        }
-
-        var reloadTrigger by rememberSaveable {
-            mutableStateOf(0)
-        }
-
         var goForwardTrigger by rememberSaveable {
-            mutableStateOf(0)
-        }
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .background(controlBarColor())
-        ) {
-            IconButton(
-                onClick = {
-                    backHandler()
-                },
-                modifier = Modifier
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_back),
-                    contentDescription = null,
-                    tint = mainColor()
-                )
-            }
-            Text(
-                text = urlTitle,
-                color = mainColor(),
-                modifier = Modifier.weight(1f),
-                maxLines = 1,
-            )
-            Spacer(modifier = Modifier.width(24.dp))
+            mutableStateOf(false)
         }
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
+                .weight(1f)
         ) {
+            val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+            var checkPermission by rememberSaveable {
+                mutableStateOf(false)
+            }
+            val locationPlz = LocalLanguage.getLocaleString(R.string.location_plz)
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
                 factory = { context ->
                     WebView(context).apply {
                         setDownloadListener { url, _, description, mimeType, _ ->
-                            // 2: userAgent
-                            // 3: contentLength
                             val request = DownloadManager.Request(Uri.parse(url))
                                 .setTitle(System.currentTimeMillis().toString())
                                 .setDescription(description)
                                 .setMimeType(mimeType)
-                                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                .setNotificationVisibility(
+                                    DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
+                                )
                                 .setDestinationInExternalPublicDir(
                                     Environment.DIRECTORY_DOWNLOADS,
-                                    URLUtil.guessFileName(url, null, null)
+                                    URLUtil.guessFileName(url, description, mimeType)
                                 )
-
-                            val downloadManager =
-                                context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                            downloadManager.enqueue(request)
+                            val downloadManager = context.getSystemService<DownloadManager>()
+                            downloadManager?.enqueue(request)
                         }
-
                         settings.apply {
                             javaScriptEnabled = true
+                            javaScriptCanOpenWindowsAutomatically = true
                             setGeolocationEnabled(true)
                             setSupportZoom(true)
                             builtInZoomControls = true
                             displayZoomControls = false
-
+                            mediaPlaybackRequiresUserGesture = true
                             databaseEnabled = true
                             domStorageEnabled = true
                             allowFileAccess = true
                             allowContentAccess = true
-                            mediaPlaybackRequiresUserGesture = false
-                            // 将图片调整到适合webView的大小
-                            useWideViewPort = true
-                            // 縮放至螢幕大小
-                            loadWithOverviewMode = true
-                            // 是否支援通過 JS 開啟新窗口
-                            javaScriptCanOpenWindowsAutomatically = true
                             cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
                         }
-                        webViewClient = client
-                        webChromeClient = chromeClient
+                        webViewClient = object : WebViewClient() {
+                            override fun shouldOverrideUrlLoading(
+                                view: WebView,
+                                request: WebResourceRequest
+                            ): Boolean {
+                                val uri = request.url
+                                val urlString = uri?.toString()
+                                val scheme = uri.scheme
+                                return when {
+                                    urlString == null || urlString.isBlank() -> {
+                                        true
+                                    }
+                                    urlString.startsWith("https://www.google.com/maps") -> {
+                                        context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+                                        true
+                                    }
+                                    !urlString.startsWith("http") -> {
+                                            val intent = if (scheme == "intent") {
+                                                Intent.parseUri(urlString, Intent.URI_INTENT_SCHEME)
+                                            } else {
+                                                Intent(Intent.ACTION_VIEW, uri)
+                                            }
+                                        kotlin.runCatching {
+                                            context.startActivity(intent)
+                                        }.fold(onSuccess = { true }, onFailure = { false })
+                                    }
+                                    else -> super.shouldOverrideUrlLoading(view, request)
+                                }
+                            }
+
+                            override fun doUpdateVisitedHistory(
+                                view: WebView, url: String?, isReload: Boolean
+                            ) {
+                                super.doUpdateVisitedHistory(view, url, isReload)
+                                viewModel.setUrl(url.orEmpty())
+                                canGoBack = view.canGoBack()
+                                canGoForward = view.canGoForward()
+                            }
+
+                        }
+
+                        webChromeClient = object : WebChromeClient() {
+                            override fun onReceivedTitle(view: WebView?, title: String?) {
+                                super.onReceivedTitle(view, title)
+                                viewModel.setTitle(title.orEmpty())
+                            }
+
+                            override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                                super.onProgressChanged(view, newProgress)
+                                viewModel.setLoadingProgress(newProgress)
+                            }
+
+                            override fun onGeolocationPermissionsShowPrompt(
+                                origin: String?,
+                                callback: GeolocationPermissions.Callback
+                            ) {
+                                when {
+                                    !permissionState.hasPermission -> {
+                                        checkPermission = true
+                                    }
+                                    !LocationUtil.isLocationEnabled(context) -> {
+                                        Toast.makeText(context, locationPlz, Toast.LENGTH_SHORT).show()
+                                    }
+                                    else -> callback(origin, true, false)
+                                }
+                            }
+                        }
                         loadUrl(attractionUrl)
                     }
                 }
             ) { webView ->
-                if (reloadTrigger != 0) {
-                    if (reloadTrigger == 1) {
-                        webView.reload()
-                        reloadTrigger = 0
-                    }
+                if (reloadTrigger) {
+                    webView.reload()
+                    reloadTrigger = false
                 }
-                if (goBackTrigger != 0) {
-                    if (goBackTrigger == 1) {
-                        webView.goBack()
-                        goBackTrigger = 0
-                    }
+
+                if (goBackTrigger) {
+                    webView.goBack()
+                    goBackTrigger = false
                 }
-                if (goForwardTrigger != 0) {
-                    if (goForwardTrigger == 1) {
-                        webView.goForward()
-                        goForwardTrigger = 0
-                    }
+
+                if (goForwardTrigger) {
+                    webView.goForward()
+                    goForwardTrigger = false
+                }
+
+                if (isResume == true) {
+                    webView.resumeTimers()
+                    webView.onResume()
+                    isResume = null
+                } else if (isResume == false) {
+                    webView.pauseTimers()
+                    webView.onPause()
+                    isResume = null
                 }
             }
-            if (loading != "") {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Loading(isFancy = false)
-                    Text(text = loading, color = controlBarColor())
-                }
+            RequestPermission(permissionState, checkPermission) {
+                checkPermission = false
             }
         }
 
         Row(
-            Modifier
+            modifier = Modifier
                 .fillMaxWidth()
-                .background(controlBarColor())
+                .background(getControlBarBgColor())
         ) {
             val context = LocalContext.current
-            IconButton(
-                onClick = {
-                    val i = Intent(Intent.ACTION_VIEW)
-                    i.data = Uri.parse(attractionUrl)
-                    context.startActivity(i)
-                },
-                modifier = Modifier
+            val urlState = viewModel.urlState.stateValue()
+            IconBtn(res = R.drawable.ic_browse) {
 
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_browse),
-                    contentDescription = null,
-                    tint = mainColor()
-                )
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlState))
+                kotlin.runCatching {
+                    context.startActivity(intent)
+                }
             }
-            // 分享
-            IconButton(
-                onClick = {
-                    context.startActivity(
-                        Intent.createChooser(
-                            Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                val shareText = "快來看!有人發表了評論"
-                                putExtra(Intent.EXTRA_TEXT, shareText)
-                            },
-                            "分享文章"
-                        )
-                    )
-                },
-                modifier = Modifier
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_share),
-                    contentDescription = null,
-                    tint = mainColor()
+            val title = viewModel.titleState.stateValue()
+            IconBtn(res = R.drawable.ic_share) {
+                val intent = Intent.createChooser(
+                    Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, urlState)
+                    },
+                    title
                 )
+                context.startActivity(intent)
             }
             Spacer(modifier = Modifier.weight(1f))
-            // 複製網址
-            IconButton(
-                onClick = {
-                    reloadTrigger = 1
-                },
-                modifier = Modifier
-
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_reload),
-                    contentDescription = null,
-                    tint = mainColor()
-                )
+            IconBtn(res = R.drawable.ic_reload) {
+                reloadTrigger = true
             }
-            // 向前
-            IconButton(
-                onClick = {
-                    goBackTrigger = 1
-                },
-                modifier = Modifier,
+            IconBtn(
+                modifier = Modifier.scale(-1f, -1f),
+                res = R.drawable.ic_go,
                 enabled = canGoBack
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_go),
-                    contentDescription = null,
-                    modifier = Modifier.scale(-1f, -1f),
-                    tint = mainColor().copy(
-                        alpha = if (canGoBack) 1f else 0.5f
-                    )
-                )
+                goBackTrigger = true
             }
-            // 向後
-            IconButton(
-                onClick = {
-                    goForwardTrigger = 1
-                },
-                modifier = Modifier,
+            IconBtn(
+                res = R.drawable.ic_go,
                 enabled = canGoForward
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_go),
-                    contentDescription = null,
-                    tint = mainColor().copy(
-                        alpha = if (canGoForward) 1f else 0.5f
-                    )
+                goForwardTrigger = true
+            }
+        }
+    }
+
+    BackHandler(onEvent = { lifecycleEvent ->
+        when (lifecycleEvent) {
+            Lifecycle.Event.ON_RESUME -> isResume = true
+            Lifecycle.Event.ON_PAUSE -> isResume = false
+            else -> {}
+        }
+    }) {
+        if (canGoBack) {
+            goBackTrigger = true
+        } else {
+            backHandler.invoke()
+        }
+    }
+}
+
+@Composable
+private fun TopBar(
+    modifier: Modifier, urlTitle: String, loadingProgress: Int, backHandler: Invoke
+) {
+    Box(modifier) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconBtn(
+                res = R.drawable.ic_back,
+                onClick = backHandler
+            )
+            Text(
+                text = urlTitle.takeIf { it.isNotBlank() } ?: "-",
+                modifier = Modifier.weight(1f),
+                color = getPrimaryColor(),
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+            )
+            Spacer(modifier = Modifier.width(24.dp))
+        }
+
+        if (loadingProgress in 1..99) {
+            Row(
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+            ) {
+                Divider(
+                    modifier = Modifier.weight(loadingProgress.toFloat()),
+                    thickness = 3.dp,
+                    color = getPrimaryColor().copy(alpha = 0.9f)
+                )
+                Divider(
+                    modifier = Modifier.weight((100 - loadingProgress).toFloat()),
+                    thickness = 3.dp,
+                    color = Color.Transparent
                 )
             }
         }
     }
-    if (showPermissionDialog) {
-        val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
-        if (!permissionState.hasPermission) {
-            PermissionRequired(
-                permissionState = permissionState,
-                permissionNotGrantedContent = {
+}
 
-                    Button(onClick = { permissionState.launchPermissionRequest() }) {
-                        Text("Request permission.")
+@Composable
+private fun IconBtn(
+    modifier: Modifier = Modifier,
+    @DrawableRes res: Int,
+    enabled: Boolean = true,
+    onClick: Invoke
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled
+    ) {
+        val color = getPrimaryColor()
+        Icon(
+            painter = painterResource(res),
+            contentDescription = null,
+            tint = if (enabled) color else color.copy(alpha = 0.35f)
+        )
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun RequestPermission(
+    permissionState: PermissionState,
+    checkPermission: Boolean,
+    closeCheckPermission: Invoke
+) {
+    if (checkPermission) {
+        var showDialog by rememberSaveable {
+            mutableStateOf(false)
+        }
+
+        PermissionRequired(
+            permissionState = permissionState,
+            content = {
+                // hasPermission
+                closeCheckPermission()
+            },
+            permissionNotGrantedContent = {
+                showDialog = true
+            },
+            permissionNotAvailableContent = {
+                closeCheckPermission()
+            },
+        )
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { },
+                dismissButton = {
+                    Button(
+                        onClick = {
+                            showDialog = false
+                            closeCheckPermission()
+                        }
+                    ) {
+                        Text(LocalLanguage.getLocaleString(R.string.cancel))
                     }
                 },
-                permissionNotAvailableContent = {
-                    // Permission Denied
-                    showPermissionDialog = false
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            permissionState.launchPermissionRequest()
+                            showDialog = false
+                            closeCheckPermission()
+                        }
+                    ) {
+                        Text(LocalLanguage.getLocaleString(R.string.confirm))
+                    }
                 },
-                content = {
-                    // Permission Granted
-                    showPermissionDialog = false
-                }
+                title = {
+                    Text(LocalLanguage.getLocaleString(R.string.location_title))
+                },
+                text = {
+                    Text(LocalLanguage.getLocaleString(R.string.location_msg))
+                },
+                properties = DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false,
+                )
             )
-        } else if (!LocationUtil.isLocationEnabled(context)) {
-            Toast.makeText(context, "你沒開定位欸", Toast.LENGTH_LONG).show()
         }
     }
 
-    BackHandler {
-        if (canGoBack) {
-            goBackTrigger = 1
-        } else {
-            backHandler()
-        }
-    }
 }
 
 @Composable
-private fun controlBarColor() = if (LocalDarkMode) {
-    MaterialTheme.colorScheme.onSecondary
-} else {
-    MaterialTheme.colorScheme.inverseSurface
-}
-
-@Composable
-private fun mainColor() = if (LocalDarkMode) {
+private fun getPrimaryColor() = if (LocalDarkMode) {
     MaterialTheme.colorScheme.onSurface
 } else {
     MaterialTheme.colorScheme.surfaceVariant
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-private fun RequestPermission() {
-    val permission = Manifest.permission.READ_EXTERNAL_STORAGE
-    val permissionState = rememberPermissionState(permission)
-    if (!permissionState.hasPermission) {
-        PermissionRequired(
-            permissionState = permissionState,
-            permissionNotGrantedContent = {
-                Button(onClick = { permissionState.launchPermissionRequest() }) {
-                    Text("Request permission.")
-                }
-            },
-            permissionNotAvailableContent = {
-                Text("Permission Denied.")
-            },
-            content = {
-                Text("Permission Granted.")
-            }
-        )
-    }
+private fun getControlBarBgColor() = if (LocalDarkMode) {
+    MaterialTheme.colorScheme.onSecondary
+} else {
+    MaterialTheme.colorScheme.inverseSurface
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun Preview() {
+    UrlIntroductionScreen(attractionUrl = "https://www.google.com/") {}
 }

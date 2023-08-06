@@ -14,6 +14,11 @@
     <string name="fax">．Fax&#160;&#160;&#160;&#160;</string>
     <string name="email">．Eml&#160;&#160;&#160;&#160;</string>
     <string name="attraction_tag">Etiquetas</string>
+    <string name="location_title">Ubicación</string>
+    <string name="location_msg">Este sitio web desea verificar la información de su ubicación actual. ¿Quiere continuar?</string>
+    <string name="confirm">Confirmar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="location_plz">Habilite la ubicación.</string>
     <string name="user_name">Valerio</string>
     <string name="app_ver">App Versión</string>
     <string name="leave_dialog_title">BUEN VIAJE</string>

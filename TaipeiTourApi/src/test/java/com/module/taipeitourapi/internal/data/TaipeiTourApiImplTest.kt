@@ -93,7 +93,6 @@ class TaipeiTourApiImplTest {
         // Perform the actual method call
         val result = taipeiTourApi.getAllAttractions(mockLanguage, mockPage)
 
-//        Log.d("werwrwer", result.toString())
         print(result.toString())
         // Assertions
         assert(result.isSuccess)

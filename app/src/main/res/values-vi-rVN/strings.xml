@@ -14,6 +14,11 @@
     <string name="fax">．Fầx&#160;&#160;&#160;&#160;</string>
     <string name="email">．Eml&#160;&#160;&#160;&#160;</string>
     <string name="attraction_tag">Thẻ bắt đầu bằng</string>
+    <string name="location_title">Vị trí</string>
+    <string name="location_msg">Trang web này muốn kiểm tra thông tin vị trí hiện tại của bạn. Muốn tiếp tục?</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="cancel">Hủy</string>
+    <string name="location_plz">Vui lòng bật vị trí.</string>
     <string name="user_name">Tiên</string>
     <string name="app_ver">Phiên Bản</string>
     <string name="leave_dialog_title">CHUYẾN TỐT ĐẸP</string>

@@ -1,6 +1,7 @@
 package com.module.taipeitourapi.internal.data
 
 import android.util.Log
+import com.google.gson.annotations.SerializedName
 import com.module.taipeitourapi.external.data.RetrofitProvider
 import com.module.taipeitourapi.external.data.TaipeiTourApi
 import com.module.taipeitourapi.external.model.request.Language
@@ -41,9 +42,6 @@ class TaipeiTourApiImpl(private val retrofitProvider: RetrofitProvider) : Taipei
                     service.getAllAttractions(language.requestCode, page)
                 }
             }
-                .onFailure {
-                    Log.d("werwerew", it.toString())
-                }
                 .mapCatching { bundle ->
                     val attractions = bundle.attractions.map { attraction ->
                         Attraction(
@@ -53,6 +51,8 @@ class TaipeiTourApiImpl(private val retrofitProvider: RetrofitProvider) : Taipei
                             zipCode = attraction.zipCode.orEmpty(),
                             distric = attraction.distric.orEmpty(),
                             address = attraction.address.orEmpty(),
+                            northLatitude = attraction.northLatitude,
+                            eastLongitude = attraction.eastLongitude,
                             officialSite = attraction.officialSite.orEmpty(),
                             originalUrl = attraction.originalUrl.orEmpty(),
                             tel = attraction.tel.orEmpty(),

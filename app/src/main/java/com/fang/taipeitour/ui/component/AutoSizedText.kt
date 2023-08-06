@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.isUnspecified
 import com.fang.taipeitour.dsl.Action
 
 @Composable
-fun AutoSizeText(
+fun AutoSizedText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,

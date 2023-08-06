@@ -11,6 +11,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.fang.taipeitour.dsl.Action
 import com.fang.taipeitour.dsl.Invoke
 
 /**
@@ -18,7 +19,7 @@ import com.fang.taipeitour.dsl.Invoke
  * @see [androidx.activity.compose.BackHandler]
  */
 @Composable
-fun BackHandler(onBack: Invoke) {
+fun BackHandler(onEvent: Action<Lifecycle.Event> = {}, onBack: Invoke) {
     val currentOnBack by rememberUpdatedState(onBack)
     val backCallback = remember {
         object : OnBackPressedCallback(true) {
@@ -38,6 +39,7 @@ fun BackHandler(onBack: Invoke) {
     DisposableEffect(lifecycleOwner, backDispatcher) {
         // Add callback to the backDispatcher
         val observer = LifecycleEventObserver { _, event ->
+            onEvent(event)
             when (event) {
                 Lifecycle.Event.ON_PAUSE -> backCallback.remove()
                 Lifecycle.Event.ON_RESUME -> {

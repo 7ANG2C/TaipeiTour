@@ -11,6 +11,8 @@ import kotlinx.parcelize.Parcelize
  * @param zipCode 郵遞區號 Ex: "111"
  * @param distric 行政區 Ex: "士林區"
  * @param address 地址 Ex: "111 臺北市士林區環河北路三段"
+ * @param northLatitude 北緯
+ * @param eastLongitude 東經
  * @param officialSite 官方網站網址 Ex: "https://hotspringmuseum.taipei"
  * @param originalUrl 資料源網址 Ex: "https://www.travel.taipei/zh-tw/attraction/details/2213"
  * @param tel 電話 Ex: "+886-2-27208889"
@@ -29,6 +31,8 @@ data class Attraction(
     val zipCode: String,
     val distric: String,
     val address: String,
+    val northLatitude: Double,
+    val eastLongitude: Double,
     val officialSite: String,
     val originalUrl: String,
     val tel: String,

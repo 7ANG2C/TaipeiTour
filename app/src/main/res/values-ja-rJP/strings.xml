@@ -14,6 +14,11 @@
     <string name="fax">．クス&#160;&#160;&#160;&#160;</string>
     <string name="email">．ルボ&#160;&#160;&#160;&#160;</string>
     <string name="attraction_tag">ハッシュタ</string>
+    <string name="location_title">場所</string>
+    <string name="location_msg">この Web サイトでは、あなたの現在の位置情報を確認したいと考えています。 続行しますか?</string>
+    <string name="confirm">確認</string>
+    <string name="cancel">キャンセル</string>
+    <string name="location_plz">位置情報を有効にしてください。</string>
     <string name="user_name">アラタ</string>
     <string name="app_ver">アプリのョン</string>
     <string name="leave_dialog_title">素敵な旅</string>
