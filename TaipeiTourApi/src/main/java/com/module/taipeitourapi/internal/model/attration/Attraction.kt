@@ -12,7 +12,9 @@ import com.module.taipeitourapi.internal.model.common.Image
  * @param zipCode 郵遞區號 Ex: "111"
  * @param distric 行政區 Ex: "士林區"
  * @param address 地址 Ex: "111 臺北市士林區環河北路三段"
- * @param officialSite 官方網站網址 Ex: "https://www.travel.taipei/zh-tw/attraction/details/1794"
+ * @param northLatitude 北緯
+ * @param eastLongitude 東經
+ * @param officialSite 官方網站網址 Ex: "https://hotspringmuseum.taipei"
  * @param originalUrl 資料源網址 Ex: "https://www.travel.taipei/zh-tw/attraction/details/2213"
  * @param tel 電話 Ex: "+886-2-27208889"
  * @param fax 傳真 Ex: "+886-2-28852885"
@@ -35,6 +37,10 @@ internal data class Attraction(
     val distric: String?,
     @SerializedName("address")
     val address: String?,
+    @SerializedName("nlat")
+    val northLatitude: Double,
+    @SerializedName("elong")
+    val eastLongitude: Double,
     @SerializedName("official_site")
     val officialSite: String?,
     @SerializedName("url")

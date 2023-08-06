@@ -1,7 +1,30 @@
 <resources>
-    <string name="app_name">臺北</string>
-    <string name="app_ver">App Ver. </string>
+    <string name="app_name">逛臺北</string>
     <string name="home">主頁</string>
+    <string name="empty_attraction">暫無景點</string>
+    <string name="no_more_attraction">已取得所有景點</string>
+    <string name="get_attractions_error">取得景點錯誤</string>
+    <string name="retry">重新嘗試</string>
     <string name="setting">設定</string>
+    <string name="base_info">基本資訊</string>
+    <string name="attraction_intro">景點介紹</string>
+    <string name="web_url">．網站&#160;&#160;&#160;&#160;</string>
+    <string name="address">．地址&#160;&#160;&#160;&#160;</string>
+    <string name="tel">．電話&#160;&#160;&#160;&#160;</string>
+    <string name="fax">．傳真&#160;&#160;&#160;&#160;</string>
+    <string name="email">．信箱&#160;&#160;&#160;&#160;</string>
+    <string name="attraction_tag">主題標籤</string>
+    <string name="location_title">存取位置</string>
+    <string name="location_msg">本網站想要使用您目前的位置資訊。確定要繼續嗎?</string>
+    <string name="confirm">確定</string>
+    <string name="cancel">取消</string>
+    <string name="location_plz">請開啟定位</string>
+    <string name="user_name">方箏</string>
+    <string name="app_ver">應用版本</string>
+    <string name="leave_dialog_title">旅途愉快</string>
+    <string name="leave_dialog_text">期待下次再見到您~</string>
+    <string name="leave_dialog_confirm">離開</string>
     <string name="language">繁體中文</string>
+    <string name="general_setting">一般</string>
+    <string name="preview_function">搶先試用新功能</string>
 </resources>

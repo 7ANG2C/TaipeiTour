@@ -1,7 +1,30 @@
 <resources>
-    <string name="app_name">遊台北</string>
-    <string name="app_ver">TaipeiTour</string>
-    <string name="home">home</string>
-    <string name="setting">Settings</string>
-    <string name="language">日文</string>
+    <string name="app_name">台北ツアー</string>
+    <string name="home">主に</string>
+    <string name="empty_attraction">アトラクション</string>
+    <string name="no_more_attraction">ションを取得しました</string>
+    <string name="get_attractions_error">位置エラーを取得する</string>
+    <string name="retry">試行する</string>
+    <string name="setting">設定</string>
+    <string name="base_info">基本情報</string>
+    <string name="attraction_intro">アトラクシ</string>
+    <string name="web_url">．サイ&#160;&#160;&#160;&#160;</string>
+    <string name="address">．住所&#160;&#160;&#160;&#160;</string>
+    <string name="tel">．電話&#160;&#160;&#160;&#160;</string>
+    <string name="fax">．クス&#160;&#160;&#160;&#160;</string>
+    <string name="email">．ルボ&#160;&#160;&#160;&#160;</string>
+    <string name="attraction_tag">ハッシュタ</string>
+    <string name="location_title">場所</string>
+    <string name="location_msg">この Web サイトでは、あなたの現在の位置情報を確認したいと考えています。 続行しますか?</string>
+    <string name="confirm">確認</string>
+    <string name="cancel">キャンセル</string>
+    <string name="location_plz">位置情報を有効にしてください。</string>
+    <string name="user_name">アラタ</string>
+    <string name="app_ver">アプリのョン</string>
+    <string name="leave_dialog_title">素敵な旅</string>
+    <string name="leave_dialog_text">次回会いましょう ^^</string>
+    <string name="leave_dialog_confirm">退出</string>
+    <string name="language">日本語</string>
+    <string name="general_setting">全般的</string>
+    <string name="preview_function">プレビュー</string>
 </resources>

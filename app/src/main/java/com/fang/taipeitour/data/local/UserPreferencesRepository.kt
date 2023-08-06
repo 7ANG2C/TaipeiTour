@@ -1,10 +1,12 @@
 package com.fang.taipeitour.data.local
 
-import com.fang.taipeitour.data.local.user.UserPreferencesDataStore
+import com.fang.taipeitour.model.ColorScheme
 import com.fang.taipeitour.model.DarkMode
 import com.fang.taipeitour.model.language.Language
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 
 /**
@@ -15,17 +17,27 @@ class UserPreferencesRepository(
     private val dataStore: UserPreferencesDataStore
 ) {
 
-    fun getLanguage() = dataStore.invoke()
+    operator fun invoke() = dataStore.invoke()
         .mapLatest {
-            Language.findByKeyOrDefault(it.language)
+            val default = UserPreferences.default
+            UserPreferences(
+                language = Language[it.language] ?: default.language,
+                darkMode = DarkMode[it.darkMode] ?: default.darkMode,
+                colorScheme = ColorScheme[it.colorScheme] ?: default.colorScheme,
+            )
         }
+        .flowOn(Dispatchers.Default)
+
+    fun getLanguage() = invoke()
+        .mapLatest { it.language }
         .distinctUntilChanged()
 
-    fun getDarkMode() = dataStore.invoke()
+    fun isDefault() = dataStore.invoke()
         .mapLatest {
-            DarkMode.findByKey(it.darkMode)
+            it.language.isEmpty() &&
+                it.darkMode.isEmpty() &&
+                it.colorScheme.isEmpty()
         }
-        .distinctUntilChanged()
 
     suspend fun seLanguage(language: Language) {
         dataStore.setLanguage(language.key)
@@ -35,7 +47,11 @@ class UserPreferencesRepository(
         dataStore.toggleDarkMode()
     }
 
-    suspend fun reset() {
+    suspend fun toggleColorScheme() {
+        dataStore.toggleColorScheme()
+    }
+
+    suspend fun resetUserPreferences() {
         dataStore.reset()
     }
 }

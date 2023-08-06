@@ -1,15 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
-    android:opacity="opaque">
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item>
-        <shape android:shape="rectangle">
-            <solid android:color="#252525" />
-        </shape>
+        <vector xmlns:aapt="http://schemas.android.com/aapt"
+            android:width="375dp"
+            android:height="812dp"
+            android:viewportWidth="375"
+            android:viewportHeight="812">
+            <path android:pathData="M0,0h375v812h-375z">
+                <aapt:attr name="android:fillColor">
+                    <gradient
+                        android:endX="387"
+                        android:endY="812"
+                        android:startX="61"
+                        android:startY="83"
+                        android:type="linear">
+                        <item
+                            android:color="#FF08021A"
+                            android:offset="0.2" />
+                        <item
+                            android:color="#FF160B36"
+                            android:offset="0.4" />
+                        <item
+                            android:color="#09313D"
+                            android:offset="0.85" />
+<!--                        <item-->
+<!--                            android:color="#076A5F"-->
+<!--                            android:offset="1" />-->
+                    </gradient>
+                </aapt:attr>
+            </path>
+        </vector>
     </item>
 
-    <!--    <item>-->
-    <!--        <bitmap-->
-    <!--            android:gravity="clip_vertical"-->
-    <!--            android:src="@drawable/avatar" />-->
-    <!--    </item>-->
+<!--    <item android:bottom="84dp">-->
+<!--        <bitmap-->
+<!--            android:gravity="center"-->
+<!--            android:src="@drawable/logo" />-->
+<!--    </item>-->
 </layer-list>

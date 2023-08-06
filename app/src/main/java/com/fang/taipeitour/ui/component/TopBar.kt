@@ -17,9 +17,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fang.taipeitour.R
+import com.fang.taipeitour.dsl.Invoke
 
 @Composable
-fun TopBar(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) {
+fun TopBar(modifier: Modifier = Modifier, text: String, onClick: Invoke) {
     Surface(
         modifier = modifier,
         shadowElevation = 4.dp,
@@ -30,7 +31,7 @@ fun TopBar(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) {
                 .padding(16.dp),
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_menu),
+                painter = painterResource(R.drawable.ic_menu),
                 contentDescription = "menu",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
@@ -44,9 +45,9 @@ fun TopBar(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) {
                 text = text,
                 modifier = Modifier
                     .align(Alignment.Center),
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.SemiBold
             )
         }
     }

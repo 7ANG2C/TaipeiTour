@@ -1,28 +1,24 @@
 package com.fang.taipeitour.ui.screen.home.attraction
 
 import android.content.Intent
-import android.content.res.Configuration
-import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import android.webkit.WebResourceError
-import android.webkit.WebResourceRequest
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,25 +26,29 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,39 +65,58 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import com.fang.taipeitour.R
-import com.fang.taipeitour.extension.logD
+import com.fang.taipeitour.dsl.Action
+import com.fang.taipeitour.dsl.Invoke
 import com.fang.taipeitour.model.attraction.Attraction
+import com.fang.taipeitour.model.language.getLocaleString
+import com.fang.taipeitour.ui.component.AutoSizedText
 import com.fang.taipeitour.ui.component.ImageSlider
-import com.fang.taipeitour.ui.component.dsl.stateValue
-import com.fang.taipeitour.ui.theme.TaipeiTourTheme
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
+import com.fang.taipeitour.ui.component.dsl.BackHandler
+import com.fang.taipeitour.ui.component.dsl.LocalDarkMode
+import com.fang.taipeitour.ui.component.dsl.LocalLanguage
+import com.fang.taipeitour.ui.component.dsl.screenHeightDp
+import com.fang.taipeitour.ui.component.gradientBackground
+import com.fang.taipeitour.ui.screen.home.urlintroduction.UrlIntroductionScreen
+import com.google.accompanist.flowlayout.FlowRow
 
 /**
- * 景點導覽
+ * Single Attraction Fragment
  */
 class AttractionFragment : Fragment() {
 
     companion object {
-        private const val ARG_ID = "id"
-        fun createIntent(id: Attraction): Fragment {
+        private const val ARG = "argument"
+        fun newInstance(argument: AttractionArgument): Fragment {
             return AttractionFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(ARG_ID, id)
+                    putParcelable(ARG, argument)
                 }
             }
         }
     }
 
-    private val viewModel by viewModel<AttractionViewModel> {
-        parametersOf(requireArguments().getParcelable<Attraction>(ARG_ID))
+    var onDismiss: Invoke? = null
+
+    private val headerHeight = 245.dp
+    private val topBarHeight = 56.dp
+
+    private val titlePaddingStart = 16.dp
+    private val titlePaddingEnd = 72.dp
+
+    private val argument by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireArguments().getParcelable(ARG, AttractionArgument::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            requireArguments().getParcelable(ARG)
+        }
     }
 
     override fun onCreateView(
@@ -108,97 +127,393 @@ class AttractionFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                CollapsingToolbarParallaxEffect(
-                    Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surface)
+                val stateArgument by rememberSaveable { mutableStateOf(argument) }
+                stateArgument?.let { argument ->
+                    CollapsingScreen(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surface),
+                        argument = argument
+                    )
+                }
+                BackHandler {
+                    onDismiss?.invoke()
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun CollapsingScreen(modifier: Modifier = Modifier, argument: AttractionArgument) {
+        var showUrlIntroduction by rememberSaveable {
+            mutableStateOf(false)
+        }
+        val scrollState = rememberScrollState(0)
+        val headerHeightPx = with(LocalDensity.current) { headerHeight.toPx() }
+        val topBarHeightPx = with(LocalDensity.current) { topBarHeight.toPx() }
+        val attraction = argument.attraction
+
+        Box(modifier = modifier) {
+            // main content
+            Content(
+                modifier = Modifier.fillMaxSize(),
+                scrollState = scrollState,
+                attraction = attraction,
+            ) {
+                showUrlIntroduction = true
+            }
+
+            // Header
+            var selectedPage by rememberSaveable {
+                mutableStateOf(0)
+            }
+            Header(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(headerHeight),
+                scrollPosition = scrollState.value,
+                headerHeightPx = headerHeightPx,
+                argument = argument,
+            ) {
+                selectedPage = it
+            }
+
+            // back
+            val interactionSource = remember { MutableInteractionSource() }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(topBarHeight)
+                    .gradientBackground(
+                        listOf(
+                            getImageGradientColor().copy(alpha = 0.3f),
+                            Color.Transparent,
+                        ),
+                        270f
+                    )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_back),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null
+                        ) {
+                            onDismiss?.invoke()
+                        }
+                        .padding(start = titlePaddingStart),
+                    tint = Color.White
+                )
+                // selected page hint
+                Text(
+                    text = if (attraction.images.isEmpty()) {
+                        "1/1"
+                    } else {
+                        "${selectedPage + 1}/${attraction.images.size}"
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = titlePaddingStart),
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.End
+                )
+            }
+
+            val topBarBottom by rememberSaveable {
+                mutableStateOf(headerHeightPx - topBarHeightPx)
+            }
+
+            val showTopBar by remember {
+                derivedStateOf {
+                    scrollState.value >= topBarBottom
+                }
+            }
+            // top bar
+            TopBar(showTopBar = showTopBar)
+
+            // title
+            Title(scroll = scrollState, text = attraction.name, showTopBar = showTopBar)
+
+            // Url Introduction Screen
+            Crossfade(targetState = showUrlIntroduction) { show ->
+                if (show) {
+                    UrlIntroductionScreen(attractionUrl = attraction.originalUrl) {
+                        showUrlIntroduction = false
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun Content(
+        modifier: Modifier = Modifier,
+        scrollState: ScrollState,
+        attraction: Attraction,
+        showUrlIntroduction: Invoke
+    ) {
+        Column(
+            modifier = modifier
+                .verticalScroll(scrollState)
+                .heightIn(min = screenHeightDp.dp + headerHeight)
+
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+            ) {
+                // header spacer
+                Spacer(Modifier.height(headerHeight))
+
+                // base info section
+                Spacer(Modifier.height(28.dp))
+                SectionTitle(
+                    R.drawable.ic_basic_info,
+                    LocalLanguage.getLocaleString(R.string.base_info)
+                )
+                Spacer(Modifier.height(10.dp))
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    val context = LocalContext.current
+                    BasicInfoRow(titleRes = R.string.address, content = attraction.address) {
+                        val uriString =
+                            "geo:${attraction.northLatitude},${attraction.eastLongitude}"
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uriString))
+                        intent.setPackage("com.google.android.apps.maps")
+                        kotlin.runCatching {
+                            context.startActivity(intent)
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    BasicInfoRow(
+                        titleRes = R.string.web_url,
+                        content = attraction.originalUrl,
+                        isWebsite = true
+                    ) {
+                        showUrlIntroduction()
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    BasicInfoRow(titleRes = R.string.tel, content = attraction.tel) {
+                        val intent = Intent(Intent.ACTION_DIAL)
+                        intent.data = Uri.parse("tel:${attraction.tel}")
+                        kotlin.runCatching {
+                            context.startActivity(intent)
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    BasicInfoRow(titleRes = R.string.fax, content = attraction.fax)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    BasicInfoRow(titleRes = R.string.email, content = attraction.email) {
+                        val uriString = "mailto:${attraction.email}"
+                        val intent = Intent(Intent.ACTION_SENDTO)
+                        intent.data = Uri.parse(uriString)
+                        kotlin.runCatching {
+                            context.startActivity(intent)
+                        }
+                    }
+                }
+
+                // attraction intro section
+                Spacer(Modifier.height(28.dp))
+                SectionTitle(
+                    R.drawable.ic_introduction,
+                    LocalLanguage.getLocaleString(R.string.attraction_intro)
+                )
+                Spacer(Modifier.height(10.dp))
+                attraction.introduction.split("\r\n\r\n")
+                    .filterNot { it.isBlank() }.forEachIndexed { i, text ->
+                        if (i != 0) {
+                            // dot style divider
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 14.dp),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                repeat(3) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(5.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.outlineVariant)
+                                    )
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                }
+                            }
+                        }
+                        SelectionContainer(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                        ) {
+                            Text(
+                                text = text,
+                                modifier = Modifier.fillMaxWidth(),
+                                fontSize = 15.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+
+                // attraction tag
+                Spacer(Modifier.height(28.dp))
+                SectionTitle(
+                    R.drawable.ic_label,
+                    LocalLanguage.getLocaleString(R.string.attraction_tag)
+                )
+                Spacer(Modifier.height(10.dp))
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    val categories = attraction.categories
+                    val targets = attraction.targets
+                    (categories + targets).forEach { category ->
+                        val color = when (category) {
+                            in categories -> MaterialTheme.colorScheme.tertiary
+                            in targets -> MaterialTheme.colorScheme.primary
+                            else -> null
+                        }
+                        SuggestionChip(
+                            onClick = { },
+                            label = {
+                                Text(text = category.name, fontSize = 14.sp)
+                            },
+                            modifier = Modifier.padding(end = 8.dp),
+                            colors = color?.let {
+                                SuggestionChipDefaults.suggestionChipColors(
+                                    containerColor = it.copy(alpha = 0.1f),
+                                    labelColor = it.copy(alpha = 0.9f),
+                                )
+                            } ?: SuggestionChipDefaults.suggestionChipColors(),
+                            border = color?.let {
+                                SuggestionChipDefaults.suggestionChipBorder(
+                                    borderColor = it.copy(alpha = 0.8f),
+                                )
+                            },
+                        )
+                    }
+                }
+            }
+            Spacer(Modifier.weight(1f)) // for height in
+            // end
+            Spacer(Modifier.height(72.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
+                    .padding(top = 6.dp, bottom = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val color = MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)
+                Text(
+                    text = "Taipei · Travel",
+                    fontSize = 12.sp,
+                    color = color
+                )
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = "旅遊臺北",
+                    fontSize = 11.sp,
+                    color = color
                 )
             }
         }
     }
 
-    private val headerHeight = 250.dp
-    private val toolbarHeight = 56.dp
-
-    private val paddingMedium = 16.dp
-
-    private val titlePaddingStart = 16.dp
-    private val titlePaddingEnd = 72.dp
-
-    private val titleFontScaleStart = 1f
-    private val titleFontScaleEnd = 0.66f
+    @Composable
+    private fun SectionTitle(res: Int, text: String) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(res),
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+            )
+            Spacer(modifier = Modifier.padding(4.dp))
+            Text(
+                text = text,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        }
+    }
 
     @Composable
-    fun CollapsingToolbarParallaxEffect(modifier: Modifier = Modifier) {
-        val scroll = rememberScrollState(0)
-
-        val headerHeightPx = with(LocalDensity.current) { headerHeight.toPx() }
-        val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.toPx() }
-
-        Box(modifier = modifier) {
-            val isShow = remember {
-                mutableStateOf(false)
-            }
-            Body(
-                scroll = scroll,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                isShow.value = true
-            }
-            Header(
-                scroll = scroll,
-                headerHeightPx = headerHeightPx,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(headerHeight)
-            )
-            IconButton(
-                onClick = {
-                    (context as? OnCloseListener)?.onClose()
-                },
-                modifier = Modifier
-                    .padding(20.dp)
-                    .size(24.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = null,
-                    tint = Color.White
+    private fun BasicInfoRow(
+        @StringRes titleRes: Int,
+        content: String,
+        isWebsite: Boolean = false,
+        onClick: Invoke? = null
+    ) {
+        if (content.isNotBlank()) {
+            Row(Modifier.fillMaxWidth()) {
+                Text(
+                    text = LocalLanguage.getLocaleString(titleRes),
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-            }
-            TopBar(
-                scroll = scroll,
-                headerHeightPx = headerHeightPx,
-//                toolbarHeightPx = toolbarHeightPx
-            )
-            Title(scroll = scroll)
-            Crossfade(targetState = isShow.value) {
-                Web(it) {
-                    isShow.value = false
-                }
+
+                Text(
+                    text = content + if (!isWebsite && onClick != null) "↗" else "",
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .clickable {
+                            onClick?.invoke()
+                        },
+                    fontSize = 15.sp,
+                    color = if (isWebsite) {
+                        Color(0xFF3974E9)
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                    textDecoration = if (isWebsite) {
+                        TextDecoration.Underline
+                    } else {
+                        null
+                    }
+                )
             }
         }
     }
 
     @Composable
     private fun Header(
-        scroll: ScrollState,
+        modifier: Modifier = Modifier,
+        scrollPosition: Int,
         headerHeightPx: Float,
-        modifier: Modifier = Modifier
+        argument: AttractionArgument,
+        onPageSelect: Action<Int>,
     ) {
         Box(
             modifier = modifier
+                .fillMaxWidth()
                 .graphicsLayer {
-                    translationY = -scroll.value.toFloat() / 2f // Parallax effect
-                    alpha = (-1f / headerHeightPx) * scroll.value + 1
+                    translationY = -scrollPosition.toFloat() / 2f
+                    alpha = (-1f / headerHeightPx) * scrollPosition + 1
                 }
         ) {
             ImageSlider(
-                modifier = Modifier,
-                images = viewModel.attractionState.stateValue().images.map { it.src }.orEmpty(),
-                noImageRes = R.drawable.no_image_holder2,
-                contentScale = ContentScale.Inside,
-            ) {}
+                modifier = Modifier.fillMaxWidth(),
+                images = argument.attraction.images.map { it.src },
+                noImageHolderRes = argument.noImageHolderRes,
+                contentScale = ContentScale.FillBounds,
+                showLoading = true,
+                onPageSelect = onPageSelect
+            )
+            val alpha = if (LocalDarkMode) 0.8f else 0.4f
             Box(
                 Modifier
                     .fillMaxSize()
@@ -206,226 +521,24 @@ class AttractionFragment : Fragment() {
                         brush = Brush.verticalGradient(
                             colors = listOf(
                                 Color.Transparent,
-                                MaterialTheme.colorScheme.onSecondary
+                                getImageGradientColor().copy(alpha = alpha),
                             ),
-                            startY = 3 * headerHeightPx / 4 // Gradient applied to wrap the title only
+                            startY = headerHeightPx * 0.8f
                         )
                     )
             )
         }
     }
 
-    @Composable
-    private fun Body(scroll: ScrollState, modifier: Modifier = Modifier, onClick: () -> Unit) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier.verticalScroll(scroll)
-        ) {
-            Spacer(Modifier.height(headerHeight))
-            val state = viewModel.attractionState.collectAsState().value
-            Text(
-                text = state.originalUrl.takeIf { it.isNotBlank() } ?: "--",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Justify,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .clickable {
-                        onClick()
-                    }
-            )
-            Text(
-                text = state.officialSite.takeIf { it.isNotBlank() } ?: "--",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Justify,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .clickable {
-                        onClick()
-                    }
-            )
-            state.introduction.split("\r\n\r\n").forEach {
-                logD("werrwe", it)
-                Row {
-                    repeat(3) {
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.6f))
-                        )
-                    }
-                }
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Justify,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-        }
-    }
-
-    @Composable
-    private fun Web(isShow: Boolean, click: () -> Unit) {
-
-        val mUrl = viewModel.attractionState.collectAsState().value.originalUrl
-        if (isShow) {
-            val webViewChromeClient = object : WebChromeClient() {
-                override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                    // 回調網頁內容加載進度
-//                    onProgressChange(newProgress)
-                    super.onProgressChanged(view, newProgress)
-                }
-            }
-            val webViewClient = object : WebViewClient() {
-                override fun onPageStarted(
-                    view: WebView?,
-                    url: String?,
-                    favicon: Bitmap?
-                ) {
-                    super.onPageStarted(view, url, favicon)
-//                    onProgressChange(-1)
-                }
-
-                override fun onPageFinished(view: WebView?, url: String?) {
-                    super.onPageFinished(view, url)
-//                    onProgressChange(100)
-                }
-
-                override fun shouldOverrideUrlLoading(
-                    view: WebView?,
-                    request: WebResourceRequest?
-                ): Boolean {
-                    if (null == request?.url) return false
-                    val showOverrideUrl = request.url.toString()
-                    try {
-                        if (!showOverrideUrl.startsWith("") &&
-                            !showOverrideUrl.startsWith("")
-                        ) {
-                            // 處理非 http https 開頭
-                            Intent(Intent.ACTION_VIEW, Uri.parse(showOverrideUrl)).apply {
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                view?.context?.applicationContext?.startActivity(this)
-                            }
-                            return true
-                        }
-                    } catch (e: Exception) {
-                        // 沒有安裝和找到能打開(「xxxx://openlink.cc....」等)協議的應用
-                        return true
-                    }
-                    return super.shouldOverrideUrlLoading(view, request)
-                }
-
-                override fun onReceivedError(
-                    view: WebView?,
-                    request: WebResourceRequest?,
-                    error: WebResourceError?
-                ) {
-                    super.onReceivedError(view, request, error)
-//                    onReceivedError(error)
-                }
-            }
-            var webView: WebView? = null
-            val coroutineScope = rememberCoroutineScope()
-            AndroidView(modifier = Modifier.fillMaxSize(), factory = { ctx ->
-                WebView(ctx).apply {
-                    this.webViewClient = webViewClient
-                    this.webChromeClient = webViewChromeClient
-                    this.settings.apply {
-                        // 允許 JS 交互
-                        javaScriptEnabled = true
-                        // 将图片调整到适合webView的大小
-                        useWideViewPort = true
-                        // 縮放至螢幕大小
-                        loadWithOverviewMode = true
-                        // 縮放操作
-                        setSupportZoom(true)
-                        builtInZoomControls = true
-                        displayZoomControls = true
-                        // 是否支援通過 JS 開啟新窗口
-                        javaScriptCanOpenWindowsAutomatically = true
-                        // 不加載緩存內容
-                        cacheMode = WebSettings.LOAD_NO_CACHE
-                    }
-                    webView = this
-                    loadUrl(mUrl)
-                }
-            })
-            if (isShow) {
-                BackHandler {
-                    if (webView?.canGoBack() == true) {
-                        webView?.goBack()
-                    } else {
-                        click()
-                        // finish()
-                    }
-                }
-            }
-
-//            CustomWebView(
-//                modifier = Modifier.fillMaxSize(),
-//                url = mUrl,
-//                onProgressChange = { progress ->
-//                  rememberWebViewProgress = progress
-//                },
-//                initSettings = { settings ->
-//                    settings?.apply {
-//                        // 允許 JS 交互
-//                        javaScriptEnabled = true
-//                        //将图片调整到适合webView的大小
-//                        useWideViewPort = true
-//                        // 縮放至螢幕大小
-//                        loadWithOverviewMode = true
-//                        // 縮放操作
-//                        setSupportZoom(true)
-//                        builtInZoomControls = true
-//                        displayZoomControls = true
-//                        // 是否支援通過 JS 開啟新窗口
-//                        javaScriptCanOpenWindowsAutomatically = true
-//                        // 不加載緩存內容
-//                        cacheMode = WebSettings.LOAD_NO_CACHE
-//                    }
-//                },
-//                onBack = { webView ->
-//                    if (webView?.canGoBack() == true) {
-//                        webView.goBack()
-//                    } else {
-//                        isShow.value = false
-//                        // finish()
-//                    }
-//                },
-//                onReceivedError = {
-//
-//                }
-//            )
-        }
-    }
-
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun TopBar(
-        scroll: ScrollState,
-        headerHeightPx: Float,
-//        toolbarHeightPx: Float,
-        modifier: Modifier = Modifier
+        modifier: Modifier = Modifier,
+        showTopBar: Boolean
     ) {
-        val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.toPx() }
-        val toolbarBottom by remember {
-            mutableStateOf(headerHeightPx - toolbarHeightPx)
-        }
-
-        val showToolbar by remember {
-            derivedStateOf {
-                scroll.value >= toolbarBottom
-            }
-        }
-
         AnimatedVisibility(
             modifier = modifier,
-            visible = showToolbar,
+            visible = showTopBar,
             enter = fadeIn(animationSpec = tween(300)),
             exit = fadeOut(animationSpec = tween(300))
         ) {
@@ -434,101 +547,117 @@ class AttractionFragment : Fragment() {
                     .background(
                         brush = Brush.horizontalGradient(
                             listOf(
-                                MaterialTheme.colorScheme.secondaryContainer,
-                                MaterialTheme.colorScheme.primaryContainer
+                                MaterialTheme.colorScheme.onSecondary,
+                                MaterialTheme.colorScheme.surface,
+                                MaterialTheme.colorScheme.surface,
                             )
                         )
                     )
-                    .height(toolbarHeight),
+                    .height(topBarHeight),
                 navigationIcon = {
-                    val context = LocalContext.current
-                    IconButton(
-                        onClick = {
-                            (context as? OnCloseListener)?.onClose()
-                        },
+                    val interactionSource = remember { MutableInteractionSource() }
+                    Box(
                         modifier = Modifier
+                            .clickable(
+                                interactionSource = interactionSource,
+                                indication = null
+                            ) {
+                                onDismiss?.invoke()
+                            }
                             .padding(16.dp)
-                            .size(24.dp)
+                            .size(24.dp),
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_back),
+                            painter = painterResource(R.drawable.ic_back),
                             contentDescription = null,
-                            tint = Color.White
+                            modifier = Modifier.align(Alignment.Center),
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
                 title = {},
-                colors = TopAppBarDefaults.smallTopAppBarColors(Color.Transparent)
+                colors = topAppBarColors(containerColor = Color.Transparent)
             )
         }
     }
 
     @Composable
     private fun Title(
+        modifier: Modifier = Modifier,
         scroll: ScrollState,
-        modifier: Modifier = Modifier
+        text: String,
+        showTopBar: Boolean
     ) {
-        var titleHeightPx by remember { mutableStateOf(0f) }
-        var titleWidthPx by remember { mutableStateOf(0f) }
+        var titleHeightPx by rememberSaveable { mutableStateOf(0f) }
+        var titleWidthPx by rememberSaveable { mutableStateOf(0f) }
 
-        Text(
-            text = viewModel.attractionState.stateValue().name,
-            fontSize = 30.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
+        val color = MaterialTheme.colorScheme.onSurface
+        val textColor = if (LocalDarkMode) {
+            remember { mutableStateOf(color) }
+        } else {
+            animateColorAsState(
+                if (showTopBar) color else MaterialTheme.colorScheme.onPrimary
+            )
+        }
+        AutoSizedText(
+            text = text,
+            targetFontSize = 28.sp,
+            minFontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = textColor.value,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = modifier
+                .padding(end = 8.dp)
                 .graphicsLayer {
-                    val collapseRange: Float = (headerHeight.toPx() - toolbarHeight.toPx())
-                    val collapseFraction: Float = (scroll.value / collapseRange).coerceIn(0f, 1f)
+                    val collapseRange = (headerHeight.toPx() - topBarHeight.toPx())
+                    val collapseFraction = (scroll.value / collapseRange).coerceIn(0f, 1f)
 
-                    val scaleXY = lerp(
-                        titleFontScaleStart.dp,
-                        titleFontScaleEnd.dp,
-                        collapseFraction
-                    )
+                    val scale = lerp(1f.dp, 0.66f.dp, collapseFraction)
 
-                    val titleExtraStartPadding = titleWidthPx.toDp() * (1 - scaleXY.value) / 2f
+                    val titleExtraStartPadding = titleWidthPx.toDp() * (1 - scale.value) / 2f
 
-                    val titleYFirstInterpolatedPoint = lerp(
+                    val paddingMedium = 16.dp
+                    val titleY1stInterpolatedPoint = lerp(
                         headerHeight - titleHeightPx.toDp() - paddingMedium,
                         headerHeight / 2,
                         collapseFraction
                     )
 
-                    val titleXFirstInterpolatedPoint = lerp(
+                    val titleX1stInterpolatedPoint = lerp(
                         titlePaddingStart,
                         (titlePaddingEnd - titleExtraStartPadding) * 5 / 4,
                         collapseFraction
                     )
 
-                    val titleYSecondInterpolatedPoint = lerp(
+                    val titleY2ndInterpolatedPoint = lerp(
                         headerHeight / 2,
-                        toolbarHeight / 2 - titleHeightPx.toDp() / 2,
+                        topBarHeight / 2 - titleHeightPx.toDp() / 2,
                         collapseFraction
                     )
 
-                    val titleXSecondInterpolatedPoint = lerp(
+                    val titleX2ndInterpolatedPoint = lerp(
                         (titlePaddingEnd - titleExtraStartPadding) * 5 / 4,
                         titlePaddingEnd - titleExtraStartPadding,
                         collapseFraction
                     )
 
                     val titleY = lerp(
-                        titleYFirstInterpolatedPoint,
-                        titleYSecondInterpolatedPoint,
+                        titleY1stInterpolatedPoint,
+                        titleY2ndInterpolatedPoint,
                         collapseFraction
                     )
 
                     val titleX = lerp(
-                        titleXFirstInterpolatedPoint,
-                        titleXSecondInterpolatedPoint,
+                        titleX1stInterpolatedPoint,
+                        titleX2ndInterpolatedPoint,
                         collapseFraction
                     )
 
                     translationY = titleY.toPx()
                     translationX = titleX.toPx()
-                    scaleX = scaleXY.value
-                    scaleY = scaleXY.value
+                    scaleX = scale.value
+                    scaleY = scale.value
                 }
                 .onGloballyPositioned {
                     titleHeightPx = it.size.height.toFloat()
@@ -536,34 +665,11 @@ class AttractionFragment : Fragment() {
                 }
         )
     }
+}
 
-    @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Composable
-    fun DefaultPreview() {
-        CollapsingToolbarParallaxEffect(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    MaterialTheme.colorScheme.surface
-                )
-        )
-    }
-
-    @Preview(showBackground = true)
-    @Composable
-    private fun Preview() {
-        TaipeiTourTheme {
-        }
-    }
-
-    @Composable
-    fun CustomWebView(
-        modifier: Modifier = Modifier,
-        url: String,
-        onBack: (webView: WebView?) -> Unit,
-        onProgressChange: (progress: Int) -> Unit = {},
-        initSettings: (webSettings: WebSettings?) -> Unit = {},
-        onReceivedError: (error: WebResourceError?) -> Unit = {}
-    ) {
-    }
+@Composable
+private fun getImageGradientColor() = if (LocalDarkMode) {
+    MaterialTheme.colorScheme.surface
+} else {
+    MaterialTheme.colorScheme.onSurface
 }

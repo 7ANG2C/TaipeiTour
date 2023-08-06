@@ -1,7 +1,30 @@
 <resources>
     <string name="app_name">Taipei Tour</string>
-    <string name="app_ver">App Ver. </string>
     <string name="home">HOME</string>
+    <string name="empty_attraction">Empty Attraction</string>
+    <string name="no_more_attraction">No More Attraction</string>
+    <string name="get_attractions_error">Get Attractions Error</string>
+    <string name="retry">Retry</string>
     <string name="setting">SETTING</string>
+    <string name="base_info">Info</string>
+    <string name="attraction_intro">Introduction</string>
+    <string name="web_url">．Web&#160;&#160;&#160;</string>
+    <string name="address">．Add&#160;&#160;&#160;&#160;</string>
+    <string name="tel">．Tel&#160;&#160;&#160;&#160;&#160;</string>
+    <string name="fax">．Fax&#160;&#160;&#160;&#160;</string>
+    <string name="email">．Eml&#160;&#160;&#160;&#160;</string>
+    <string name="attraction_tag">Tag</string>
+    <string name="location_title">Location</string>
+    <string name="location_msg">This website would like to check your current location information. Want to continue?</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="location_plz">Please enable location.</string>
+    <string name="user_name">Lisa</string>
+    <string name="app_ver">App Version</string>
+    <string name="leave_dialog_title">NICE TRIP</string>
+    <string name="leave_dialog_text">See ya next time!</string>
+    <string name="leave_dialog_confirm">Leave</string>
     <string name="language">English</string>
+    <string name="general_setting">General</string>
+    <string name="preview_function">Preview</string>
 </resources>

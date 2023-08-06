@@ -2,130 +2,154 @@ package com.fang.taipeitour.ui.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fang.taipeitour.data.remote.attraction.GetAttractionListRepository
+import com.fang.taipeitour.data.local.UserPreferencesRepository
+import com.fang.taipeitour.data.remote.GetAllAttractionRepository
 import com.fang.taipeitour.model.attraction.Attraction
+import com.fang.taipeitour.model.language.Language
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * 進入頁面預設 pull refresh
- */
-@OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel(
-    private val repository: GetAttractionListRepository
+    private val repository: GetAllAttractionRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
-    private class Page(val value: Int)
+    private class RequestPage(val value: Int)
 
     private data class Mediator(
-        val state: AttractionData.State,
         val list: List<Attraction>,
+        val state: AttractionData.State,
         val page: Int,
     )
 
-    data class AttractionData(
-        val state: State,
-        val items: List<Item>,
-        val page: Int,
-    ) {
-        enum class State {
-            NoNewData, Fail, SuccessAndNew
-        }
+    private companion object {
+        const val FIRST_REQUEST_PAGE = 1
     }
 
-    sealed class Item {
-        data class Data(val attraction: Attraction) : Item()
-        object Loading : Item()
-    }
+    private val requestPageState = MutableStateFlow<RequestPage?>(null)
 
-    private val perSize = repository.perSize
-
-    private val pageState = MutableStateFlow<Page?>(null)
-
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshingState = _isRefreshing.asStateFlow()
+    private val _isRefreshingState = MutableStateFlow(false)
+    val isRefreshingState = _isRefreshingState.asStateFlow()
 
     private val _dataState = MutableStateFlow<AttractionData?>(null)
     val dataState = _dataState.asStateFlow()
 
-    private val _attractionState = MutableStateFlow<Attraction?>(null)
-    val attractionState = _attractionState.asStateFlow()
+    private val _workState = MutableStateFlow<WorkState>(WorkState.Pending)
+    val workState = _workState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            pageState.filterNotNull().flatMapLatest { page ->
-                repository.invoke(page.value)
-                    .flowOn(Dispatchers.IO)
-                    .mapLatest {
-                        Mediator(
-                            if (it.size < perSize) {
-                                AttractionData.State.NoNewData
-                            } else AttractionData.State.SuccessAndNew,
-                            it,
-                            page.value
-                        )
-                    }
-                    .catch {
-                        Mediator(
-                            AttractionData.State.Fail, emptyList(), page.value
-                        )
-                    }
-            }
-                .scan(null) { acc: Mediator?, new: Mediator ->
-                    if (acc == null || new.page == 1) {
-                        new
+            combine(
+                requestPageState.filterNotNull(),
+                userPreferencesRepository.getLanguage().onEach {
+                    refresh()
+                },
+                ::Pair
+            )
+                .scan(null) { acc: Pair<RequestPage, Language>?, new: Pair<RequestPage, Language> ->
+                    val accLanguage = acc?.second
+                    val (newPage, newLanguage) = new
+                    if (newLanguage != accLanguage && newPage.value != FIRST_REQUEST_PAGE) {
+                        null
                     } else {
-                        new.copy(list = acc.list + new.list)
+                        new
                     }
                 }
-                .filterNotNull()
+                .mapNotNull { pair ->
+                    pair?.let { (page, language) ->
+                        repository.invoke(page.value, language).fold(
+                            onSuccess = {
+                                Mediator(
+                                    list = it,
+                                    state = if (it.isEmpty()) {
+                                        AttractionData.State.NoMoreData
+                                    } else AttractionData.State.MightBeMoreData,
+                                    page = page.value
+                                )
+                            },
+                            onFailure = {
+                                Mediator(
+                                    list = emptyList(),
+                                    state = AttractionData.State.Error(it),
+                                    page = page.value
+                                )
+                            }
+                        )
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .scan(null) { acc: Mediator?, new: Mediator ->
+                    when {
+                        new.state is AttractionData.State.Error -> {
+                            new.copy(list = acc?.list.orEmpty())
+                        }
+                        // first refresh || change language
+                        acc == null || new.page == FIRST_REQUEST_PAGE -> new
+                        else -> new.copy(list = acc.list + new.list)
+                    }
+                }
+                .mapNotNull { mediator ->
+                    mediator?.let {
+                        val loadingItem =
+                            if (mediator.state == AttractionData.State.MightBeMoreData) {
+                                Item.Loading
+                            } else null
+                        AttractionData(
+                            items = mediator.list.map { Item.Data(it) } + listOfNotNull(loadingItem),
+                            state = mediator.state,
+                        )
+                    }
+                }
                 .flowOn(Dispatchers.Default)
-                .collectLatest { mediator ->
-                    _isRefreshing.value = false
-                    _dataState.value = AttractionData(
-                        mediator.state,
-                        when (mediator.state) {
-                            AttractionData.State.NoNewData -> {
-                                mediator.list.map { Item.Data(it) }
-                            }
-                            AttractionData.State.Fail -> {
-                                mediator.list.map { Item.Data(it) }
-                            }
-                            AttractionData.State.SuccessAndNew -> {
-                                mediator.list.map { Item.Data(it) } + Item.Loading
-                            }
-                        },
-                        mediator.page
-                    )
+                .collectLatest { data ->
+                    setRefreshingState(false)
+                    val workState = when (data.state) {
+                        AttractionData.State.NoMoreData -> WorkState.NoMoreData
+                        is AttractionData.State.Error -> WorkState.Error(
+                            data.state.t
+                        )
+                        else -> WorkState.Pending
+                    }
+                    setWorkState(workState)
+                    _dataState.value = data
                 }
         }
         refresh()
     }
 
     fun refresh() {
-        _isRefreshing.value = true
-        pageState.value = Page(1)
+        setRefreshingState(true)
+        setWorkState(WorkState.Pending)
+        requestPageState.value = RequestPage(FIRST_REQUEST_PAGE)
     }
 
     fun loadMore() {
-        pageState.update { old ->
-            old?.let {
-                Page(it.value + 1)
+        setWorkState(WorkState.Pending)
+        requestPageState.update { old ->
+            old?.value?.plus(1)?.let {
+                RequestPage(it)
             }
         }
     }
 
-    fun setAttractionGuide(attraction: Attraction?) {
-        _attractionState.value = attraction
+    /**
+     * show hint
+     */
+    fun setWorkState(workState: WorkState) {
+        _workState.value = WorkState.Pending
+        _workState.value = workState
+    }
+
+    private fun setRefreshingState(isRefreshing: Boolean) {
+        _isRefreshingState.value = isRefreshing
     }
 }

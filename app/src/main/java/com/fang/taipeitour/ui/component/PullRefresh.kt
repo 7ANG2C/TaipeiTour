@@ -26,6 +26,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.fang.taipeitour.dsl.ComposableInvoke
+import com.fang.taipeitour.dsl.Invoke
 import java.lang.Float.min
 import kotlin.math.roundToInt
 
@@ -34,8 +36,8 @@ import kotlin.math.roundToInt
 fun PullRefresh(
     modifier: Modifier = Modifier,
     isRefreshing: Boolean,
-    onRefresh: () -> Unit,
-    content: @Composable () -> Unit,
+    onRefresh: Invoke,
+    content: ComposableInvoke
 ) {
     val pullState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh)
     var offset by remember { mutableStateOf(0) }

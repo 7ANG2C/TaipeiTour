@@ -2,27 +2,24 @@ package com.fang.taipeitour.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fang.taipeitour.data.local.UserPreferences
 import com.fang.taipeitour.data.local.UserPreferencesRepository
-import com.fang.taipeitour.model.DarkMode
-import com.fang.taipeitour.util.sharingStartedWhileSubscribed
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.fang.taipeitour.extension.stateIn
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.flowOn
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModel(
-    dataStore: UserPreferencesRepository
+    repository: UserPreferencesRepository
 ) : ViewModel() {
 
-    val darkModeState = dataStore.getDarkMode()
-        .mapLatest {
-            it ?: DarkMode.default
+    val preferencesState = repository.invoke()
+        .flowOn(Dispatchers.Default)
+        .catch {
+            emit(UserPreferences.default)
         }
-        .catch { emit(DarkMode.default) }
         .stateIn(
             scope = viewModelScope,
-            started = sharingStartedWhileSubscribed(),
-            initialValue = DarkMode.default
+            initialValue = null
         )
 }
