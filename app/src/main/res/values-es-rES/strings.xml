@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Tour de Taipéi</string>
+    <string name="home">HOGAR</string>
+    <string name="empty_attraction">Aún no atracciones</string>
+    <string name="no_more_attraction">Todas las atracciones</string>
+    <string name="get_attractions_error">Error de ubicación</string>
+    <string name="retry">Rever</string>
+    <string name="setting">CONFIGURACIÓN</string>
+    <string name="base_info">Información básica</string>
+    <string name="attraction_intro">Atracciones</string>
+    <string name="web_url">．Web&#160;&#160;&#160;</string>
+    <string name="address">．Add&#160;&#160;&#160;&#160;</string>
+    <string name="tel">．Tel&#160;&#160;&#160;&#160;&#160;</string>
+    <string name="fax">．Fax&#160;&#160;&#160;&#160;</string>
+    <string name="email">．Eml&#160;&#160;&#160;&#160;</string>
+    <string name="attraction_tag">Etiquetas</string>
+    <string name="location_title">Ubicación</string>
+    <string name="location_msg">Este sitio web desea verificar la información de su ubicación actual. ¿Quiere continuar?</string>
+    <string name="confirm">Confirmar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="location_plz">Habilite la ubicación.</string>
+    <string name="user_name">Valerio</string>
+    <string name="app_ver">App Versión</string>
+    <string name="leave_dialog_title">BUEN VIAJE</string>
+    <string name="leave_dialog_text">Hasta la próxima :)</string>
+    <string name="leave_dialog_confirm">Dejar</string>
+    <string name="language">Español</string>
+    <string name="general_setting">General</string>
+    <string name="preview_function">Avance</string>
+</resources>

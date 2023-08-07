@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">타이페이 투어</string>
+    <string name="home">끌어당</string>
+    <string name="empty_attraction">아직 어트랙션 없음</string>
+    <string name="no_more_attraction">모든 어션 획득</string>
+    <string name="get_attractions_error">위치 오류 오기</string>
+    <string name="retry">다시 시도하십시오</string>
+    <string name="setting">환경</string>
+    <string name="base_info">기본 정보</string>
+    <string name="attraction_intro">어트랙션</string>
+    <string name="web_url">．이트&#160;&#160;&#160;&#160;</string>
+    <string name="address">．주소&#160;&#160;&#160;&#160;</string>
+    <string name="tel">．전화&#160;&#160;&#160;&#160;</string>
+    <string name="fax">．팩스&#160;&#160;&#160;&#160;</string>
+    <string name="email">．사서&#160;&#160;&#160;&#160;</string>
+    <string name="attraction_tag">해시태그</string>
+    <string name="location_title">위치</string>
+    <string name="location_msg">이 웹사이트는 귀하의 현재 위치 정보를 확인하려고 합니다. 계속하시겠습니까?</string>
+    <string name="confirm">확인</string>
+    <string name="cancel">취소</string>
+    <string name="location_plz">위치를 활성화해 주세요.</string>
+    <string name="user_name">박시진</string>
+    <string name="app_ver">앱 버전</string>
+    <string name="leave_dialog_title">좋은 여행</string>
+    <string name="leave_dialog_text">다음에 보자 ㅋㅋㅋㅋㅋ</string>
+    <string name="leave_dialog_confirm">뒤쪽에</string>
+    <string name="language">한국인</string>
+    <string name="general_setting">일반적인</string>
+    <string name="preview_function">실험 설정</string>
+</resources>
