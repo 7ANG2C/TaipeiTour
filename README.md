@@ -13,12 +13,11 @@
 - 專案架構 MVVM 為主，部分參考：[Architecture Samples](https://github.com/android/architecture-samples "Android Architecture Samples")
 - 使用 Flow 以及 coroutines 處理 asynchronous operations
 - 使用 koin 作為 dependency injection
-- 將 Open-API 的使用模組化[TaipeiTourApi](https://github.com/7ANG2C/TaipeiTour/tree/feature/prepare_readme/TaipeiTourApi "TaipeiTourApi")
+- 將 Open-API 的使用模組化 [TaipeiTourApi](https://github.com/7ANG2C/TaipeiTour/tree/feature/prepare_readme/TaipeiTourApi "TaipeiTourApi")
 - [PreviewFunctionFlavor] 在 debug/release 有不同實作，用以模擬區分 flavor/dimension 的開發方式
 - 使用 [version catalogs](https://developer.android.com/build/migrate-to-catalogs "version catalogs") 搭配 [libs.versions.toml] 進行多模組版本管理
 
 ## 主要畫面
-- [Demo](https://www.youtube.com/watch?v=i3aD9Is7a2U "Youtube") (裝置規格 : SAMSUNG Galaxy Note 10+ Android 12)
 
 | 圖片                                                | 敘述                                                                                                                                                  |
 |---------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
