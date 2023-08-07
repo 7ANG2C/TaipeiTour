@@ -7,7 +7,7 @@
 - [主要畫面](#主要畫面)
 - [程式碼檢查](#程式碼檢查)
 - [開發環境](#開發環境)
-- [References](#References)
+- [REFERENCES](#REFERENCES)
 - [備註](#備註)
 
 ## 專案介紹
@@ -39,7 +39,7 @@
 - VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o.
 - macOS 12.6 | Memory: 4096M | Cores: 8
 
-## References
+## REFERENCES
 - [Travel-Taipei Open API](https://www.travel.taipei/open-api/swagger/ui/index#/ "travel-taipei-open-api")
 - [Material3 Theme Builder](https://m3.material.io/theme-builder#/custom "md3-theme-builder")
 
@@ -49,7 +49,7 @@
   - 手機規格 : SAMSUNG Galaxy Note 10+ (Android 12)
 - 估時
   | 0727 | 0728 | 0729 | 0730 | 0731 | 0801 | 0802 | - |
-  | 規劃  規劃 | 二 | 二 | 二 | 二 | 三 | 四 | 共 48 hr |
+  | 規劃 | 二 | 二 | 二 | 二 | 三 | 四 | 共 48 hr |
   | 0803 | 0804 | 0805 | 0806 | 0807 | - | - | - |
   | 一 | 二 | 二 | 二 | 二 | - | - | 共 48 hr |
 
