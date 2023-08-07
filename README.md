@@ -21,14 +21,14 @@
 
 ## 主要畫面
 
-| 圖片                                                | 敘述                                                                                                                 |
-|---------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| <img src="img/main_screen.jpg" height="500">      | 主頁 MainScreen<br>- 卡片式列表 / 下拉刷新 / 上滑取更多<br/>- 具備 錯誤&無資料 的畫面反饋處理<br/>- 右下按鈕：向上滾 - 顯示當前進度<br/>- 右下按鈕：向下滾 - 一鍵滑至頂端    |
-| <img src="img/attraction_screen.jpg" height="500"> | 單景點 AttractionFragment<br>- Fragment 內使用 ComposeView<br/>- Collapse Top Bar 動畫效果<br/>- 商家資訊如電話等，能夠點擊轉導至相關應用程式      |
-| <img src="img/web_into_screen.jpg" height="500">  | 網頁景點 WebIntroductionScreen<br>- Uri 轉導處理<br/>- 可供下載檔案 (DownloadManager)<br/>- 位置權限請求處理                             |
-| <img src="img/setting_screen.jpg" height="500">   | 設定 SettingScreen <br>- 更換語系時有 slide-fade 效果<br/>- 提供 DarkMode / ColorScheme<br/>- Preview Function 在 debug 時提供更多設置 |
-| <img src="img/language_dialog.jpg" height="500">  | 多語系彈窗<br>                                                                                                          |
-| <img src="img/drawer.jpg" height="500">           | 側邊欄<br>- 切換功能時，主畫面有 scale 效果                                                                                       |
+| 圖片                                                | 敘述                                                                                                            |
+|---------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
+| <img src="img/main_screen.jpg" height="500">      | 主頁 MainScreen<br>- 卡片式列表 / 下拉刷新 / 上滑取更多<br/>- 具備 錯誤&無資料 的畫面反饋處理<br/>- 右下按鈕：向上滾 - 顯示當前進度<br/>- 右下按鈕：向下滾 - 一鍵滑至頂端 |
+| <img src="img/attraction_screen.jpg" height="500"> | 單景點 AttractionFragment<br>- Fragment 內使用 ComposeView<br/>- Collapse Top Bar 動畫效果<br/>- 景點資訊如電話等，能夠點擊轉導至相關應用程式 |
+| <img src="img/web_into_screen.jpg" height="500">  | 網頁景點 WebIntroductionScreen<br>- Uri 轉導處理<br/>- 可供下載檔案 (DownloadManager)<br/>- 位置權限請求處理                        |
+| <img src="img/setting_screen.jpg" height="500">   | 設定 SettingScreen <br>- 更換語系時有 slide-fade 效果<br/>- 提供 DarkMode Switch<br/>- Preview Function 在 debug 時提供更多設置   |
+| <img src="img/language_dialog.jpg" height="500">  | 多語系彈窗<br>                                                                                                     |
+| <img src="img/drawer.jpg" height="500">           | 側邊欄<br>- 切換功能時，主畫面有 scale 效果                                                                                  |
 - 使用 DataStore 取代 SharedPreferences 進行資料永久儲存 
 - 使用 [coil](https://developer.android.com/jetpack/compose/graphics/images/loading#coil "coil") 進行圖片讀取
 
@@ -52,12 +52,12 @@
 - [設計稿](https://www.figma.com/file/XZ3fJaUESt5pWt8JuAoxey/TaipeiTour?type=design&node-id=0-1&mode=design "Figma")
 - [Demo](https://www.youtube.com/watch?v=i3aD9Is7a2U "Youtube")
   - 手機規格 : SAMSUNG Galaxy Note 10+ (Android 12)
-- 估時
+- 時程
   | 0727 | 0728 | 0729 | 0730 | 0731 | 0801 | 0802 |
   | - | - | - | - | - | - | - |
-  | 確認規格<br>規劃實作方式 | 專案建置<br>服務串接<br>ImageSlider 實作 | 主頁實作<br>DataStore 建置<br>Flavor 建置 | 二 | 二 | 三 | 四 |
+  | 確認規格<br>規劃實作方式 | 專案建置<br>服務串接<br>ImageSlider 實作 | 主頁實作<br>DataStore 建置<br>Flavor 建置 | 研究動畫<br>依賴版本更新 | Drawer 實作<br>單景點頁面實作<br>部分頁面動畫實作 | 單景點頁面實作<br>UserPreferences 建置 | 完善主頁資料流 |
   | 0803 | 0804 | 0805 | 0806 | 0807 | - | - |
-  | 一 | 二 | 測試研究與撰寫 | 專案審視整理<br>Splash 畫面 | 文件撰寫與整理<br>影片錄製 | - | - |
+  | 設定頁實作<br>國旗刻劃 | WebView實作<br>研究地圖渲染 | 測試研究與撰寫 | 專案審視整理<br>Splash 畫面 | 文件撰寫與整理<br>影片錄製 | - | - |
 - 目前 `GET/{lang}/Attractions/All` 在語系為印尼時，結果為 fail (最後測試時間為 2023-08-07)
   ![](img/request_fail_lang_id.png)
 
