@@ -48,10 +48,11 @@
 - [Demo](https://www.youtube.com/watch?v=i3aD9Is7a2U "Youtube")
   - 手機規格 : SAMSUNG Galaxy Note 10+ (Android 12)
 - 估時
-  | 0727 | 0728 | 0729 | 0730 | 0731 | 0801 | 0802 | - |
-  | 規劃 | 二 | 二 | 二 | 二 | 三 | 四 | 共 48 hr |
-  | 0803 | 0804 | 0805 | 0806 | 0807 | - | - | - |
-  | 一 | 二 | 二 | 二 | 二 | - | - | 共 48 hr |
+  | 0727 | 0728 | 0729 | 0730 | 0731 | 0801 | 0802 | / |
+  | - | - | - | - | - | - | - | - |
+  | 規劃  規劃 | 二 | 二 | 二 | 二 | 三 | 四 | 共 48 hr |
+  | 0803 | 0804 | 0805 | 0806 | 0807 | / | / | / |
+  | 一 | 二 | 二 | 二 | 二 | / | / | 共 48 hr |
 
 [PreviewFunctionFlavor]: ./app/src/main/java/com/fang/taipeitour/flavor/PreviewFunctionFlavor.kt
 [libs.versions.toml]: ./gradle/libs.versions.toml
