@@ -1,6 +1,4 @@
-# TaipeiTour
-- Hello Taipei, enjoy Taipei!
-  ![](img/cover.png)
+![](img/cover.png)
 
 # Overview
 - [專案介紹](#專案介紹)
@@ -21,14 +19,14 @@
 
 ## 主要畫面
 
-| 圖片                                                | 敘述                                                                                                            |
-|---------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
-| <img src="img/main_screen.jpg" height="500">      | 主頁 MainScreen<br>- 卡片式列表 / 下拉刷新 / 上滑取更多<br/>- 具備 錯誤&無資料 的畫面反饋處理<br/>- 右下按鈕：向上滾 - 顯示當前進度<br/>- 右下按鈕：向下滾 - 一鍵滑至頂端 |
-| <img src="img/attraction_screen.jpg" height="500"> | 單景點 AttractionFragment<br>- Fragment 內使用 ComposeView<br/>- Collapse Top Bar 動畫效果<br/>- 景點資訊如電話等，能夠點擊轉導至相關應用程式 |
-| <img src="img/web_into_screen.jpg" height="500">  | 網頁景點 WebIntroductionScreen<br>- Uri 轉導處理<br/>- 可供下載檔案 (DownloadManager)<br/>- 位置權限請求處理                        |
-| <img src="img/setting_screen.jpg" height="500">   | 設定 SettingScreen <br>- 更換語系時有 slide-fade 效果<br/>- 提供 DarkMode Switch<br/>- Preview Function 在 debug 時提供更多設置   |
-| <img src="img/language_dialog.jpg" height="500">  | 多語系彈窗<br>                                                                                                     |
-| <img src="img/drawer.jpg" height="500">           | 側邊欄<br>- 切換功能時，主畫面有 scale 效果                                                                                  |
+| 圖片                                                | 敘述                                                                                                                                                  |
+|---------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| <img src="img/main_screen.jpg" height="500">      | 主頁 MainScreen<br>- 卡片式列表 / 下拉刷新 / 上滑取更多<br/>- 具備 錯誤&無資料 的畫面反饋處理<br/>- 如果沒有圖片資源，會自動以 place holder 填補<br/>- 右下按鈕：向上滾 - 顯示當前進度<br/>- 右下按鈕：向下滾 - 一鍵滑至頂端 |
+| <img src="img/attraction_screen.jpg" height="500"> | 單景點 AttractionFragment<br>- Fragment 內使用 ComposeView<br/>- Collapse Top Bar 動畫效果<br/>- 景點資訊如電話等，能夠點擊轉導至相關應用程式                                       |
+| <img src="img/web_into_screen.jpg" height="500">  | 網頁景點 WebIntroductionScreen<br>- Uri 轉導處理<br/>- 可供下載檔案 (DownloadManager)<br/>- 位置權限請求處理                                                              |
+| <img src="img/setting_screen.jpg" height="500">   | 設定 SettingScreen <br>- 更換語系時有 slide-fade 效果<br/>- 提供 DarkMode Switch<br/>- Preview Function 在 debug 時提供更多設置                                         |
+| <img src="img/language_dialog.jpg" height="500">  | 多語系彈窗<br>                                                                                                                                           |
+| <img src="img/drawer.jpg" height="500">           | 側邊欄<br>- 切換功能時，主畫面有 scale 效果                                                                                                                        |
 - 使用 DataStore 取代 SharedPreferences 進行資料永久儲存 
 - 使用 [coil](https://developer.android.com/jetpack/compose/graphics/images/loading#coil "coil") 進行圖片讀取
 
