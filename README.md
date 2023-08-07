@@ -20,24 +20,16 @@
 - 使用 [version catalogs](https://developer.android.com/build/migrate-to-catalogs "version catalogs") 搭配 [libs.versions.toml] 進行多模組版本管理
 
 ## 主要畫面
-<style>
-    img {
-        max-width: 100%;
-        height: auto;
-    }
-    blockquote {
-        margin-left: 20px;
-    }
-</style>
 
-| 圖片                                              | 敘述                               |
-|-------------------------------------------------|----------------------------------|
-| <img src="img/main_screen.jpg" height="400"> | 主頁<br>- 進行錯誤處理<br/>- 進行畫面反饋      |
-| <img src="img/attraction_screen.jpg" height="400"> | 單景點<br>- 畫面內包裹 fragment          |
-| <img src="img/setting_screen.jpg" height="400"> | 網頁景點(WebView)<br>- 進行intent 轉導處理 |
-| <img src="img/web_into_screen.jpg" height="400"> | 設定<br>- 更換語系時有 slide-fade 效果     |
-| <img src="img/language_dialog.jpg" height="400"> | 多語系彈窗<br>                        |
-| <img src="img/drawer.jpg" height="400"> | 側邊欄<br>                          |
+
+| 圖片                                                | 敘述                               |
+|---------------------------------------------------|----------------------------------|
+| <img src="img/main_screen.jpg" height="500">      | 主頁<br>- 進行錯誤處理<br/>- 進行畫面反饋      |
+| <img src="img/attraction_screen.jpg" height="500"> | 單景點<br>- 畫面內包裹 fragment          |
+| <img src="img/web_into_screen.jpg" height="500">  | 網頁景點(WebView)<br>- 進行intent 轉導處理 |
+| <img src="img/setting_screen.jpg" height="500">   | 設定<br>- 更換語系時有 slide-fade 效果     |
+| <img src="img/language_dialog.jpg" height="500">  | 多語系彈窗<br>                        |
+| <img src="img/drawer.jpg" height="500">           | 側邊欄<br>                          |
 
 ## 程式碼檢查
 - 使用 [spotless](https://github.com/diffplug/spotless "spotless") 檢查 code style
@@ -66,6 +58,7 @@
   | 0803 | 0804 | 0805 | 0806 | 0807 | / | / | / |
   | 一 | 二 | 二 | 二 | 二 | / | / | 共 48 hr |
 - 備註 目前多語系的部分，id是錯的
+  ![](img/request_fail_lang_id.png)
 
 [PreviewFunctionFlavor]: ./app/src/main/java/com/fang/taipeitour/flavor/PreviewFunctionFlavor.kt
 [libs.versions.toml]: ./gradle/libs.versions.toml
