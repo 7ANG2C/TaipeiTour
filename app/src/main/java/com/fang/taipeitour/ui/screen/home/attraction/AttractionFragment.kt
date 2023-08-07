@@ -238,8 +238,8 @@ class AttractionFragment : Fragment() {
             // title
             Title(scroll = scrollState, text = attraction.name, showTopBar = showTopBar)
 
-            // Url Introduction Screen
-            Crossfade(targetState = showUrlIntroduction) { show ->
+            // Web Introduction Screen
+            Crossfade(targetState = showUrlIntroduction, label = "web") { show ->
                 if (show) {
                     UrlIntroductionScreen(attractionUrl = attraction.originalUrl) {
                         showUrlIntroduction = false
@@ -596,7 +596,7 @@ class AttractionFragment : Fragment() {
             remember { mutableStateOf(color) }
         } else {
             animateColorAsState(
-                if (showTopBar) color else MaterialTheme.colorScheme.onPrimary
+                if (showTopBar) color else MaterialTheme.colorScheme.onPrimary, label = "show"
             )
         }
         AutoSizedText(

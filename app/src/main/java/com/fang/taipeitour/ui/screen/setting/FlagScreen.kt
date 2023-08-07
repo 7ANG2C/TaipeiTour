@@ -25,31 +25,31 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.fang.taipeitour.R
 
-private val ColorFlagRed = Color(0xFFE94E4E)
-private val ColorFlagYellow = Color(0xFFF8CC44)
-private val ColorFlagBlue = Color(0xFF3C4EB1)
-private val ColorFlagWhite = Color(0xFFF1F1F1)
+private val colorFlagRed = Color(0xFFE94E4E)
+private val colorFlagYellow = Color(0xFFF8CC44)
+private val colorFlagBlue = Color(0xFF3C4EB1)
+private val colorFlagWhite = Color(0xFFF1F1F1)
 
 @Composable
 fun FlagTw() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ColorFlagRed)
+            .background(colorFlagRed)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxHeight(0.7f)
                 .fillMaxWidth(0.25f)
                 .clip(RoundedCornerShape(bottomEnd = 4.dp))
-                .background(ColorFlagBlue)
+                .background(colorFlagBlue)
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_flag_tw_sun),
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.Center),
-                tint = ColorFlagWhite
+                tint = colorFlagWhite
             )
         }
     }
@@ -60,7 +60,7 @@ fun FlagCn() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ColorFlagRed)
+            .background(colorFlagRed)
     ) {
         Row(
             modifier = Modifier
@@ -72,7 +72,7 @@ fun FlagCn() {
                 painter = painterResource(R.drawable.ic_star),
                 contentDescription = null,
                 modifier = Modifier.padding(horizontal = 16.dp),
-                tint = ColorFlagYellow
+                tint = colorFlagYellow
             )
             Column {
                 repeat(4) {
@@ -85,7 +85,7 @@ fun FlagCn() {
                             .padding(start = padding.dp)
                             .weight(1f)
                             .scale(0.5f),
-                        tint = ColorFlagYellow
+                        tint = colorFlagYellow
                     )
                 }
             }
@@ -101,7 +101,7 @@ fun FlagEn() {
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             (0..4).forEach {
-                val color = if (it % 2 == 0) ColorFlagRed else ColorFlagWhite
+                val color = if (it % 2 == 0) colorFlagRed else colorFlagWhite
                 Box(
                     Modifier
                         .fillMaxWidth()
@@ -115,7 +115,7 @@ fun FlagEn() {
                 .fillMaxHeight(0.6f)
                 .fillMaxWidth(0.3f)
                 .clip(RoundedCornerShape(bottomEnd = 4.dp))
-                .background(ColorFlagBlue),
+                .background(colorFlagBlue),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             repeat(4) {
@@ -132,7 +132,7 @@ fun FlagEn() {
                             painter = painterResource(R.drawable.ic_star),
                             contentDescription = null,
                             modifier = Modifier.scale(0.6f),
-                            tint = ColorFlagWhite
+                            tint = colorFlagWhite
                         )
                     }
                 }
@@ -146,7 +146,7 @@ fun FlagJp() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ColorFlagWhite)
+            .background(colorFlagWhite)
             .padding(16.dp)
     ) {
         Box(
@@ -154,7 +154,7 @@ fun FlagJp() {
                 .fillMaxHeight()
                 .aspectRatio(1f)
                 .clip(CircleShape)
-                .background(ColorFlagRed)
+                .background(colorFlagRed)
                 .align(Alignment.Center)
         )
     }
@@ -165,7 +165,7 @@ fun FlagKo() {
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .background(ColorFlagWhite),
+            .background(colorFlagWhite),
         verticalAlignment = Alignment.CenterVertically
     ) {
         val color = Color(0xFF0F111D)
@@ -202,11 +202,11 @@ fun FlagEs() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ColorFlagRed)
+            .background(colorFlagRed)
     ) {
         Box(
             modifier = Modifier
-                .background(ColorFlagYellow)
+                .background(colorFlagYellow)
                 .fillMaxWidth()
                 .fillMaxHeight(0.7f)
                 .align(Alignment.Center)
@@ -217,7 +217,7 @@ fun FlagEs() {
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .padding(start = 20.dp),
-                tint = ColorFlagRed
+                tint = colorFlagRed
             )
         }
     }
@@ -227,8 +227,8 @@ fun FlagEs() {
 fun FlagId() {
     Column(modifier = Modifier.fillMaxSize()) {
         listOf(
-            ColorFlagRed to 1f,
-            ColorFlagWhite to 1f,
+            colorFlagRed to 1f,
+            colorFlagWhite to 1f,
         ).forEach { (color, weight) ->
             Box(
                 Modifier
@@ -244,11 +244,11 @@ fun FlagId() {
 fun FlagTh() {
     Column(modifier = Modifier.fillMaxSize()) {
         listOf(
-            ColorFlagRed to 0.7f,
-            ColorFlagWhite to 0.9f,
-            ColorFlagBlue to 1.2f,
-            ColorFlagWhite to 0.9f,
-            ColorFlagRed to 0.7f,
+            colorFlagRed to 0.7f,
+            colorFlagWhite to 0.9f,
+            colorFlagBlue to 1.2f,
+            colorFlagWhite to 0.9f,
+            colorFlagRed to 0.7f,
         ).forEach { (color, weight) ->
             Box(
                 Modifier
@@ -265,14 +265,14 @@ fun FlagVn() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ColorFlagRed)
+            .background(colorFlagRed)
 
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_star),
             contentDescription = null,
             modifier = Modifier.align(Alignment.Center),
-            tint = ColorFlagYellow
+            tint = colorFlagYellow
         )
     }
 }

@@ -82,7 +82,7 @@ fun SettingScreen(
 
     // Main Content
     Column(Modifier.fillMaxSize()) {
-        Crossfade(targetState = LocalLanguage) {
+        Crossfade(targetState = LocalLanguage, label = "main") {
             TopBar(
                 modifier = Modifier.fillMaxWidth(),
                 text = it.getLocaleString(R.string.setting),
@@ -247,7 +247,7 @@ fun SettingScreen(
 
 @Composable
 private fun SectionTitle(text: String) {
-    Crossfade(targetState = text) {
+    Crossfade(targetState = text, label = "section_title") {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = buildAnnotatedString {
@@ -305,7 +305,8 @@ private fun <S> SettingCard(
                     fadeOut(fadeAnimationSpec)
                 }
                 (enterTransition with exitTransition)
-            }
+            },
+            label = "content"
         ) {
             content(it)
         }

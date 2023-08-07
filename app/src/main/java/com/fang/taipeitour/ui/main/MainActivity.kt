@@ -100,13 +100,15 @@ class MainActivity : AppCompatActivity() {
                             // main content
                             Crossfade(
                                 targetState = menuState,
-                                animationSpec = tween(400)
+                                animationSpec = tween(400),
+                                label = "main_content"
                             ) { menu ->
                                 val scale by animateFloatAsState(
                                     targetValue = if (drawerState.targetValue == DrawerValue.Open) {
                                         0.9f
                                     } else 1f,
-                                    animationSpec = tween(durationMillis = 300)
+                                    animationSpec = tween(durationMillis = 300),
+                                    label = "scale"
                                 )
                                 Box(
                                     Modifier

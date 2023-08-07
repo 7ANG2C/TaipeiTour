@@ -42,7 +42,7 @@ fun TaipeiTourTheme(
         }
     }
 
-    Crossfade(themedColorScheme) { color ->
+    Crossfade(themedColorScheme, label = "theme") { color ->
         MaterialTheme(
             colorScheme = color,
             typography = Typography,

@@ -1,5 +1,6 @@
 package com.fang.taipeitour.test.flavor
 
+import com.fang.taipeitour.BuildConfig
 import com.fang.taipeitour.flavor.PreviewFunction
 import com.fang.taipeitour.flavor.PreviewFunctionFlavor
 import com.fang.taipeitour.flavor.PreviewFunctionFlavorImpl
@@ -20,7 +21,10 @@ class PreviewFunctionFlavorImplTest {
 
     @Test
     fun testPreviewFunctionFlavorImpl() {
-        val mockPreviewFunctions = PreviewFunction.values().toList()
+        val mockPreviewFunctions = if (BuildConfig.DEBUG) {
+            PreviewFunction.values().toList()
+        } else emptyList()
+
         val mockFlavor = mockk<PreviewFunctionFlavor>()
         every { mockFlavor.invoke() } returns mockPreviewFunctions
 

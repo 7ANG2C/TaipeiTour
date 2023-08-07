@@ -155,7 +155,7 @@ fun UrlIntroductionScreen(
                                 val urlString = uri?.toString()
                                 val scheme = uri.scheme
                                 return when {
-                                    urlString == null || urlString.isBlank() -> {
+                                    urlString.isNullOrBlank() -> {
                                         true
                                     }
                                     urlString.startsWith("https://www.google.com/maps") -> {

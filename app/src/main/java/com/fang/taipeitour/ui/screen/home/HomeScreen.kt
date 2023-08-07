@@ -189,7 +189,8 @@ fun HomeScreen(
                                     -height
                                 } + fadeOut(fadeAnimationSpec)
                             (enterTransition with exitTransition).using(SizeTransform(clip = true))
-                        }
+                        },
+                        label = "fab"
                     ) { isScrollUp ->
                         if (isScrollUp) {
                             Icon(
@@ -300,13 +301,14 @@ fun HomeScreen(
 
     val scale by animateFloatAsState(
         targetValue = if (redirectAttraction != null) 1f else .9f,
-        tween(400)
+        tween(400), label = "scale"
     )
     Crossfade(
         targetState = redirectAttraction,
-        animationSpec = tween(400)
-    ) { _attraction ->
-        _attraction?.let { argument ->
+        animationSpec = tween(400),
+        label = "attraction"
+    ) { attractionArg ->
+        attractionArg?.let { argument ->
             FragmentContainer(
                 modifier = Modifier
                     .fillMaxSize()
@@ -379,7 +381,7 @@ private fun AttractionItem(
 ) {
     var isExpand by rememberSaveable { mutableStateOf(false) }
     val rotationAngle by animateFloatAsState(
-        targetValue = if (isExpand) 180f else 0f
+        targetValue = if (isExpand) 180f else 0f, label = "rotate"
     )
     ElevatedCard(
         modifier = Modifier

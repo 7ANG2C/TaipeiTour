@@ -43,7 +43,8 @@ fun PullRefresh(
     var offset by remember { mutableStateOf(0) }
     val animatedOffset by animateIntAsState(
         targetValue = offset,
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+        label = "pull"
     )
 
     val height = 60.dp
@@ -77,7 +78,8 @@ fun PullRefresh(
                 targetValue = if (willRefresh) .95f else 1f,
                 animationSpec = spring(
                     dampingRatio = Spring.DampingRatioMediumBouncy,
-                )
+                ),
+                label = "scale"
             )
 
             Box(
