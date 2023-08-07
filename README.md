@@ -8,22 +8,24 @@
   <figcaption>這是圖片的備註文字。</figcaption>
 </figure>
 
-<table>
-  <tr>
-    <td>
-      <img src="path/to/image1.jpg" alt="Image 1" width="200" height="150">
-    </td>
-    <td>
-      <img src="path/to/image2.jpg" alt="Image 2" width="200" height="150">
-    </td>
-    <!-- Add more image cells as needed -->
-  </tr>
-  <tr>
-    <td>這是圖片1的敘述文字。</td>
-    <td>這是圖片2的敘述文字。</td>
-    <!-- Add more text cells as needed -->
-  </tr>
-</table>
+| 圖片                             | 敘述                |
+|----------------------------------|--------------------|
+| ![圖片 1](img/setting_screen.jpg)    | 這是圖片1的敘述。   |
+| ![圖片 2](img/setting_screen.jpg)    | 這是圖片2的敘述。   |
+| ![圖片 3](img/setting_screen.jpg)    | 這是圖片3的敘述。   |
+
+<style>
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+</style>
+
+| 圖片                                       | 敘述                |
+|--------------------------------------------|--------------------|
+| <img src="img/setting_screen.jpg" height="150"> | 這是圖片1的敘述。   |
+| <img src="img/setting_screen.jpg" height="200"> | 這是圖片2的敘述。   |
+| <img src="img/setting_screen.jpg" height="180"> | 這是圖片3的敘述。   |
 
 # Overview
 - [專案介紹](#專案介紹)
