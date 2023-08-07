@@ -24,6 +24,7 @@ koin-android = "3.4.2"
 koin-compose = "3.4.5"
 coil = "2.4.0"
 spotless = "6.7.2"
+mockk = "1.12.4"
 # plugin ver
 protobuf-gradle = "0.9.1"
 # Build
@@ -63,6 +64,8 @@ koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = 
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 spotless-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutine" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }

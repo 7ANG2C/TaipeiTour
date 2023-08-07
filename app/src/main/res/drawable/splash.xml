@@ -24,18 +24,18 @@
                         <item
                             android:color="#09313D"
                             android:offset="0.85" />
-<!--                        <item-->
-<!--                            android:color="#076A5F"-->
-<!--                            android:offset="1" />-->
+                        <!--                        <item-->
+                        <!--                            android:color="#076A5F"-->
+                        <!--                            android:offset="1" />-->
                     </gradient>
                 </aapt:attr>
             </path>
         </vector>
     </item>
 
-<!--    <item android:bottom="84dp">-->
-<!--        <bitmap-->
-<!--            android:gravity="center"-->
-<!--            android:src="@drawable/logo" />-->
-<!--    </item>-->
+    <!--    <item android:bottom="84dp">-->
+    <!--        <bitmap-->
+    <!--            android:gravity="center"-->
+    <!--            android:src="@drawable/logo" />-->
+    <!--    </item>-->
 </layer-list>

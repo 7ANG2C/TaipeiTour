@@ -21,11 +21,6 @@ class TaipeiTourApiImpl(private val retrofitProvider: RetrofitProvider) : Taipei
     }
 
     /**
-     * 批次數量
-     */
-    override val perSize = 30
-
-    /**
      * 取得熱門景點
      * @param language 語系代碼
      * @param page 頁碼 (每次回應30筆資料)

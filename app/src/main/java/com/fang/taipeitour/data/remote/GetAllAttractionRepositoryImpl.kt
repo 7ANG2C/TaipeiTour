@@ -13,6 +13,11 @@ class GetAllAttractionRepositoryImpl(
     private val api: TaipeiTourApi
 ) : GetAllAttractionRepository {
 
+    /**
+     * 取得熱門景點
+     * @param language 語系代碼
+     * @param page 頁碼 (每次回應30筆資料)
+     */
     override suspend fun invoke(page: Int, language: Language): Result<List<Attraction>> {
         val serviceLanguage = when (language) {
             Language.TAIWAN -> ServiceLanguage.TAIWAN

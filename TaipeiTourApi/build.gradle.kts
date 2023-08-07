@@ -36,6 +36,6 @@ dependencies {
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.gson)
 
-    testImplementation("io.mockk:mockk:1.12.4")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
+    testImplementation(libs.mockk)
+    testImplementation(libs.coroutines.test)
 }

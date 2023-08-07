@@ -1,4 +1,4 @@
-package com.fang.taipeitour
+package com.fang.taipeitour.test
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

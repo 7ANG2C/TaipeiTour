@@ -55,6 +55,7 @@ class HomeViewModel(
                 },
                 ::Pair
             )
+                // 過濾掉切換語言時，拿到舊的 page
                 .scan(null) { acc: Pair<RequestPage, Language>?, new: Pair<RequestPage, Language> ->
                     val accLanguage = acc?.second
                     val (newPage, newLanguage) = new
@@ -64,6 +65,7 @@ class HomeViewModel(
                         new
                     }
                 }
+                // 主要取資料
                 .mapNotNull { pair ->
                     pair?.let { (page, language) ->
                         repository.invoke(page.value, language).fold(
@@ -87,6 +89,7 @@ class HomeViewModel(
                     }
                 }
                 .flowOn(Dispatchers.IO)
+                // 上滑取更多之列表疊加
                 .scan(null) { acc: Mediator?, new: Mediator ->
                     when {
                         new.state is AttractionData.State.Error -> {
@@ -97,6 +100,7 @@ class HomeViewModel(
                         else -> new.copy(list = acc.list + new.list)
                     }
                 }
+                // 是否需增加上滑取更多的 loading item
                 .mapNotNull { mediator ->
                     mediator?.let {
                         val loadingItem =

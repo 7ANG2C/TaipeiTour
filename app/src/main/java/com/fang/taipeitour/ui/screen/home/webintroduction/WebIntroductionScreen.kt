@@ -1,4 +1,4 @@
-package com.fang.taipeitour.ui.screen.home.urlintroduction
+package com.fang.taipeitour.ui.screen.home.webintroduction
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -68,7 +69,7 @@ import org.koin.androidx.compose.koinViewModel
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun UrlIntroductionScreen(
-    viewModel: UrlIntroductionViewModel = koinViewModel(),
+    viewModel: WebIntroductionViewModel = koinViewModel(),
     attractionUrl: String,
     backHandler: Invoke
 ) {
@@ -207,7 +208,8 @@ fun UrlIntroductionScreen(
                                         checkPermission = true
                                     }
                                     !LocationUtil.isLocationEnabled(context) -> {
-                                        Toast.makeText(context, locationPlz, Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, locationPlz, Toast.LENGTH_SHORT)
+                                            .show()
                                     }
                                     else -> callback(origin, true, false)
                                 }
@@ -409,7 +411,11 @@ private fun RequestPermission(
                         onClick = {
                             showDialog = false
                             closeCheckPermission()
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = MaterialTheme.colorScheme.primary
+                        ),
                     ) {
                         Text(LocalLanguage.getLocaleString(R.string.cancel))
                     }

@@ -11,6 +11,4 @@ enum class ScreenMenu(@StringRes val titleRes: Int, val icon: Int) {
     companion object {
         val all by lazy { values().toList() }
     }
-
-    val isHome get() = this == HOME
 }
