@@ -53,12 +53,12 @@
 - [Demo](https://www.youtube.com/watch?v=i3aD9Is7a2U "Youtube")
   - 手機規格 : SAMSUNG Galaxy Note 10+ (Android 12)
 - 時程
-  | 0727 | 0728 | 0729 | 0730 | 0731 | 0801 | 0802 |
-  | - | - | - | - | - | - | - |
-  | 確認規格<br>規劃實作方式 | 專案建置<br>服務串接<br>ImageSlider 實作 | 主頁實作<br>DataStore 建置<br>Flavor 建置 | 研究動畫<br>依賴版本更新 | Drawer 實作<br>單景點頁面實作<br>部分頁面動畫實作 | 單景點頁面實作<br>UserPreferences 建置 | 完善主頁資料流 |
-  | 0803 | 0804 | 0805 | 0806 | 0807 | - | - |
-  | 設定頁實作<br>國旗刻劃 | WebView實作<br>研究地圖渲染 | 測試研究與撰寫 | 專案審視整理<br>Splash 畫面 | 文件撰寫與整理<br>影片錄製 | - | - |
-- 目前 `GET/{lang}/Attractions/All` 在語系為印尼時，結果為 fail (最後測試時間為 2023-08-07)
+  | 0727 | 0728 | 0729 | 0730 | 0731 | 0801 |
+  | - | - | - | - | - | - |
+  | 確認規格<br>規劃實作方式 | 專案建置<br>服務串接<br>ImageSlider 實作 | 主頁實作<br>DataStore 建置<br>Flavor 建置 | 研究動畫<br>依賴版本更新 | Drawer 實作<br>單景點頁面實作<br>部分頁面動畫實作 | 單景點頁面實作<br>UserPreferences 建置 |
+  | 0802 | 0803 | 0804 | 0805 | 0806 | 0807 |
+  | 完善主頁資料流 | 設定頁實作<br>國旗刻劃 | WebView實作<br>研究地圖渲染 | 測試研究與撰寫 | 專案審視整理<br>Splash、Icon...等 | 文件撰寫與整理<br>影片錄製 |
+- 目前 `GET/{lang}/Attractions/All` 在語系為印尼時 request fail (最後測試時間為 2023-08-07)
   ![](img/request_fail_lang_id.png)
 
 [PreviewFunctionFlavor]: ./app/src/main/java/com/fang/taipeitour/flavor/PreviewFunctionFlavor.kt
