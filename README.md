@@ -2,7 +2,11 @@
 - Hello Taipei, enjoy Taipei!
   ![](img/cover.png)
 - <img src="img/setting_screen.jpg" alt="Cover Image" height="300">
-<img src="img/setting_screen.jpg" alt="Cover Image" height="100">
+
+<figure>
+  <img src="img/setting_screen.jpg" alt="Cover Image" height="100">
+  <figcaption>這是圖片的備註文字。</figcaption>
+</figure>
 
 # Overview
 - [專案介紹](#專案介紹)
@@ -52,15 +56,9 @@
 - 估時
   | 0727 | 0728 | 0729 | 0730 | 0731 | 0801 | 0802 | / |
   | - | - | - | - | - | - | - | - |
-  | 規劃  規劃 | 二 | 二 | 二 | 二 | 三 | 四 | 共 48 hr |
+  | 規劃<br>規劃 | 二 | 二 | 二 | 二 | 三 | 四 | 共 48 hr |
   | 0803 | 0804 | 0805 | 0806 | 0807 | / | / | / |
   | 一 | 二 | 二 | 二 | 二 | / | / | 共 48 hr |
 
-- TEST
-  | 姓名    | 電子郵件                  | 備註                |
-  |---------|-------------------------|--------------------|
-  | John    | john@example.com        | 這是第一行   |
-  | Alice   | alice@example.com       | 這是第一行<br>第二行備 |
-  | Bob     | bob@example.com         | 這是一個很長的備註，<br>需要換行 |
 [PreviewFunctionFlavor]: ./app/src/main/java/com/fang/taipeitour/flavor/PreviewFunctionFlavor.kt
 [libs.versions.toml]: ./gradle/libs.versions.toml
