@@ -1,10 +1,10 @@
-package com.fang.taipeitour.ui.screen.home.urlintroduction
+package com.fang.taipeitour.ui.screen.home.webintroduction
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class UrlIntroductionViewModel : ViewModel() {
+class WebIntroductionViewModel : ViewModel() {
 
     private val _titleState = MutableStateFlow("")
     val titleState = _titleState.asStateFlow()

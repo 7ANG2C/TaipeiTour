@@ -83,7 +83,7 @@ import com.fang.taipeitour.ui.component.dsl.LocalDarkMode
 import com.fang.taipeitour.ui.component.dsl.LocalLanguage
 import com.fang.taipeitour.ui.component.dsl.gradientBackground
 import com.fang.taipeitour.ui.component.dsl.screenHeightDp
-import com.fang.taipeitour.ui.screen.home.urlintroduction.UrlIntroductionScreen
+import com.fang.taipeitour.ui.screen.home.webintroduction.UrlIntroductionScreen
 import com.google.accompanist.flowlayout.FlowRow
 
 /**
