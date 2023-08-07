@@ -20,16 +20,24 @@
 - 使用 [version catalogs](https://developer.android.com/build/migrate-to-catalogs "version catalogs") 搭配 [libs.versions.toml] 進行多模組版本管理
 
 ## 主要畫面
+<style>
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    blockquote {
+        margin-left: 20px;
+    }
+</style>
 
-
-| 圖片                                                | 敘述                               |
-|---------------------------------------------------|----------------------------------|
-| <img src="img/main_screen.jpg" height="500">      | 主頁<br>- 進行錯誤處理<br/>- 進行畫面反饋      |
-| <img src="img/attraction_screen.jpg" height="500"> | 單景點<br>- 畫面內包裹 fragment          |
-| <img src="img/web_into_screen.jpg" height="500">  | 網頁景點(WebView)<br>- 進行intent 轉導處理 |
-| <img src="img/setting_screen.jpg" height="500">   | 設定<br>- 更換語系時有 slide-fade 效果     |
-| <img src="img/language_dialog.jpg" height="500">  | 多語系彈窗<br>                        |
-| <img src="img/drawer.jpg" height="500">           | 側邊欄<br>                          |
+| 圖片                                                | 敘述                                                                                                                 |
+|---------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| <img src="img/main_screen.jpg" height="500">      | 主頁 MainScreen<br>- 卡片式列表 / 下拉刷新 / 上滑取更多<br/>- 具備 錯誤&無資料 的畫面反饋處理<br/>- 右下按鈕：向上滾 - 顯示當前進度<br/>- 右下按鈕；向下滾 - 一件滑至頂端    |
+| <img src="img/attraction_screen.jpg" height="500"> | 單景點 AttractionFragment<br>- Fragment 內使用 ComposeView<br/>- Collapse Toop Bar 動畫效果<br/>                             |
+| <img src="img/web_into_screen.jpg" height="500">  | 網頁景點 WebIntroductionScreen<br>- 進行intent 轉導處理                                                                      |
+| <img src="img/setting_screen.jpg" height="500">   | 設定 SettingScreen <br>- 更換語系時有 slide-fade 效果<br/>- 提供 DarkMode / ColorScheme<br/>- Preview Function 在 debug 時提供更多設置 |
+| <img src="img/language_dialog.jpg" height="500">  | 多語系彈窗<br>                                                                                                          |
+| <img src="img/drawer.jpg" height="500">           | 側邊欄<br>- 切換功能時，主畫面有 scale 效果                                                                                       |
 
 ## 程式碼檢查
 - 使用 [spotless](https://github.com/diffplug/spotless "spotless") 檢查 code style
