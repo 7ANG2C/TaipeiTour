@@ -1,7 +1,6 @@
 # TaipeiTour
-Hello Taipei, enjoy Taipei!
-
-
+- Hello Taipei, enjoy Taipei!
+  ![](./doc/cover.png)
 # Overview
 - 備註錄影機型
 - 規劃文件
@@ -21,9 +20,10 @@ Hello Taipei, enjoy Taipei!
 ## 畫面重點
 - Main
 - 主頁
-  - guide
-  - 網頁
+  - guide - 使用 fragment
+  - 網頁 - 做了啥處理??
 - setting
+- 備註 目前多語系的部分，id是錯的
 
 ## Third-Party
 - [coil](https://developer.android.com/jetpack/compose/graphics/images/loading#internet-loading "coil")
