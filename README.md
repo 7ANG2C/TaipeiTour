@@ -3,26 +3,28 @@
   ![](./doc/cover.png)
 
 # Overview
-- [專案架構](#專案架構)
+- [專案介紹](#專案介紹)
+- [主要畫面](#主要畫面)
 - [程式碼檢查](#程式碼檢查)
-- 備註錄影機型
-- 規劃文件
-- 建置環境
+- [開發環境](#開發環境)
+- [References](#References)
+- [備註](#備註)
 
-## 專案架構
+## 專案介紹
 - 使用 Jetpack Compose 進行介面開發
 - 專案架構 MVVM 為主 [部分參考](https://github.com/android/architecture-samples "Android Architecture Samples")
 - 使用 Flow 以及 coroutines 處理 asynchronous operations
 - 使用 koin 作為 dependency injection
-- debug/release flavor 可以提供不同實作
-- [模組化](https://github.com/7ANG2C/TaipeiTour/tree/feature/prepare_readme/TaipeiTourApi "TaipeiTourApi")
+- 將 Open-API 的使用[模組化](https://github.com/7ANG2C/TaipeiTour/tree/feature/prepare_readme/TaipeiTourApi "TaipeiTourApi")
+- [PreviewFunctionFlavor] 在 debug/release 有不同實作，用以模擬區分 flavor/dimension 的開發方式
+- 使用 [version catalogs](https://developer.android.com/build/migrate-to-catalogs "version catalogs")) 搭配 [libs.versions.toml] 進行多模組版本管理
 
-## 畫面重點
+## 主要畫面
 - Main
 - 主頁
   - guide - 使用 fragment
   - 網頁 - 做了啥處理??
-- setting
+- 設定頁
 - 備註 目前多語系的部分，id是錯的
 
 ## 程式碼檢查
@@ -37,19 +39,19 @@
 - VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o.
 - macOS 12.6 | Memory: 4096M | Cores: 8
 
-## 手機 Demo 環境
-- SAMSUNG Galaxy Note 10+
-- Android 12
-
 ## References
 - [Travel-Taipei Open API](https://www.travel.taipei/open-api/swagger/ui/index#/ "travel-taipei-open-api")
 - [Material3 Theme Builder](https://m3.material.io/theme-builder#/custom "md3-theme-builder")
 
 ## 備註
 - [設計稿](https://www.figma.com/file/XZ3fJaUESt5pWt8JuAoxey/TaipeiTour?type=design&node-id=0-1&mode=design "Figma")
-- [Demo](https://www.figma.com/file/XZ3fJaUESt5pWt8JuAoxey/TaipeiTour?type=design&node-id=0-1&mode=design "Youtube")
+- [Demo](https://www.youtube.com/watch?v=i3aD9Is7a2U "Youtube")
+  - 手機規格 : SAMSUNG Galaxy Note 10+ (Android 12)
 - 估時
   | 一 | 二 | 二 | 二 | 二 | 二 | 二 | 二 |
   | - | - | - | - | - | - | - | - |
   | 一 | 二 | 二 | 二 | 二 | 二 | 二 | 二 |
   | 一 | 二 | 二 | 二 | 二 | 二 | 二 | 二 |
+
+[PreviewFunctionFlavor]: ./app/src/main/java/com/fang/taipeitour/flavor/PreviewFunctionFlavor.kt
+[libs.versions.toml]: ./gradle/libs.versions.toml
