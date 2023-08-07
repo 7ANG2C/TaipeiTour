@@ -1,31 +1,6 @@
 # TaipeiTour
 - Hello Taipei, enjoy Taipei!
   ![](img/cover.png)
-- <img src="img/setting_screen.jpg" alt="Cover Image" height="300">
-
-<figure>
-  <img src="img/setting_screen.jpg" alt="Cover Image" height="100">
-  <figcaption>這是圖片的備註文字。</figcaption>
-</figure>
-
-| 圖片                             | 敘述                |
-|----------------------------------|--------------------|
-| ![圖片 1](img/setting_screen.jpg)    | 這是圖片1的敘述。   |
-| ![圖片 2](img/setting_screen.jpg)    | 這是圖片2的敘述。   |
-| ![圖片 3](img/setting_screen.jpg)    | 這是圖片3的敘述。   |
-
-<style>
-    img {
-        max-width: 100%;
-        height: auto;
-    }
-</style>
-
-| 圖片                                       | 敘述                |
-|--------------------------------------------|--------------------|
-| <img src="img/setting_screen.jpg" height="150"> | 這是圖片1的敘述。   |
-| <img src="img/setting_screen.jpg" height="200"> | 這是圖片2的敘述。   |
-| <img src="img/setting_screen.jpg" height="180"> | 這是圖片3的敘述。   |
 
 # Overview
 - [專案介紹](#專案介紹)
@@ -45,12 +20,24 @@
 - 使用 [version catalogs](https://developer.android.com/build/migrate-to-catalogs "version catalogs") 搭配 [libs.versions.toml] 進行多模組版本管理
 
 ## 主要畫面
-- Main
-- 主頁
-  - guide - 使用 fragment
-  - 網頁 - 做了啥處理??
-- 設定頁
-- 備註 目前多語系的部分，id是錯的
+<style>
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    blockquote {
+        margin-left: 20px;
+    }
+</style>
+
+| 圖片                                              | 敘述                               |
+|-------------------------------------------------|----------------------------------|
+| <img src="img/main_screen.jpg" height="400"> | 主頁<br>- 進行錯誤處理<br/>- 進行畫面反饋      |
+| <img src="img/attraction_screen.jpg" height="400"> | 單景點<br>- 畫面內包裹 fragment          |
+| <img src="img/setting_screen.jpg" height="400"> | 網頁景點(WebView)<br>- 進行intent 轉導處理 |
+| <img src="img/web_into_screen.jpg" height="400"> | 設定<br>- 更換語系時有 slide-fade 效果     |
+| <img src="img/language_dialog.jpg" height="400"> | 多語系彈窗<br>                        |
+| <img src="img/drawer.jpg" height="400"> | 側邊欄<br>                          |
 
 ## 程式碼檢查
 - 使用 [spotless](https://github.com/diffplug/spotless "spotless") 檢查 code style
@@ -78,6 +65,7 @@
   | 規劃<br>規劃 | 二 | 二 | 二 | 二 | 三 | 四 | 共 48 hr |
   | 0803 | 0804 | 0805 | 0806 | 0807 | / | / | / |
   | 一 | 二 | 二 | 二 | 二 | / | / | 共 48 hr |
+- 備註 目前多語系的部分，id是錯的
 
 [PreviewFunctionFlavor]: ./app/src/main/java/com/fang/taipeitour/flavor/PreviewFunctionFlavor.kt
 [libs.versions.toml]: ./gradle/libs.versions.toml
