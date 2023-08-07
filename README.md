@@ -1,4 +1,4 @@
-![](img/cover.png)
+![](img/github_cover.png)
 
 # Overview
 - [專案介紹](#專案介紹)
@@ -18,6 +18,7 @@
 - 使用 [version catalogs](https://developer.android.com/build/migrate-to-catalogs "version catalogs") 搭配 [libs.versions.toml] 進行多模組版本管理
 
 ## 主要畫面
+- [Demo](https://www.youtube.com/watch?v=i3aD9Is7a2U "Youtube") (裝置規格 : SAMSUNG Galaxy Note 10+ Android 12)
 
 | 圖片                                                | 敘述                                                                                                                                                  |
 |---------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -47,10 +48,7 @@
 - [Material3 Theme Builder](https://m3.material.io/theme-builder#/custom "md3-theme-builder")
 
 ## 備註
-- [設計稿](https://www.figma.com/file/XZ3fJaUESt5pWt8JuAoxey/TaipeiTour?type=design&node-id=0-1&mode=design "Figma")
-- [Demo](https://www.youtube.com/watch?v=i3aD9Is7a2U "Youtube")
-  - 手機規格 : SAMSUNG Galaxy Note 10+ (Android 12)
-- 時程
+- 開發時間表
   | 0727 | 0728 | 0729 | 0730 | 0731 | 0801 |
   | - | - | - | - | - | - |
   | 確認規格<br>規劃實作方式 | 專案建置<br>服務串接<br>ImageSlider 實作 | 主頁實作<br>DataStore 建置<br>Flavor 建置 | 研究動畫<br>依賴版本更新 | Drawer 實作<br>單景點頁面實作<br>部分頁面動畫實作 | 單景點頁面實作<br>UserPreferences 建置 |
@@ -58,6 +56,7 @@
   | 完善主頁資料流 | 設定頁實作<br>國旗刻劃 | WebView實作<br>研究地圖渲染 | 測試研究與撰寫 | 專案審視整理<br>Splash、Icon...等 | 文件撰寫與整理<br>影片錄製 |
 - 目前 `GET/{lang}/Attractions/All` 在語系為印尼時 request fail (最後測試時間為 2023-08-07)
   ![](img/request_fail_lang_id.png)
+- [cover figma](https://www.figma.com/file/XZ3fJaUESt5pWt8JuAoxey/TaipeiTour?type=design&node-id=0-1&mode=design "Figma")
 
 [PreviewFunctionFlavor]: ./app/src/main/java/com/fang/taipeitour/flavor/PreviewFunctionFlavor.kt
 [libs.versions.toml]: ./gradle/libs.versions.toml
