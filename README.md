@@ -1,6 +1,6 @@
 # TaipeiTour
 - Hello Taipei, enjoy Taipei!
-  ![](./doc/cover.png)
+  ![](img/cover.png)
 
 # Overview
 - [專案介紹](#專案介紹)
@@ -12,12 +12,12 @@
 
 ## 專案介紹
 - 使用 Jetpack Compose 進行介面開發
-- 專案架構 MVVM 為主 [部分參考](https://github.com/android/architecture-samples "Android Architecture Samples")
+- 專案架構 MVVM 為主，部分參考：[Architecture Samples](https://github.com/android/architecture-samples "Android Architecture Samples")
 - 使用 Flow 以及 coroutines 處理 asynchronous operations
 - 使用 koin 作為 dependency injection
-- 將 Open-API 的使用[模組化](https://github.com/7ANG2C/TaipeiTour/tree/feature/prepare_readme/TaipeiTourApi "TaipeiTourApi")
+- 將 Open-API 的使用模組化[TaipeiTourApi](https://github.com/7ANG2C/TaipeiTour/tree/feature/prepare_readme/TaipeiTourApi "TaipeiTourApi")
 - [PreviewFunctionFlavor] 在 debug/release 有不同實作，用以模擬區分 flavor/dimension 的開發方式
-- 使用 [version catalogs](https://developer.android.com/build/migrate-to-catalogs "version catalogs")) 搭配 [libs.versions.toml] 進行多模組版本管理
+- 使用 [version catalogs](https://developer.android.com/build/migrate-to-catalogs "version catalogs") 搭配 [libs.versions.toml] 進行多模組版本管理
 
 ## 主要畫面
 - Main
@@ -48,10 +48,10 @@
 - [Demo](https://www.youtube.com/watch?v=i3aD9Is7a2U "Youtube")
   - 手機規格 : SAMSUNG Galaxy Note 10+ (Android 12)
 - 估時
-  | 一 | 二 | 二 | 二 | 二 | 二 | 二 | 二 |
-  | - | - | - | - | - | - | - | - |
-  | 一 | 二 | 二 | 二 | 二 | 二 | 二 | 二 |
-  | 一 | 二 | 二 | 二 | 二 | 二 | 二 | 二 |
+  | 0727 | 0728 | 0729 | 0730 | 0731 | 0801 | 0802 | - |
+  | 規劃  規劃 | 二 | 二 | 二 | 二 | 三 | 四 | 共 48 hr |
+  | 0803 | 0804 | 0805 | 0806 | 0807 | - | - | - |
+  | 一 | 二 | 二 | 二 | 二 | - | - | 共 48 hr |
 
 [PreviewFunctionFlavor]: ./app/src/main/java/com/fang/taipeitour/flavor/PreviewFunctionFlavor.kt
 [libs.versions.toml]: ./gradle/libs.versions.toml
