@@ -1,17 +1,14 @@
-import com.android.build.api.dsl.LibraryExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidBasePlugin
-import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-import org.jetbrains.kotlin.gradle.plugin.KOTLIN_OPTIONS_DSL_NAME
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
-    alias(libs.plugins.org.jetbrains.kotlin.android) apply false
-    alias(libs.plugins.kotlin.parcelize) apply false
     alias(libs.plugins.com.android.application) apply false
     alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.org.jetbrains.kotlin.android) apply false
+    alias(libs.plugins.kotlin.parcelize) apply false
+    alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.spotless)
 }
 
@@ -21,7 +18,7 @@ allprojects {
     spotless {
         kotlin {
             target("**/*.kt")
-            ktlint()
+            ktlint().setEditorConfigPath("${rootProject.rootDir}/.editorconfig")
             trimTrailingWhitespace()
             indentWithSpaces()
             endWithNewline()
@@ -45,19 +42,19 @@ subprojects {
                 targetSdk = libs.versions.compileSdk.get().toInt()
             }
             compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_11
-                targetCompatibility = JavaVersion.VERSION_11
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+            with(buildFeatures) {
+                buildConfig = true
             }
         }
-
         afterEvaluate {
-            val appModuleExtension = extensions.findByType<BaseAppModuleExtension>()
-            val libraryExtension = extensions.findByType<LibraryExtension>()
-            val extensionAware = (appModuleExtension ?: libraryExtension) as ExtensionAware
-            val kotlinOptions = extensionAware.extensions.getByName(KOTLIN_OPTIONS_DSL_NAME) as KotlinJvmOptions
-            kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+            with(extensions.getByType<KotlinAndroidProjectExtension>()) {
+                compilerOptions {
+                    jvmTarget.set(JvmTarget.JVM_17)
+                }
+            }
         }
     }
 }
-
-true // Needed to make the Suppress annotation work for the plugins block

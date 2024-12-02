@@ -6,7 +6,10 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
-fun Language?.getLocaleString(@StringRes res: Int, default: String = ""): String {
+fun Language?.getLocaleString(
+    @StringRes res: Int,
+    default: String = "",
+): String {
     return if (this != null) {
         kotlin.runCatching {
             val config = LocalConfiguration.current
@@ -15,5 +18,7 @@ fun Language?.getLocaleString(@StringRes res: Int, default: String = ""): String
                 LocalContext.current.createConfigurationContext(config).resources
             localizedResources.getString(res)
         }.getOrDefault(default)
-    } else ""
+    } else {
+        ""
+    }
 }

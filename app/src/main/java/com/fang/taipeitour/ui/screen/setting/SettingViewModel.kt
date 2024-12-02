@@ -12,24 +12,25 @@ import kotlinx.coroutines.launch
 
 class SettingViewModel(
     private val repository: UserPreferencesRepository,
-    private val previewFunctionFlavor: PreviewFunctionFlavor
+    private val previewFunctionFlavor: PreviewFunctionFlavor,
 ) : ViewModel() {
+    val previewFunctions =
+        snapshotFlow {
+            previewFunctionFlavor()
+        }
+            .catch { emit(emptyList()) }
+            .stateIn(
+                scope = viewModelScope,
+                initialValue = emptyList(),
+            )
 
-    val previewFunctions = snapshotFlow {
-        previewFunctionFlavor.invoke()
-    }
-        .catch { emit(emptyList()) }
-        .stateIn(
-            scope = viewModelScope,
-            initialValue = emptyList()
-        )
-
-    val isEmpty = repository.isDefault()
-        .catch { emit(true) }
-        .stateIn(
-            scope = viewModelScope,
-            initialValue = true
-        )
+    val isEmpty =
+        repository.isDefault()
+            .catch { emit(true) }
+            .stateIn(
+                scope = viewModelScope,
+                initialValue = true,
+            )
 
     fun setLanguage(language: Language) {
         viewModelScope.launch {

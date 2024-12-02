@@ -1,6 +1,5 @@
 package com.fang.taipeitour.ui.component
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +33,6 @@ import com.fang.taipeitour.ui.component.dsl.screenWidthDp
 /**
  * @param ratio height / width
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageSlider(
     modifier: Modifier,
@@ -47,35 +45,39 @@ fun ImageSlider(
 ) {
     Surface(
         modifier = modifier,
-        color = Color.Transparent
+        color = Color.Transparent,
     ) {
-        val colorFilter = ColorFilter.colorMatrix(
-            ColorMatrix(
-                floatArrayOf(
-                    1.25f, 0f, 0f, 0f, 0f,
-                    0f, 1f, 0f, 0f, 0f,
-                    0f, 0f, 0.75f, 0f, 0f,
-                    0f, 0f, 0f, 1f, 0f
-                )
-            ).apply { setToSaturation(0.6f) }
-        )
+        val colorFilter =
+            ColorFilter.colorMatrix(
+                ColorMatrix(
+                    floatArrayOf(
+                        1.25f, 0f, 0f, 0f, 0f,
+                        0f, 1f, 0f, 0f, 0f,
+                        0f, 0f, 0.75f, 0f, 0f,
+                        0f, 0f, 0f, 1f, 0f,
+                    ),
+                ).apply { setToSaturation(0.6f) },
+            )
         if (images.isEmpty() && noImageHolderRes != 0) {
             Image(
                 painter = painterResource(noImageHolderRes),
                 contentDescription = null,
                 contentScale = contentScale,
-                colorFilter = colorFilter
+                colorFilter = colorFilter,
             )
         } else {
             val width = screenWidthDp.dp
             val height = (screenWidthDp * ratio).dp
-            val pagerState = rememberPagerState()
+            val pagerState =
+                rememberPagerState {
+                    images.size
+                }
             onPageSelect(pagerState.currentPage)
             HorizontalPager(
-                pageCount = images.size,
-                modifier = Modifier
-                    .width(width)
-                    .height(height),
+                modifier =
+                    Modifier
+                        .width(width)
+                        .height(height),
                 state = pagerState,
             ) { page ->
                 val context = LocalContext.current
@@ -83,17 +85,19 @@ fun ImageSlider(
                     model = images[page],
                     contentDescription = null,
                     imageLoader = ImageLoader.Builder(context).crossfade(true).build(),
-                    modifier = Modifier
-                        .width(width)
-                        .height(height),
+                    modifier =
+                        Modifier
+                            .width(width)
+                            .height(height),
                     loading = {
                         if (showLoading) {
                             Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(MaterialTheme.colorScheme.inverseOnSurface),
+                                modifier =
+                                    Modifier
+                                        .fillMaxSize()
+                                        .background(MaterialTheme.colorScheme.inverseOnSurface),
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
+                                verticalArrangement = Arrangement.Center,
                             ) {
                                 Loading(isFancy = false)
                             }
@@ -101,11 +105,12 @@ fun ImageSlider(
                     },
                     error = {
                         Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.7f)),
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.7f)),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                            verticalArrangement = Arrangement.Center,
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_error),
@@ -117,7 +122,7 @@ fun ImageSlider(
                         }
                     },
                     contentScale = contentScale,
-                    colorFilter = colorFilter
+                    colorFilter = colorFilter,
                 )
             }
         }

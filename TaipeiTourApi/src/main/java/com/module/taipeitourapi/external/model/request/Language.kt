@@ -13,5 +13,4 @@ enum class Language(internal val requestCode: String) {
     INDONESIA("id"),
     THAILAND("th"),
     VIETNAM("vi"),
-    ;
 }

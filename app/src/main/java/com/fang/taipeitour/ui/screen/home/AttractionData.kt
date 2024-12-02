@@ -5,16 +5,16 @@ data class AttractionData(
     val state: State,
 ) {
     sealed class State {
-
         /**
          * Success But Might Be More Data
          */
-        object MightBeMoreData : State()
+        data object MightBeMoreData : State()
 
         /**
          * Success With No More Data
          */
-        object NoMoreData : State()
+        data object NoMoreData : State()
+
         data class Error(val t: Throwable) : State()
     }
 

@@ -7,6 +7,4 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 @Composable
-fun <T> StateFlow<T>.stateValue(
-    context: CoroutineContext = EmptyCoroutineContext
-) = collectAsState(context).value
+fun <T> StateFlow<T>.stateValue(context: CoroutineContext = EmptyCoroutineContext) = collectAsState(context).value

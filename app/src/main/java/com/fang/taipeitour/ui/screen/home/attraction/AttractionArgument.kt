@@ -8,5 +8,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class AttractionArgument(
     val attraction: Attraction,
-    @DrawableRes val noImageHolderRes: Int
+    @DrawableRes val noImageHolderRes: Int,
 ) : Parcelable

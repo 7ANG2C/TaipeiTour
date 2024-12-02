@@ -9,7 +9,6 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class TaipeiTourApplication : Application() {
-
     override fun onCreate() {
         super.onCreate()
 
@@ -20,10 +19,10 @@ class TaipeiTourApplication : Application() {
         startKoin {
             androidContext(this@TaipeiTourApplication)
             modules(
-                TaipeiTourServiceModule.invoke() +
+                TaipeiTourServiceModule() +
                     ViewModelModule() +
-                    CoreModule.invoke() +
-                    RepositoryModule.invoke()
+                    CoreModule() +
+                    RepositoryModule(),
             )
         }
     }

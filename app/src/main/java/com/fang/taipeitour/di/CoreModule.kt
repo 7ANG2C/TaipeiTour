@@ -8,9 +8,9 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 object CoreModule {
-
-    operator fun invoke() = module {
-        singleOf(::UserPreferencesDataStore)
-        singleOf(::PreviewFunctionFlavorImpl).bind<PreviewFunctionFlavor>()
-    }
+    operator fun invoke() =
+        module {
+            singleOf(::UserPreferencesDataStore)
+            singleOf(::PreviewFunctionFlavorImpl).bind<PreviewFunctionFlavor>()
+        }
 }

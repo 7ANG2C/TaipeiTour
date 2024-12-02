@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val repository: GetAllAttractionRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
     private class RequestPage(val value: Int)
 
@@ -53,7 +53,7 @@ class HomeViewModel(
                 userPreferencesRepository.getLanguage().onEach {
                     refresh()
                 },
-                ::Pair
+                ::Pair,
             )
                 // 過濾掉切換語言時，拿到舊的 page
                 .scan(null) { acc: Pair<RequestPage, Language>?, new: Pair<RequestPage, Language> ->
@@ -72,19 +72,22 @@ class HomeViewModel(
                             onSuccess = {
                                 Mediator(
                                     list = it,
-                                    state = if (it.isEmpty()) {
-                                        AttractionData.State.NoMoreData
-                                    } else AttractionData.State.MightBeMoreData,
-                                    page = page.value
+                                    state =
+                                        if (it.isEmpty()) {
+                                            AttractionData.State.NoMoreData
+                                        } else {
+                                            AttractionData.State.MightBeMoreData
+                                        },
+                                    page = page.value,
                                 )
                             },
                             onFailure = {
                                 Mediator(
                                     list = emptyList(),
                                     state = AttractionData.State.Error(it),
-                                    page = page.value
+                                    page = page.value,
                                 )
-                            }
+                            },
                         )
                     }
                 }
@@ -106,7 +109,9 @@ class HomeViewModel(
                         val loadingItem =
                             if (mediator.state == AttractionData.State.MightBeMoreData) {
                                 Item.Loading
-                            } else null
+                            } else {
+                                null
+                            }
                         AttractionData(
                             items = mediator.list.map { Item.Data(it) } + listOfNotNull(loadingItem),
                             state = mediator.state,
@@ -116,13 +121,15 @@ class HomeViewModel(
                 .flowOn(Dispatchers.Default)
                 .collectLatest { data ->
                     setRefreshingState(false)
-                    val workState = when (data.state) {
-                        AttractionData.State.NoMoreData -> WorkState.NoMoreData
-                        is AttractionData.State.Error -> WorkState.Error(
-                            data.state.t
-                        )
-                        else -> WorkState.Pending
-                    }
+                    val workState =
+                        when (data.state) {
+                            AttractionData.State.NoMoreData -> WorkState.NoMoreData
+                            is AttractionData.State.Error ->
+                                WorkState.Error(
+                                    data.state.t,
+                                )
+                            else -> WorkState.Pending
+                        }
                     setWorkState(workState)
                     _dataState.value = data
                 }

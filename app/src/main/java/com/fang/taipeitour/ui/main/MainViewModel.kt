@@ -10,16 +10,16 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 
 class MainViewModel(
-    repository: UserPreferencesRepository
+    repository: UserPreferencesRepository,
 ) : ViewModel() {
-
-    val preferencesState = repository.invoke()
-        .flowOn(Dispatchers.Default)
-        .catch {
-            emit(UserPreferences.default)
-        }
-        .stateIn(
-            scope = viewModelScope,
-            initialValue = null
-        )
+    val preferencesState =
+        repository()
+            .flowOn(Dispatchers.Default)
+            .catch {
+                emit(UserPreferences.default)
+            }
+            .stateIn(
+                scope = viewModelScope,
+                initialValue = null,
+            )
 }

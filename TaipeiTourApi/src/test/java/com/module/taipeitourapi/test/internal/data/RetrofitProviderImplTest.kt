@@ -8,7 +8,6 @@ import org.junit.Before
 import org.junit.Test
 
 class RetrofitProviderImplTest {
-
     private lateinit var retrofitProviderImpl: RetrofitProviderImpl
 
     @Before

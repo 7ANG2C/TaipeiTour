@@ -19,21 +19,26 @@ import com.fang.taipeitour.ui.component.dsl.screenHeightDp
  * Scrollable Themed Dialog
  */
 @Composable
-fun CustomDialog(onDismiss: Invoke, content: @Composable BoxScope.() -> Unit) {
+fun CustomDialog(
+    onDismiss: Invoke,
+    content: @Composable BoxScope.() -> Unit,
+) {
     Dialog(onDismissRequest = onDismiss) {
         Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(0.dp, (screenHeightDp * 0.9f).dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(0.dp, (screenHeightDp * 0.9f).dp),
             shape = MaterialTheme.shapes.extraLarge,
-            color = MaterialTheme.colorScheme.onSecondary
+            color = MaterialTheme.colorScheme.onSecondary,
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 16.dp),
                 contentAlignment = Alignment.Center,
-                content = content
+                content = content,
             )
         }
     }

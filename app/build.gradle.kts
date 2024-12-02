@@ -1,13 +1,14 @@
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Properties
 
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.com.android.application)
     alias(libs.plugins.org.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.protobuf)
 }
 
@@ -16,20 +17,19 @@ android {
 
     defaultConfig {
         applicationId = "com.fang.taipeitour"
-        versionCode = 3
-        versionName = "1.1.0"
+        versionCode = 4
+        versionName = "1.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        vectorDrawables.useSupportLibrary = true
     }
 
     signingConfigs {
-        val keystoreProperties = Properties().apply {
-            val keystorePropertiesFile = rootProject.file("keystore.properties")
-            load(FileInputStream(keystorePropertiesFile))
-        }
+        val keystoreProperties =
+            Properties().apply {
+                val keystorePropertiesFile = rootProject.file("keystore.properties")
+                load(FileInputStream(keystorePropertiesFile))
+            }
         create("taipei_tour") {
             keyAlias = keystoreProperties.getProperty("keyAlias")
             keyPassword = keystoreProperties.getProperty("keyPassword")
@@ -43,18 +43,14 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
             buildConfigField("String", "BUILD_TIMESTAMP", "\"${getDateTime()}\"")
             signingConfig = signingConfigs.getByName("taipei_tour")
         }
     }
-    buildFeatures {
-        buildConfig = true
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+    composeCompiler {
+        featureFlags = setOf(ComposeFeatureFlag.OptimizeNonSkippingGroups)
     }
     packaging {
         resources {
