@@ -15,7 +15,6 @@ import kotlinx.coroutines.withContext
  * TaipeiTourApi default implementation
  */
 class TaipeiTourApiImpl(private val retrofitProvider: RetrofitProvider) : TaipeiTourApi {
-
     private val service by lazy {
         retrofitProvider.invoke().create(TaipeiTourApiService::class.java)
     }
@@ -27,7 +26,7 @@ class TaipeiTourApiImpl(private val retrofitProvider: RetrofitProvider) : Taipei
      */
     override suspend fun getAllAttractions(
         language: Language,
-        page: Int
+        page: Int,
     ): Result<AttractionBundle> {
         return withContext(Dispatchers.Default) {
             kotlin.runCatching {
@@ -36,36 +35,40 @@ class TaipeiTourApiImpl(private val retrofitProvider: RetrofitProvider) : Taipei
                 }
             }
                 .mapCatching { bundle ->
-                    val attractions = bundle.attractions.map { attraction ->
-                        Attraction(
-                            id = attraction.id.orEmpty(),
-                            name = attraction.name.orEmpty(),
-                            introduction = attraction.introduction.orEmpty(),
-                            zipCode = attraction.zipCode.orEmpty(),
-                            distric = attraction.distric.orEmpty(),
-                            address = attraction.address.orEmpty(),
-                            northLatitude = attraction.northLatitude,
-                            eastLongitude = attraction.eastLongitude,
-                            officialSite = attraction.officialSite.orEmpty(),
-                            originalUrl = attraction.originalUrl.orEmpty(),
-                            tel = attraction.tel.orEmpty(),
-                            fax = attraction.fax.orEmpty(),
-                            email = attraction.email.orEmpty(),
-                            modified = attraction.modified.orEmpty(),
-                            categories = attraction.categories.map {
-                                Category(it.id, it.name)
-                            },
-                            targets = attraction.targets.map {
-                                Category(it.id, it.name)
-                            },
-                            images = attraction.images.map {
-                                Image(it.src, it.ext)
-                            },
-                        )
-                    }
+                    val attractions =
+                        bundle.attractions.map { attraction ->
+                            Attraction(
+                                id = attraction.id.orEmpty(),
+                                name = attraction.name.orEmpty(),
+                                introduction = attraction.introduction.orEmpty(),
+                                zipCode = attraction.zipCode.orEmpty(),
+                                distric = attraction.distric.orEmpty(),
+                                address = attraction.address.orEmpty(),
+                                northLatitude = attraction.northLatitude,
+                                eastLongitude = attraction.eastLongitude,
+                                officialSite = attraction.officialSite.orEmpty(),
+                                originalUrl = attraction.originalUrl.orEmpty(),
+                                tel = attraction.tel.orEmpty(),
+                                fax = attraction.fax.orEmpty(),
+                                email = attraction.email.orEmpty(),
+                                modified = attraction.modified.orEmpty(),
+                                categories =
+                                    attraction.categories.map {
+                                        Category(it.id, it.name)
+                                    },
+                                targets =
+                                    attraction.targets.map {
+                                        Category(it.id, it.name)
+                                    },
+                                images =
+                                    attraction.images.map {
+                                        Image(it.src, it.ext)
+                                    },
+                            )
+                        }
                     AttractionBundle(
                         total = bundle.total,
-                        attractions = attractions
+                        attractions = attractions,
                     )
                 }
         }

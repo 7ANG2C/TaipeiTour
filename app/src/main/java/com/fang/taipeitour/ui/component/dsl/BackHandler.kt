@@ -8,9 +8,9 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.fang.taipeitour.dsl.Action
 import com.fang.taipeitour.dsl.Invoke
 
@@ -19,35 +19,41 @@ import com.fang.taipeitour.dsl.Invoke
  * @see [androidx.activity.compose.BackHandler]
  */
 @Composable
-fun BackHandler(onEvent: Action<Lifecycle.Event> = {}, onBack: Invoke) {
+fun BackHandler(
+    onEvent: Action<Lifecycle.Event> = {},
+    onBack: Invoke,
+) {
     val currentOnBack by rememberUpdatedState(onBack)
-    val backCallback = remember {
-        object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                currentOnBack()
+    val backCallback =
+        remember {
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    currentOnBack()
+                }
             }
         }
-    }
 
     SideEffect {
         backCallback.isEnabled = true
     }
-    val backDispatcher = checkNotNull(LocalOnBackPressedDispatcherOwner.current) {
-        "No OnBackPressedDispatcherOwner was provided via LocalOnBackPressedDispatcherOwner"
-    }.onBackPressedDispatcher
+    val backDispatcher =
+        checkNotNull(LocalOnBackPressedDispatcherOwner.current) {
+            "No OnBackPressedDispatcherOwner was provided via LocalOnBackPressedDispatcherOwner"
+        }.onBackPressedDispatcher
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner, backDispatcher) {
         // Add callback to the backDispatcher
-        val observer = LifecycleEventObserver { _, event ->
-            onEvent(event)
-            when (event) {
-                Lifecycle.Event.ON_PAUSE -> backCallback.remove()
-                Lifecycle.Event.ON_RESUME -> {
-                    backDispatcher.addCallback(lifecycleOwner, backCallback)
+        val observer =
+            LifecycleEventObserver { _, event ->
+                onEvent(event)
+                when (event) {
+                    Lifecycle.Event.ON_PAUSE -> backCallback.remove()
+                    Lifecycle.Event.ON_RESUME -> {
+                        backDispatcher.addCallback(lifecycleOwner, backCallback)
+                    }
+                    else -> {}
                 }
-                else -> {}
             }
-        }
         lifecycleOwner.lifecycle.addObserver(observer)
 
         onDispose {

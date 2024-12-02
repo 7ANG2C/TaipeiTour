@@ -11,7 +11,6 @@ import retrofit2.http.Query
  * @see <a href="https://www.travel.taipei/open-api/swagger/ui/index#/Attractions/Attractions_All">Swagger</a>
  */
 internal interface TaipeiTourApiService {
-
     /**
      * 取得熱門景點
      * @param language 語系代碼

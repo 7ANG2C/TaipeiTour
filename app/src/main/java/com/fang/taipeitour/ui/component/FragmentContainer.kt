@@ -4,7 +4,7 @@ import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,20 +20,21 @@ import androidx.fragment.app.findFragment
 fun <T : Fragment> FragmentContainer(
     modifier: Modifier = Modifier,
     fragment: T,
-    update: T?.() -> Unit
+    update: T?.() -> Unit,
 ) {
     val localView = LocalView.current
     val currentContext = LocalContext.current
-    val fragmentManager = remember(localView) {
-        runCatching {
-            localView.findFragment<T>().childFragmentManager
-        }.getOrDefault(
-            (currentContext as? FragmentActivity)?.supportFragmentManager
-        )
-    }
+    val fragmentManager =
+        remember(localView) {
+            runCatching {
+                localView.findFragment<T>().childFragmentManager
+            }.getOrDefault(
+                (currentContext as? FragmentActivity)?.supportFragmentManager,
+            )
+        }
 
     val containerId by remember {
-        mutableStateOf(View.generateViewId())
+        mutableIntStateOf(View.generateViewId())
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -43,9 +44,10 @@ fun <T : Fragment> FragmentContainer(
 
     AndroidView(
         factory = { context ->
-            val containerView = FragmentContainerView(context).apply {
-                id = containerId
-            }
+            val containerView =
+                FragmentContainerView(context).apply {
+                    id = containerId
+                }
             fragmentManager?.commit {
                 replace(containerView.id, fragment)
             }

@@ -7,5 +7,5 @@ package com.module.taipeitourapi.external.model.response.attration
  */
 data class AttractionBundle(
     val total: Int,
-    val attractions: List<Attraction>
+    val attractions: List<Attraction>,
 )

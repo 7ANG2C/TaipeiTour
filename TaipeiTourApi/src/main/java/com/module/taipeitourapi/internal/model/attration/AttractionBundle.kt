@@ -11,5 +11,5 @@ internal data class AttractionBundle(
     @SerializedName("total")
     val total: Int,
     @SerializedName("data")
-    val attractions: List<Attraction>
+    val attractions: List<Attraction>,
 )

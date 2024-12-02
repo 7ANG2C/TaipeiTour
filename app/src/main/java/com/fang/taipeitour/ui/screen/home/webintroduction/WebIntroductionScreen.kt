@@ -26,7 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -71,7 +71,7 @@ import org.koin.androidx.compose.koinViewModel
 fun UrlIntroductionScreen(
     viewModel: WebIntroductionViewModel = koinViewModel(),
     attractionUrl: String,
-    backHandler: Invoke
+    backHandler: Invoke,
 ) {
     var canGoBack by rememberSaveable {
         mutableStateOf(false)
@@ -84,12 +84,13 @@ fun UrlIntroductionScreen(
     }
     Column(Modifier.fillMaxSize()) {
         TopBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(getControlBarBgColor()),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(getControlBarBgColor()),
             urlTitle = viewModel.titleState.stateValue(),
             loadingProgress = viewModel.loadingState.stateValue(),
-            backHandler = backHandler
+            backHandler = backHandler,
         )
 
         var reloadTrigger by rememberSaveable {
@@ -104,9 +105,10 @@ fun UrlIntroductionScreen(
         }
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
         ) {
             val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
             var checkPermission by rememberSaveable {
@@ -118,17 +120,18 @@ fun UrlIntroductionScreen(
                 factory = { context ->
                     WebView(context).apply {
                         setDownloadListener { url, _, description, mimeType, _ ->
-                            val request = DownloadManager.Request(Uri.parse(url))
-                                .setTitle(System.currentTimeMillis().toString())
-                                .setDescription(description)
-                                .setMimeType(mimeType)
-                                .setNotificationVisibility(
-                                    DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
-                                )
-                                .setDestinationInExternalPublicDir(
-                                    Environment.DIRECTORY_DOWNLOADS,
-                                    URLUtil.guessFileName(url, description, mimeType)
-                                )
+                            val request =
+                                DownloadManager.Request(Uri.parse(url))
+                                    .setTitle(System.currentTimeMillis().toString())
+                                    .setDescription(description)
+                                    .setMimeType(mimeType)
+                                    .setNotificationVisibility(
+                                        DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED,
+                                    )
+                                    .setDestinationInExternalPublicDir(
+                                        Environment.DIRECTORY_DOWNLOADS,
+                                        URLUtil.guessFileName(url, description, mimeType),
+                                    )
                             val downloadManager = context.getSystemService<DownloadManager>()
                             downloadManager?.enqueue(request)
                         }
@@ -140,84 +143,92 @@ fun UrlIntroductionScreen(
                             builtInZoomControls = true
                             displayZoomControls = false
                             mediaPlaybackRequiresUserGesture = true
-                            databaseEnabled = true
                             domStorageEnabled = true
                             allowFileAccess = true
                             allowContentAccess = true
                             cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
                         }
-                        webViewClient = object : WebViewClient() {
-                            override fun shouldOverrideUrlLoading(
-                                view: WebView,
-                                request: WebResourceRequest
-                            ): Boolean {
-                                val uri = request.url
-                                val urlString = uri?.toString()
-                                val scheme = uri.scheme
-                                return when {
-                                    urlString.isNullOrBlank() -> {
-                                        true
-                                    }
-                                    urlString.startsWith("https://www.google.com/maps") -> {
-                                        context.startActivity(Intent(Intent.ACTION_VIEW, uri))
-                                        true
-                                    }
-                                    !urlString.startsWith("http") -> {
-                                        val intent = if (scheme == "intent") {
-                                            Intent.parseUri(urlString, Intent.URI_INTENT_SCHEME)
-                                        } else {
-                                            Intent(Intent.ACTION_VIEW, uri)
+                        webViewClient =
+                            object : WebViewClient() {
+                                override fun shouldOverrideUrlLoading(
+                                    view: WebView,
+                                    request: WebResourceRequest,
+                                ): Boolean {
+                                    val uri = request.url
+                                    val urlString = uri?.toString()
+                                    val scheme = uri.scheme
+                                    return when {
+                                        urlString.isNullOrBlank() -> {
+                                            true
                                         }
-                                        kotlin.runCatching {
-                                            context.startActivity(intent)
-                                        }.fold(onSuccess = { true }, onFailure = { false })
+                                        urlString.startsWith("https://www.google.com/maps") -> {
+                                            context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+                                            true
+                                        }
+                                        !urlString.startsWith("http") -> {
+                                            val intent =
+                                                if (scheme == "intent") {
+                                                    Intent.parseUri(urlString, Intent.URI_INTENT_SCHEME)
+                                                } else {
+                                                    Intent(Intent.ACTION_VIEW, uri)
+                                                }
+                                            kotlin.runCatching {
+                                                context.startActivity(intent)
+                                            }.fold(onSuccess = { true }, onFailure = { false })
+                                        }
+                                        else -> super.shouldOverrideUrlLoading(view, request)
                                     }
-                                    else -> super.shouldOverrideUrlLoading(view, request)
+                                }
+
+                                override fun doUpdateVisitedHistory(
+                                    view: WebView,
+                                    url: String?,
+                                    isReload: Boolean,
+                                ) {
+                                    super.doUpdateVisitedHistory(view, url, isReload)
+                                    viewModel.setUrl(url.orEmpty())
+                                    canGoBack = view.canGoBack()
+                                    canGoForward = view.canGoForward()
                                 }
                             }
 
-                            override fun doUpdateVisitedHistory(
-                                view: WebView,
-                                url: String?,
-                                isReload: Boolean
-                            ) {
-                                super.doUpdateVisitedHistory(view, url, isReload)
-                                viewModel.setUrl(url.orEmpty())
-                                canGoBack = view.canGoBack()
-                                canGoForward = view.canGoForward()
-                            }
-                        }
+                        webChromeClient =
+                            object : WebChromeClient() {
+                                override fun onReceivedTitle(
+                                    view: WebView?,
+                                    title: String?,
+                                ) {
+                                    super.onReceivedTitle(view, title)
+                                    viewModel.setTitle(title.orEmpty())
+                                }
 
-                        webChromeClient = object : WebChromeClient() {
-                            override fun onReceivedTitle(view: WebView?, title: String?) {
-                                super.onReceivedTitle(view, title)
-                                viewModel.setTitle(title.orEmpty())
-                            }
+                                override fun onProgressChanged(
+                                    view: WebView?,
+                                    newProgress: Int,
+                                ) {
+                                    super.onProgressChanged(view, newProgress)
+                                    viewModel.setLoadingProgress(newProgress)
+                                }
 
-                            override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                                super.onProgressChanged(view, newProgress)
-                                viewModel.setLoadingProgress(newProgress)
-                            }
-
-                            override fun onGeolocationPermissionsShowPrompt(
-                                origin: String?,
-                                callback: GeolocationPermissions.Callback
-                            ) {
-                                when {
-                                    !permissionState.hasPermission -> {
-                                        checkPermission = true
+                                override fun onGeolocationPermissionsShowPrompt(
+                                    origin: String?,
+                                    callback: GeolocationPermissions.Callback,
+                                ) {
+                                    when {
+                                        !permissionState.hasPermission -> {
+                                            checkPermission = true
+                                        }
+                                        !LocationUtil.isLocationEnabled(context) -> {
+                                            Toast.makeText(context, locationPlz, Toast.LENGTH_SHORT)
+                                                .show()
+                                        }
+                                        else -> callback(origin, true, false)
                                     }
-                                    !LocationUtil.isLocationEnabled(context) -> {
-                                        Toast.makeText(context, locationPlz, Toast.LENGTH_SHORT)
-                                            .show()
-                                    }
-                                    else -> callback(origin, true, false)
                                 }
                             }
-                        }
                         loadUrl(attractionUrl)
                     }
-                }
+                },
             ) { webView ->
                 if (reloadTrigger) {
                     webView.reload()
@@ -250,14 +261,14 @@ fun UrlIntroductionScreen(
         }
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(getControlBarBgColor())
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(getControlBarBgColor()),
         ) {
             val context = LocalContext.current
             val urlState = viewModel.urlState.stateValue()
             IconBtn(res = R.drawable.ic_browse) {
-
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlState))
                 kotlin.runCatching {
                     context.startActivity(intent)
@@ -265,13 +276,14 @@ fun UrlIntroductionScreen(
             }
             val title = viewModel.titleState.stateValue()
             IconBtn(res = R.drawable.ic_share) {
-                val intent = Intent.createChooser(
-                    Intent(Intent.ACTION_SEND).apply {
-                        type = "text/plain"
-                        putExtra(Intent.EXTRA_TEXT, urlState)
-                    },
-                    title
-                )
+                val intent =
+                    Intent.createChooser(
+                        Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, urlState)
+                        },
+                        title,
+                    )
                 context.startActivity(intent)
             }
             Spacer(modifier = Modifier.weight(1f))
@@ -281,13 +293,13 @@ fun UrlIntroductionScreen(
             IconBtn(
                 modifier = Modifier.scale(-1f, -1f),
                 res = R.drawable.ic_go,
-                enabled = canGoBack
+                enabled = canGoBack,
             ) {
                 goBackTrigger = true
             }
             IconBtn(
                 res = R.drawable.ic_go,
-                enabled = canGoForward
+                enabled = canGoForward,
             ) {
                 goForwardTrigger = true
             }
@@ -314,15 +326,15 @@ private fun TopBar(
     modifier: Modifier,
     urlTitle: String,
     loadingProgress: Int,
-    backHandler: Invoke
+    backHandler: Invoke,
 ) {
     Box(modifier) {
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             IconBtn(
                 res = R.drawable.ic_back,
-                onClick = backHandler
+                onClick = backHandler,
             )
             Text(
                 text = urlTitle.takeIf { it.isNotBlank() } ?: "-",
@@ -340,17 +352,17 @@ private fun TopBar(
             Row(
                 Modifier
                     .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             ) {
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier.weight(loadingProgress.toFloat()),
                     thickness = 3.dp,
-                    color = getPrimaryColor().copy(alpha = 0.9f)
+                    color = getPrimaryColor().copy(alpha = 0.9f),
                 )
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier.weight((100 - loadingProgress).toFloat()),
                     thickness = 3.dp,
-                    color = Color.Transparent
+                    color = Color.Transparent,
                 )
             }
         }
@@ -362,18 +374,18 @@ private fun IconBtn(
     modifier: Modifier = Modifier,
     @DrawableRes res: Int,
     enabled: Boolean = true,
-    onClick: Invoke
+    onClick: Invoke,
 ) {
     IconButton(
         onClick = onClick,
         modifier = modifier,
-        enabled = enabled
+        enabled = enabled,
     ) {
         val color = getPrimaryColor()
         Icon(
             painter = painterResource(res),
             contentDescription = null,
-            tint = if (enabled) color else color.copy(alpha = 0.35f)
+            tint = if (enabled) color else color.copy(alpha = 0.35f),
         )
     }
 }
@@ -383,7 +395,7 @@ private fun IconBtn(
 private fun RequestPermission(
     permissionState: PermissionState,
     checkPermission: Boolean,
-    closeCheckPermission: Invoke
+    closeCheckPermission: Invoke,
 ) {
     if (checkPermission) {
         var showDialog by rememberSaveable {
@@ -412,10 +424,11 @@ private fun RequestPermission(
                             showDialog = false
                             closeCheckPermission()
                         },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = MaterialTheme.colorScheme.primary
-                        ),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = MaterialTheme.colorScheme.primary,
+                            ),
                     ) {
                         Text(LocalLanguage.getLocaleString(R.string.cancel))
                     }
@@ -426,7 +439,7 @@ private fun RequestPermission(
                             permissionState.launchPermissionRequest()
                             showDialog = false
                             closeCheckPermission()
-                        }
+                        },
                     ) {
                         Text(LocalLanguage.getLocaleString(R.string.confirm))
                     }
@@ -437,28 +450,31 @@ private fun RequestPermission(
                 text = {
                     Text(LocalLanguage.getLocaleString(R.string.location_msg))
                 },
-                properties = DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false,
-                )
+                properties =
+                    DialogProperties(
+                        dismissOnBackPress = false,
+                        dismissOnClickOutside = false,
+                    ),
             )
         }
     }
 }
 
 @Composable
-private fun getPrimaryColor() = if (LocalDarkMode) {
-    MaterialTheme.colorScheme.onSurface
-} else {
-    MaterialTheme.colorScheme.surfaceVariant
-}
+private fun getPrimaryColor() =
+    if (LocalDarkMode) {
+        MaterialTheme.colorScheme.onSurface
+    } else {
+        MaterialTheme.colorScheme.surfaceVariant
+    }
 
 @Composable
-private fun getControlBarBgColor() = if (LocalDarkMode) {
-    MaterialTheme.colorScheme.onSecondary
-} else {
-    MaterialTheme.colorScheme.inverseSurface
-}
+private fun getControlBarBgColor() =
+    if (LocalDarkMode) {
+        MaterialTheme.colorScheme.onSecondary
+    } else {
+        MaterialTheme.colorScheme.inverseSurface
+    }
 
 @Preview(showBackground = true)
 @Composable

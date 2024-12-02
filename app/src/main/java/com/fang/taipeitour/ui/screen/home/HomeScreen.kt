@@ -4,7 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -12,7 +11,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -35,7 +34,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -48,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -90,7 +89,6 @@ import org.koin.androidx.compose.koinViewModel
 /**
  * all attractions screen
  */
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
@@ -100,12 +98,12 @@ fun HomeScreen(
         mutableStateOf<AttractionArgument?>(null)
     }
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         TopBar(
             modifier = Modifier.fillMaxWidth(),
             text = LocalLanguage.getLocaleString(R.string.home),
-            onClick = onMenuClicked
+            onClick = onMenuClicked,
         )
         Box(modifier = Modifier.weight(1f)) {
             val data = viewModel.dataState.stateValue()
@@ -115,7 +113,7 @@ fun HomeScreen(
             val lazyColumnState = rememberLazyListState()
             PullRefresh(
                 isRefreshing = isRefreshing,
-                onRefresh = { viewModel.refresh() }
+                onRefresh = { viewModel.refresh() },
             ) {
                 LazyColumn(
                     modifier = Modifier.padding(horizontal = 14.dp),
@@ -130,7 +128,7 @@ fun HomeScreen(
                             val noImageHolder = holders[index % holders.size]
                             AttractionItem(
                                 item = item,
-                                noImageHolderRes = noImageHolder
+                                noImageHolderRes = noImageHolder,
                             ) {
                                 redirectAttraction = AttractionArgument(it, noImageHolder)
                             }
@@ -140,10 +138,11 @@ fun HomeScreen(
                     data?.loadingItem?.let {
                         item {
                             Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 16.dp),
-                                contentAlignment = Alignment.Center
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 16.dp),
+                                contentAlignment = Alignment.Center,
                             ) {
                                 Loading(isFancy = false)
                             }
@@ -170,10 +169,11 @@ fun HomeScreen(
                             }
                         }
                     },
-                    modifier = Modifier
-                        .padding(20.dp)
-                        .align(Alignment.BottomEnd),
-                    containerColor = MaterialTheme.colorScheme.tertiary
+                    modifier =
+                        Modifier
+                            .padding(20.dp)
+                            .align(Alignment.BottomEnd),
+                    containerColor = MaterialTheme.colorScheme.tertiary,
                 ) {
                     AnimatedContent(
                         targetState = isScrollUp && data.items.isNotEmpty(),
@@ -188,40 +188,40 @@ fun HomeScreen(
                                 slideOutVertically(animationSpec) { height ->
                                     -height
                                 } + fadeOut(fadeAnimationSpec)
-                            (enterTransition with exitTransition).using(SizeTransform(clip = true))
+                            (enterTransition togetherWith exitTransition).using(SizeTransform(clip = true))
                         },
-                        label = "fab"
+                        label = "fab",
                     ) { isScrollUp ->
                         if (isScrollUp) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_scroll_up),
                                 contentDescription = null,
                                 modifier = Modifier.wrapContentSize(),
-                                tint = MaterialTheme.colorScheme.onTertiary
+                                tint = MaterialTheme.colorScheme.onTertiary,
                             )
                         } else {
                             Column(
                                 modifier = Modifier.wrapContentSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 visibleIndex?.let {
                                     Text(
                                         text = "$it",
                                         color = MaterialTheme.colorScheme.onTertiary,
-                                        fontSize = 12.sp
+                                        fontSize = 12.sp,
                                     )
                                 }
-                                Divider(
-                                    Modifier
-                                        .height(1.dp)
-                                        .width(24.dp),
-                                    color = MaterialTheme.colorScheme.onTertiary
+                                Box(
+                                    modifier =
+                                        Modifier
+                                            .height(1.dp)
+                                            .width(24.dp)
+                                            .background(MaterialTheme.colorScheme.onTertiary),
                                 )
-
                                 Text(
-                                    "${data.attractions.size}",
+                                    text = "${data.attractions.size}",
                                     color = MaterialTheme.colorScheme.onTertiary,
-                                    fontSize = 12.sp
+                                    fontSize = 12.sp,
                                 )
                             }
                         }
@@ -241,15 +241,15 @@ fun HomeScreen(
                             onClick = {
                                 viewModel.setWorkState(WorkState.Pending)
                             },
-                            modifier = Modifier.padding(end = 8.dp)
+                            modifier = Modifier.padding(end = 8.dp),
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_close),
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.surface
+                                tint = MaterialTheme.colorScheme.surface,
                             )
                         }
-                    }
+                    },
                 ) {
                     when (workState) {
                         is WorkState.Error -> R.string.get_attractions_error
@@ -259,7 +259,7 @@ fun HomeScreen(
                         Text(
                             text = LocalLanguage.getLocaleString(it),
                             color = MaterialTheme.colorScheme.surface,
-                            fontSize = 16.sp
+                            fontSize = 16.sp,
                         )
                     }
                 }
@@ -274,7 +274,7 @@ fun HomeScreen(
                     text = LocalLanguage.getLocaleString(R.string.empty_attraction),
                     modifier = Modifier.align(Alignment.Center),
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
                 )
             }
 
@@ -285,14 +285,15 @@ fun HomeScreen(
             ) {
                 OutlinedButton(
                     onClick = { viewModel.refresh() },
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(bottom = 48.dp),
+                    modifier =
+                        Modifier
+                            .align(Alignment.Center)
+                            .padding(bottom = 48.dp),
                 ) {
                     Text(
                         text = LocalLanguage.getLocaleString(R.string.retry),
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
                     )
                 }
             }
@@ -301,41 +302,45 @@ fun HomeScreen(
 
     val scale by animateFloatAsState(
         targetValue = if (redirectAttraction != null) 1f else .9f,
-        tween(400), label = "scale"
+        tween(400),
+        label = "scale",
     )
     Crossfade(
         targetState = redirectAttraction,
         animationSpec = tween(400),
-        label = "attraction"
+        label = "attraction",
     ) { attractionArg ->
         attractionArg?.let { argument ->
             FragmentContainer(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .scale(scale),
-                fragment = AttractionFragment.newInstance(argument)
-                    .apply {
-                        (this as AttractionFragment).onDismiss = {
-                            redirectAttraction = null
-                        }
-                    },
-                update = { /* no need update here */ }
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .scale(scale),
+                fragment =
+                    AttractionFragment.newInstance(argument)
+                        .apply {
+                            (this as AttractionFragment).onDismiss = {
+                                redirectAttraction = null
+                            }
+                        },
+                update = { /* no need update here */ },
             )
         }
     }
 }
 
-private fun getNoImageHolderRes() = listOf(
-    R.drawable.no_image_holder1,
-    R.drawable.no_image_holder2,
-    R.drawable.no_image_holder3,
-    R.drawable.no_image_holder4,
-    R.drawable.no_image_holder5,
-    R.drawable.no_image_holder6,
-    R.drawable.no_image_holder7,
-    R.drawable.no_image_holder8,
-    R.drawable.no_image_holder9,
-)
+private fun getNoImageHolderRes() =
+    listOf(
+        R.drawable.no_image_holder1,
+        R.drawable.no_image_holder2,
+        R.drawable.no_image_holder3,
+        R.drawable.no_image_holder4,
+        R.drawable.no_image_holder5,
+        R.drawable.no_image_holder6,
+        R.drawable.no_image_holder7,
+        R.drawable.no_image_holder8,
+        R.drawable.no_image_holder9,
+    )
 
 @Composable
 private fun Indicator(
@@ -353,10 +358,11 @@ private fun Indicator(
             items(pageCount) {
                 val alpha = if (currentPage == it) 1f else 0.6f
                 Box(
-                    modifier = Modifier
-                        .size(size.dp)
-                        .clip(CircleShape)
-                        .background(Color.White.copy(alpha = alpha))
+                    modifier =
+                        Modifier
+                            .size(size.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = alpha)),
                 )
                 if (it != pageCount - 1) {
                     Spacer(modifier = Modifier.width(space.dp))
@@ -377,38 +383,43 @@ private fun Indicator(
 private fun AttractionItem(
     item: Attraction,
     @DrawableRes noImageHolderRes: Int,
-    invoke: Action<Attraction>
+    invoke: Action<Attraction>,
 ) {
     var isExpand by rememberSaveable { mutableStateOf(false) }
     val rotationAngle by animateFloatAsState(
-        targetValue = if (isExpand) 180f else 0f, label = "rotate"
+        targetValue = if (isExpand) 180f else 0f,
+        label = "rotate",
     )
     ElevatedCard(
-        modifier = Modifier
-            .clip(MaterialTheme.shapes.large)
-            .clickable {
-                invoke(item)
-            },
+        modifier =
+            Modifier
+                .clip(MaterialTheme.shapes.large)
+                .clickable {
+                    invoke(item)
+                },
         shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        ),
+        colors =
+            CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            ),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(3f),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(3f),
         ) {
             var selectedPage by rememberSaveable {
-                mutableStateOf(0)
+                mutableIntStateOf(0)
             }
             ImageSlider(
-                modifier = Modifier
-                    .fillMaxSize(),
+                modifier =
+                    Modifier
+                        .fillMaxSize(),
                 images = item.images.map { it.src },
                 noImageHolderRes = noImageHolderRes,
                 contentScale = ContentScale.FillWidth,
-                showLoading = false
+                showLoading = false,
             ) {
                 selectedPage = it
             }
@@ -417,14 +428,14 @@ private fun AttractionItem(
                     .padding(bottom = 8.dp)
                     .align(Alignment.BottomCenter),
                 item.images.size,
-                selectedPage
+                selectedPage,
             )
         }
 
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
         ) {
             AutoSizedText(
                 text = item.name,
@@ -433,25 +444,25 @@ private fun AttractionItem(
                 minFontSize = 6.sp,
                 fontWeight = FontWeight.Medium,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 2
+                maxLines = 2,
             )
             IconButton(
                 onClick = {
                     isExpand = !isExpand
                 },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally),
             ) {
                 Icon(
                     modifier = Modifier.rotate(rotationAngle),
                     painter = painterResource(R.drawable.ic_arrow_drop),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.primary,
                 )
             }
             AnimatedVisibility(visible = isExpand) {
                 Column {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_location),
@@ -478,7 +489,7 @@ private fun AttractionItem(
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             fontSize = 14.sp,
                             overflow = TextOverflow.Ellipsis,
-                            maxLines = 2
+                            maxLines = 2,
                         )
                     }
                 }
@@ -492,8 +503,8 @@ private fun AttractionItem(
  */
 @Composable
 private fun LazyListState.isScrollUp(): Boolean {
-    var preIndex by rememberSaveable(this) { mutableStateOf(firstVisibleItemIndex) }
-    var preScrollOffset by rememberSaveable(this) { mutableStateOf(firstVisibleItemScrollOffset) }
+    var preIndex by rememberSaveable(this) { mutableIntStateOf(firstVisibleItemIndex) }
+    var preScrollOffset by rememberSaveable(this) { mutableIntStateOf(firstVisibleItemScrollOffset) }
     return remember(this) {
         derivedStateOf {
             if (preIndex != firstVisibleItemIndex) {
@@ -513,13 +524,14 @@ private fun LazyListState.isScrollUp(): Boolean {
  */
 @Composable
 private fun LazyListState.ReachBottom(action: Action<Unit>) {
-    val isHitBtm = remember {
-        derivedStateOf {
-            layoutInfo.visibleItemsInfo.lastOrNull()?.let {
-                it.index == layoutInfo.totalItemsCount - 1
-            } ?: false
+    val isHitBtm =
+        remember {
+            derivedStateOf {
+                layoutInfo.visibleItemsInfo.lastOrNull()?.let {
+                    it.index == layoutInfo.totalItemsCount - 1
+                } ?: false
+            }
         }
-    }
     LaunchedEffect(isHitBtm) {
         snapshotFlow { isHitBtm.value }.collectLatest {
             if (it) action(Unit)

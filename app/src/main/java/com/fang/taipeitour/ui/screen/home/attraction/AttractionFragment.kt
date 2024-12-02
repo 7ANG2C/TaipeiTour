@@ -90,14 +90,15 @@ import com.google.accompanist.flowlayout.FlowRow
  * Single Attraction Fragment
  */
 class AttractionFragment : Fragment() {
-
     companion object {
         private const val ARG = "argument"
+
         fun newInstance(argument: AttractionArgument): Fragment {
             return AttractionFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(ARG, argument)
-                }
+                arguments =
+                    Bundle().apply {
+                        putParcelable(ARG, argument)
+                    }
             }
         }
     }
@@ -122,7 +123,7 @@ class AttractionFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -130,10 +131,11 @@ class AttractionFragment : Fragment() {
                 val stateArgument by rememberSaveable { mutableStateOf(argument) }
                 stateArgument?.let { argument ->
                     CollapsingScreen(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.surface),
-                        argument = argument
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.surface),
+                        argument = argument,
                     )
                 }
                 BackHandler {
@@ -144,7 +146,10 @@ class AttractionFragment : Fragment() {
     }
 
     @Composable
-    private fun CollapsingScreen(modifier: Modifier = Modifier, argument: AttractionArgument) {
+    private fun CollapsingScreen(
+        modifier: Modifier = Modifier,
+        argument: AttractionArgument,
+    ) {
         var showUrlIntroduction by rememberSaveable {
             mutableStateOf(false)
         }
@@ -168,9 +173,10 @@ class AttractionFragment : Fragment() {
                 mutableStateOf(0)
             }
             Header(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(headerHeight),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(headerHeight),
                 scrollPosition = scrollState.value,
                 headerHeightPx = headerHeightPx,
                 argument = argument,
@@ -181,45 +187,49 @@ class AttractionFragment : Fragment() {
             // back
             val interactionSource = remember { MutableInteractionSource() }
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(topBarHeight)
-                    .gradientBackground(
-                        listOf(
-                            getImageGradientColor().copy(alpha = 0.3f),
-                            Color.Transparent,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(topBarHeight)
+                        .gradientBackground(
+                            listOf(
+                                getImageGradientColor().copy(alpha = 0.3f),
+                                Color.Transparent,
+                            ),
+                            270f,
                         ),
-                        270f
-                    )
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_back),
                     contentDescription = null,
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .clickable(
-                            interactionSource = interactionSource,
-                            indication = null
-                        ) {
-                            onDismiss?.invoke()
-                        }
-                        .padding(start = titlePaddingStart),
-                    tint = Color.White
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterStart)
+                            .clickable(
+                                interactionSource = interactionSource,
+                                indication = null,
+                            ) {
+                                onDismiss?.invoke()
+                            }
+                            .padding(start = titlePaddingStart),
+                    tint = Color.White,
                 )
                 // selected page hint
                 Text(
-                    text = if (attraction.images.isEmpty()) {
-                        "1/1"
-                    } else {
-                        "${selectedPage + 1}/${attraction.images.size}"
-                    },
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(end = titlePaddingStart),
+                    text =
+                        if (attraction.images.isEmpty()) {
+                            "1/1"
+                        } else {
+                            "${selectedPage + 1}/${attraction.images.size}"
+                        },
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterEnd)
+                            .padding(end = titlePaddingStart),
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.End
+                    textAlign = TextAlign.End,
                 )
             }
 
@@ -254,17 +264,18 @@ class AttractionFragment : Fragment() {
         modifier: Modifier = Modifier,
         scrollState: ScrollState,
         attraction: Attraction,
-        showUrlIntroduction: Invoke
+        showUrlIntroduction: Invoke,
     ) {
         Column(
-            modifier = modifier
-                .verticalScroll(scrollState)
-                .heightIn(min = screenHeightDp.dp + headerHeight)
-
+            modifier =
+                modifier
+                    .verticalScroll(scrollState)
+                    .heightIn(min = screenHeightDp.dp + headerHeight),
         ) {
             Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
+                modifier =
+                    Modifier
+                        .padding(horizontal = 16.dp),
             ) {
                 // header spacer
                 Spacer(Modifier.height(headerHeight))
@@ -273,13 +284,14 @@ class AttractionFragment : Fragment() {
                 Spacer(Modifier.height(28.dp))
                 SectionTitle(
                     R.drawable.ic_basic_info,
-                    LocalLanguage.getLocaleString(R.string.base_info)
+                    LocalLanguage.getLocaleString(R.string.base_info),
                 )
                 Spacer(Modifier.height(10.dp))
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                 ) {
                     val context = LocalContext.current
                     BasicInfoRow(titleRes = R.string.address, content = attraction.address) {
@@ -295,7 +307,7 @@ class AttractionFragment : Fragment() {
                     BasicInfoRow(
                         titleRes = R.string.web_url,
                         content = attraction.originalUrl,
-                        isWebsite = true
+                        isWebsite = true,
                     ) {
                         showUrlIntroduction()
                     }
@@ -324,7 +336,7 @@ class AttractionFragment : Fragment() {
                 Spacer(Modifier.height(28.dp))
                 SectionTitle(
                     R.drawable.ic_introduction,
-                    LocalLanguage.getLocaleString(R.string.attraction_intro)
+                    LocalLanguage.getLocaleString(R.string.attraction_intro),
                 )
                 Spacer(Modifier.height(10.dp))
                 attraction.introduction.split("\r\n\r\n")
@@ -332,17 +344,19 @@ class AttractionFragment : Fragment() {
                         if (i != 0) {
                             // dot style divider
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 14.dp),
-                                horizontalArrangement = Arrangement.Center
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 14.dp),
+                                horizontalArrangement = Arrangement.Center,
                             ) {
                                 repeat(3) {
                                     Box(
-                                        modifier = Modifier
-                                            .size(5.dp)
-                                            .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.outlineVariant)
+                                        modifier =
+                                            Modifier
+                                                .size(5.dp)
+                                                .clip(CircleShape)
+                                                .background(MaterialTheme.colorScheme.outlineVariant),
                                     )
                                     Spacer(modifier = Modifier.width(16.dp))
                                 }
@@ -351,7 +365,7 @@ class AttractionFragment : Fragment() {
                         SelectionContainer(
                             Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
+                                .padding(horizontal = 16.dp),
                         ) {
                             Text(
                                 text = text,
@@ -366,39 +380,44 @@ class AttractionFragment : Fragment() {
                 Spacer(Modifier.height(28.dp))
                 SectionTitle(
                     R.drawable.ic_label,
-                    LocalLanguage.getLocaleString(R.string.attraction_tag)
+                    LocalLanguage.getLocaleString(R.string.attraction_tag),
                 )
                 Spacer(Modifier.height(10.dp))
                 FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                 ) {
                     val categories = attraction.categories
                     val targets = attraction.targets
                     (categories + targets).forEach { category ->
-                        val color = when (category) {
-                            in categories -> MaterialTheme.colorScheme.tertiary
-                            in targets -> MaterialTheme.colorScheme.primary
-                            else -> null
-                        }
+                        val color =
+                            when (category) {
+                                in categories -> MaterialTheme.colorScheme.tertiary
+                                in targets -> MaterialTheme.colorScheme.primary
+                                else -> null
+                            }
                         SuggestionChip(
                             onClick = { },
                             label = {
                                 Text(text = category.name, fontSize = 14.sp)
                             },
                             modifier = Modifier.padding(end = 8.dp),
-                            colors = color?.let {
-                                SuggestionChipDefaults.suggestionChipColors(
-                                    containerColor = it.copy(alpha = 0.1f),
-                                    labelColor = it.copy(alpha = 0.9f),
-                                )
-                            } ?: SuggestionChipDefaults.suggestionChipColors(),
-                            border = color?.let {
-                                SuggestionChipDefaults.suggestionChipBorder(
-                                    borderColor = it.copy(alpha = 0.8f),
-                                )
-                            },
+                            colors =
+                                color?.let {
+                                    SuggestionChipDefaults.suggestionChipColors(
+                                        containerColor = it.copy(alpha = 0.1f),
+                                        labelColor = it.copy(alpha = 0.9f),
+                                    )
+                                } ?: SuggestionChipDefaults.suggestionChipColors(),
+                            border =
+                                color?.let {
+                                    SuggestionChipDefaults.suggestionChipBorder(
+                                        enabled = true,
+                                        borderColor = it.copy(alpha = 0.8f),
+                                    )
+                                },
                         )
                     }
                 }
@@ -407,33 +426,37 @@ class AttractionFragment : Fragment() {
             // end
             Spacer(Modifier.height(72.dp))
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
-                    .padding(top = 6.dp, bottom = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
+                        .padding(top = 6.dp, bottom = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 val color = MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)
                 Text(
                     text = "Taipei · Travel",
                     fontSize = 12.sp,
-                    color = color
+                    color = color,
                 )
                 Spacer(Modifier.height(2.dp))
                 Text(
                     text = "旅遊臺北",
                     fontSize = 11.sp,
-                    color = color
+                    color = color,
                 )
             }
         }
     }
 
     @Composable
-    private fun SectionTitle(res: Int, text: String) {
+    private fun SectionTitle(
+        res: Int,
+        text: String,
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 painter = painterResource(res),
@@ -456,7 +479,7 @@ class AttractionFragment : Fragment() {
         @StringRes titleRes: Int,
         content: String,
         isWebsite: Boolean = false,
-        onClick: Invoke? = null
+        onClick: Invoke? = null,
     ) {
         if (content.isNotBlank()) {
             Row(Modifier.fillMaxWidth()) {
@@ -468,22 +491,25 @@ class AttractionFragment : Fragment() {
 
                 Text(
                     text = content + if (!isWebsite && onClick != null) "↗" else "",
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .clickable {
-                            onClick?.invoke()
-                        },
+                    modifier =
+                        Modifier
+                            .clip(RoundedCornerShape(4.dp))
+                            .clickable {
+                                onClick?.invoke()
+                            },
                     fontSize = 15.sp,
-                    color = if (isWebsite) {
-                        Color(0xFF3974E9)
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    },
-                    textDecoration = if (isWebsite) {
-                        TextDecoration.Underline
-                    } else {
-                        null
-                    }
+                    color =
+                        if (isWebsite) {
+                            Color(0xFF3974E9)
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                    textDecoration =
+                        if (isWebsite) {
+                            TextDecoration.Underline
+                        } else {
+                            null
+                        },
                 )
             }
         }
@@ -498,12 +524,13 @@ class AttractionFragment : Fragment() {
         onPageSelect: Action<Int>,
     ) {
         Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .graphicsLayer {
-                    translationY = -scrollPosition.toFloat() / 2f
-                    alpha = (-1f / headerHeightPx) * scrollPosition + 1
-                }
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .graphicsLayer {
+                        translationY = -scrollPosition.toFloat() / 2f
+                        alpha = (-1f / headerHeightPx) * scrollPosition + 1
+                    },
         ) {
             ImageSlider(
                 modifier = Modifier.fillMaxWidth(),
@@ -511,21 +538,23 @@ class AttractionFragment : Fragment() {
                 noImageHolderRes = argument.noImageHolderRes,
                 contentScale = ContentScale.FillBounds,
                 showLoading = true,
-                onPageSelect = onPageSelect
+                onPageSelect = onPageSelect,
             )
             val alpha = if (LocalDarkMode) 0.8f else 0.4f
             Box(
                 Modifier
                     .fillMaxSize()
                     .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                getImageGradientColor().copy(alpha = alpha),
+                        brush =
+                            Brush.verticalGradient(
+                                colors =
+                                    listOf(
+                                        Color.Transparent,
+                                        getImageGradientColor().copy(alpha = alpha),
+                                    ),
+                                startY = headerHeightPx * 0.8f,
                             ),
-                            startY = headerHeightPx * 0.8f
-                        )
-                    )
+                    ),
             )
         }
     }
@@ -534,49 +563,52 @@ class AttractionFragment : Fragment() {
     @Composable
     private fun TopBar(
         modifier: Modifier = Modifier,
-        showTopBar: Boolean
+        showTopBar: Boolean,
     ) {
         AnimatedVisibility(
             modifier = modifier,
             visible = showTopBar,
             enter = fadeIn(animationSpec = tween(300)),
-            exit = fadeOut(animationSpec = tween(300))
+            exit = fadeOut(animationSpec = tween(300)),
         ) {
             TopAppBar(
-                modifier = Modifier
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.onSecondary,
-                                MaterialTheme.colorScheme.surface,
-                                MaterialTheme.colorScheme.surface,
-                            )
+                modifier =
+                    Modifier
+                        .background(
+                            brush =
+                                Brush.horizontalGradient(
+                                    listOf(
+                                        MaterialTheme.colorScheme.onSecondary,
+                                        MaterialTheme.colorScheme.surface,
+                                        MaterialTheme.colorScheme.surface,
+                                    ),
+                                ),
                         )
-                    )
-                    .height(topBarHeight),
+                        .height(topBarHeight),
                 navigationIcon = {
                     val interactionSource = remember { MutableInteractionSource() }
                     Box(
-                        modifier = Modifier
-                            .clickable(
-                                interactionSource = interactionSource,
-                                indication = null
-                            ) {
-                                onDismiss?.invoke()
-                            }
-                            .padding(16.dp)
-                            .size(24.dp),
+                        modifier =
+                            Modifier
+                                .clickable(
+                                    interactionSource = interactionSource,
+                                    indication = null,
+                                ) {
+                                    onDismiss?.invoke()
+                                }
+                                .padding(16.dp)
+                                .size(24.dp),
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_back),
                             contentDescription = null,
                             modifier = Modifier.align(Alignment.Center),
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 },
                 title = {},
-                colors = topAppBarColors(containerColor = Color.Transparent)
+                colors = topAppBarColors(containerColor = Color.Transparent),
             )
         }
     }
@@ -586,19 +618,21 @@ class AttractionFragment : Fragment() {
         modifier: Modifier = Modifier,
         scroll: ScrollState,
         text: String,
-        showTopBar: Boolean
+        showTopBar: Boolean,
     ) {
         var titleHeightPx by rememberSaveable { mutableStateOf(0f) }
         var titleWidthPx by rememberSaveable { mutableStateOf(0f) }
 
         val color = MaterialTheme.colorScheme.onSurface
-        val textColor = if (LocalDarkMode) {
-            remember { mutableStateOf(color) }
-        } else {
-            animateColorAsState(
-                if (showTopBar) color else MaterialTheme.colorScheme.onPrimary, label = "show"
-            )
-        }
+        val textColor =
+            if (LocalDarkMode) {
+                remember { mutableStateOf(color) }
+            } else {
+                animateColorAsState(
+                    if (showTopBar) color else MaterialTheme.colorScheme.onPrimary,
+                    label = "show",
+                )
+            }
         AutoSizedText(
             text = text,
             targetFontSize = 28.sp,
@@ -607,69 +641,77 @@ class AttractionFragment : Fragment() {
             color = textColor.value,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = modifier
-                .padding(end = 8.dp)
-                .graphicsLayer {
-                    val collapseRange = (headerHeight.toPx() - topBarHeight.toPx())
-                    val collapseFraction = (scroll.value / collapseRange).coerceIn(0f, 1f)
+            modifier =
+                modifier
+                    .padding(end = 8.dp)
+                    .graphicsLayer {
+                        val collapseRange = (headerHeight.toPx() - topBarHeight.toPx())
+                        val collapseFraction = (scroll.value / collapseRange).coerceIn(0f, 1f)
 
-                    val scale = lerp(1f.dp, 0.66f.dp, collapseFraction)
+                        val scale = lerp(1f.dp, 0.66f.dp, collapseFraction)
 
-                    val titleExtraStartPadding = titleWidthPx.toDp() * (1 - scale.value) / 2f
+                        val titleExtraStartPadding = titleWidthPx.toDp() * (1 - scale.value) / 2f
 
-                    val paddingMedium = 16.dp
-                    val titleY1stInterpolatedPoint = lerp(
-                        headerHeight - titleHeightPx.toDp() - paddingMedium,
-                        headerHeight / 2,
-                        collapseFraction
-                    )
+                        val paddingMedium = 16.dp
+                        val titleY1stInterpolatedPoint =
+                            lerp(
+                                headerHeight - titleHeightPx.toDp() - paddingMedium,
+                                headerHeight / 2,
+                                collapseFraction,
+                            )
 
-                    val titleX1stInterpolatedPoint = lerp(
-                        titlePaddingStart,
-                        (titlePaddingEnd - titleExtraStartPadding) * 5 / 4,
-                        collapseFraction
-                    )
+                        val titleX1stInterpolatedPoint =
+                            lerp(
+                                titlePaddingStart,
+                                (titlePaddingEnd - titleExtraStartPadding) * 5 / 4,
+                                collapseFraction,
+                            )
 
-                    val titleY2ndInterpolatedPoint = lerp(
-                        headerHeight / 2,
-                        topBarHeight / 2 - titleHeightPx.toDp() / 2,
-                        collapseFraction
-                    )
+                        val titleY2ndInterpolatedPoint =
+                            lerp(
+                                headerHeight / 2,
+                                topBarHeight / 2 - titleHeightPx.toDp() / 2,
+                                collapseFraction,
+                            )
 
-                    val titleX2ndInterpolatedPoint = lerp(
-                        (titlePaddingEnd - titleExtraStartPadding) * 5 / 4,
-                        titlePaddingEnd - titleExtraStartPadding,
-                        collapseFraction
-                    )
+                        val titleX2ndInterpolatedPoint =
+                            lerp(
+                                (titlePaddingEnd - titleExtraStartPadding) * 5 / 4,
+                                titlePaddingEnd - titleExtraStartPadding,
+                                collapseFraction,
+                            )
 
-                    val titleY = lerp(
-                        titleY1stInterpolatedPoint,
-                        titleY2ndInterpolatedPoint,
-                        collapseFraction
-                    )
+                        val titleY =
+                            lerp(
+                                titleY1stInterpolatedPoint,
+                                titleY2ndInterpolatedPoint,
+                                collapseFraction,
+                            )
 
-                    val titleX = lerp(
-                        titleX1stInterpolatedPoint,
-                        titleX2ndInterpolatedPoint,
-                        collapseFraction
-                    )
+                        val titleX =
+                            lerp(
+                                titleX1stInterpolatedPoint,
+                                titleX2ndInterpolatedPoint,
+                                collapseFraction,
+                            )
 
-                    translationY = titleY.toPx()
-                    translationX = titleX.toPx()
-                    scaleX = scale.value
-                    scaleY = scale.value
-                }
-                .onGloballyPositioned {
-                    titleHeightPx = it.size.height.toFloat()
-                    titleWidthPx = it.size.width.toFloat()
-                }
+                        translationY = titleY.toPx()
+                        translationX = titleX.toPx()
+                        scaleX = scale.value
+                        scaleY = scale.value
+                    }
+                    .onGloballyPositioned {
+                        titleHeightPx = it.size.height.toFloat()
+                        titleWidthPx = it.size.width.toFloat()
+                    },
         )
     }
 }
 
 @Composable
-private fun getImageGradientColor() = if (LocalDarkMode) {
-    MaterialTheme.colorScheme.surface
-} else {
-    MaterialTheme.colorScheme.onSurface
-}
+private fun getImageGradientColor() =
+    if (LocalDarkMode) {
+        MaterialTheme.colorScheme.surface
+    } else {
+        MaterialTheme.colorScheme.onSurface
+    }

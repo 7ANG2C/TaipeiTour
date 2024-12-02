@@ -2,13 +2,12 @@ package com.fang.taipeitour.ui.screen.setting
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -86,14 +85,15 @@ fun SettingScreen(
             TopBar(
                 modifier = Modifier.fillMaxWidth(),
                 text = it.getLocaleString(R.string.setting),
-                onClick = onMenuClicked
+                onClick = onMenuClicked,
             )
         }
 
         Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 32.dp, vertical = 20.dp)
+            modifier =
+                Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 32.dp, vertical = 20.dp),
         ) {
             // General
             SectionTitle(LocalLanguage.getLocaleString(R.string.general_setting))
@@ -103,7 +103,7 @@ fun SettingScreen(
                 scrollEffect = true,
                 onClick = {
                     showLanguageDialog = true
-                }
+                },
             ) {
                 when (it) {
                     Language.TAIWAN -> FlagTw()
@@ -122,32 +122,39 @@ fun SettingScreen(
                 targetState = LocalDarkMode,
                 onClick = {
                     viewModel.toggleDarkMode()
-                }
+                },
             ) { isDark ->
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .gradientBackground(
-                            if (isDark) listOf(
-                                Color(0xFF250C69),
-                                Color(0xFF121164),
-                                Color(0xFF142B69),
-                            ) else listOf(
-                                Color(0xFFFFF2CA),
-                                Color(0xFFFFFACA),
-                                Color(0xFFE5F2FF),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .gradientBackground(
+                                if (isDark) {
+                                    listOf(
+                                        Color(0xFF250C69),
+                                        Color(0xFF121164),
+                                        Color(0xFF142B69),
+                                    )
+                                } else {
+                                    listOf(
+                                        Color(0xFFFFF2CA),
+                                        Color(0xFFFFFACA),
+                                        Color(0xFFE5F2FF),
+                                    )
+                                },
+                                272f,
                             ),
-                            272f
-                        ),
                 ) {
                     Image(
-                        painter = painterResource(
-                            if (isDark) R.drawable.ic_dark_mode else R.drawable.ic_light_mode
-                        ),
+                        painter =
+                            painterResource(
+                                if (isDark) R.drawable.ic_dark_mode else R.drawable.ic_light_mode,
+                            ),
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .align(Alignment.Center)
+                        modifier =
+                            Modifier
+                                .size(24.dp)
+                                .align(Alignment.Center),
                     )
                 }
             }
@@ -161,71 +168,78 @@ fun SettingScreen(
                 Spacer(modifier = Modifier.height(12.dp))
                 previews.forEach { preview ->
                     when (preview) {
-                        PreviewFunction.COLOR_SCHEME -> SettingCard(
-                            targetState = LocalColorScheme,
-                            onClick = {
-                                viewModel.toggleColorScheme()
-                            }
-                        ) {
-                            val background: List<Color>
-                            val tint: Color
-                            if (LocalDarkMode) {
-                                background = listOf(
-                                    MaterialTheme.colorScheme.primary,
-                                    MaterialTheme.colorScheme.tertiary,
-                                )
-                                tint = MaterialTheme.colorScheme.inversePrimary
-                            } else {
-                                background = listOf(
-                                    MaterialTheme.colorScheme.primaryContainer,
-                                    MaterialTheme.colorScheme.tertiaryContainer,
-                                )
-                                tint = MaterialTheme.colorScheme.primary
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .gradientBackground(background, 300f)
+                        PreviewFunction.COLOR_SCHEME ->
+                            SettingCard(
+                                targetState = LocalColorScheme,
+                                onClick = {
+                                    viewModel.toggleColorScheme()
+                                },
                             ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_color_scheme),
-                                    contentDescription = null,
-                                    tint = tint,
-                                    modifier = Modifier.align(Alignment.Center)
-                                )
+                                val background: List<Color>
+                                val tint: Color
+                                if (LocalDarkMode) {
+                                    background =
+                                        listOf(
+                                            MaterialTheme.colorScheme.primary,
+                                            MaterialTheme.colorScheme.tertiary,
+                                        )
+                                    tint = MaterialTheme.colorScheme.inversePrimary
+                                } else {
+                                    background =
+                                        listOf(
+                                            MaterialTheme.colorScheme.primaryContainer,
+                                            MaterialTheme.colorScheme.tertiaryContainer,
+                                        )
+                                    tint = MaterialTheme.colorScheme.primary
+                                }
+                                Box(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize()
+                                            .gradientBackground(background, 300f),
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_color_scheme),
+                                        contentDescription = null,
+                                        tint = tint,
+                                        modifier = Modifier.align(Alignment.Center),
+                                    )
+                                }
                             }
-                        }
 
-                        PreviewFunction.RESET_USER_PREFERENCE -> SettingCard(
-                            targetState = viewModel.isEmpty.stateValue(),
-                            onClick = {
-                                viewModel.resetUserPreferences()
+                        PreviewFunction.RESET_USER_PREFERENCE ->
+                            SettingCard(
+                                targetState = viewModel.isEmpty.stateValue(),
+                                onClick = {
+                                    viewModel.resetUserPreferences()
+                                },
+                            ) { isEmpty ->
+                                val background: Color
+                                val tint: Color
+                                if ((LocalDarkMode && isEmpty) || (!LocalDarkMode && !isEmpty)) {
+                                    background = MaterialTheme.colorScheme.secondary
+                                    tint = MaterialTheme.colorScheme.inversePrimary
+                                } else {
+                                    background = MaterialTheme.colorScheme.onSecondary
+                                    tint = MaterialTheme.colorScheme.primary
+                                }
+                                Box(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize()
+                                            .background(background),
+                                ) {
+                                    Icon(
+                                        painter =
+                                            painterResource(
+                                                if (isEmpty) R.drawable.ic_clean else R.drawable.ic_dirty,
+                                            ),
+                                        contentDescription = null,
+                                        tint = tint,
+                                        modifier = Modifier.align(Alignment.Center),
+                                    )
+                                }
                             }
-                        ) { isEmpty ->
-                            val background: Color
-                            val tint: Color
-                            if ((LocalDarkMode && isEmpty) || (!LocalDarkMode && !isEmpty)) {
-                                background = MaterialTheme.colorScheme.secondary
-                                tint = MaterialTheme.colorScheme.inversePrimary
-                            } else {
-                                background = MaterialTheme.colorScheme.onSecondary
-                                tint = MaterialTheme.colorScheme.primary
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(background)
-                            ) {
-                                Icon(
-                                    painter = painterResource(
-                                        if (isEmpty) R.drawable.ic_clean else R.drawable.ic_dirty
-                                    ),
-                                    contentDescription = null,
-                                    tint = tint,
-                                    modifier = Modifier.align(Alignment.Center)
-                                )
-                            }
-                        }
                     }
                     if (preview != previews.lastOrNull()) {
                         Spacer(modifier = Modifier.height(16.dp))
@@ -241,7 +255,7 @@ fun SettingScreen(
         isShow = showLanguageDialog,
         onLanguageSelected = {
             viewModel.setLanguage(it)
-        }
+        },
     )
 }
 
@@ -250,63 +264,67 @@ private fun SectionTitle(text: String) {
     Crossfade(targetState = text, label = "section_title") {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = buildAnnotatedString {
-                    withStyle(SpanStyle(fontSize = 12.sp)) {
-                        append(" ▍")
-                    }
-                    withStyle(SpanStyle(fontSize = 16.sp)) {
-                        append(it)
-                    }
-                },
-                color = MaterialTheme.colorScheme.secondary
+                text =
+                    buildAnnotatedString {
+                        withStyle(SpanStyle(fontSize = 12.sp)) {
+                            append(" ▍")
+                        }
+                        withStyle(SpanStyle(fontSize = 16.sp)) {
+                            append(it)
+                        }
+                    },
+                color = MaterialTheme.colorScheme.secondary,
             )
         }
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun <S> SettingCard(
     targetState: S,
     scrollEffect: Boolean = false,
     onClick: Invoke,
-    content: @Composable ColumnScope.(S) -> Unit
+    content: @Composable ColumnScope.(S) -> Unit,
 ) {
     ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
-            .clickable {
-                onClick.invoke()
-            }
-            .aspectRatio(5f),
-        elevation = CardDefaults.elevatedCardElevation(
-            defaultElevation = 2.dp,
-            pressedElevation = 1.dp
-        ),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .clickable {
+                    onClick.invoke()
+                }
+                .aspectRatio(5f),
+        elevation =
+            CardDefaults.elevatedCardElevation(
+                defaultElevation = 2.dp,
+                pressedElevation = 1.dp,
+            ),
     ) {
         AnimatedContent(
             targetState = targetState,
             transitionSpec = {
                 val animationSpec = tween<IntOffset>(800)
                 val fadeAnimationSpec = tween<Float>(800)
-                val enterTransition = if (scrollEffect) {
-                    slideInVertically(animationSpec) { height ->
-                        height
-                    } + fadeIn(fadeAnimationSpec)
-                } else {
-                    fadeIn(fadeAnimationSpec)
-                }
-                val exitTransition = if (scrollEffect) {
-                    slideOutVertically(animationSpec) { height ->
-                        -height
-                    } + fadeOut(fadeAnimationSpec)
-                } else {
-                    fadeOut(fadeAnimationSpec)
-                }
-                (enterTransition with exitTransition)
+                val enterTransition =
+                    if (scrollEffect) {
+                        slideInVertically(animationSpec) { height ->
+                            height
+                        } + fadeIn(fadeAnimationSpec)
+                    } else {
+                        fadeIn(fadeAnimationSpec)
+                    }
+                val exitTransition =
+                    if (scrollEffect) {
+                        slideOutVertically(animationSpec) { height ->
+                            -height
+                        } + fadeOut(fadeAnimationSpec)
+                    } else {
+                        fadeOut(fadeAnimationSpec)
+                    }
+                (enterTransition togetherWith exitTransition)
             },
-            label = "content"
+            label = "content",
         ) {
             content(it)
         }
@@ -324,50 +342,53 @@ private fun LanguageDialog(
             LazyColumn {
                 items(Language.all) { language ->
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .clickable {
-                                onLanguageSelected.invoke(language)
-                                onDismissRequest.invoke()
-                            }
-                            .background(
-                                if (language == LocalLanguage) {
-                                    MaterialTheme.colorScheme.secondary
-                                } else {
-                                    Color.Transparent
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .clickable {
+                                    onLanguageSelected.invoke(language)
+                                    onDismissRequest.invoke()
                                 }
-                            )
-                            .padding(12.dp),
-                        horizontalArrangement = Arrangement.Center
+                                .background(
+                                    if (language == LocalLanguage) {
+                                        MaterialTheme.colorScheme.secondary
+                                    } else {
+                                        Color.Transparent
+                                    },
+                                )
+                                .padding(12.dp),
+                        horizontalArrangement = Arrangement.Center,
                     ) {
                         Image(
-                            painter = painterResource(
-                                when (language) {
-                                    Language.TAIWAN -> R.drawable.flag_tw
-                                    Language.CHINA -> R.drawable.flag_cn
-                                    Language.ENGLISH -> R.drawable.flag_us
-                                    Language.JAPAN -> R.drawable.flag_jp
-                                    Language.KOREA -> R.drawable.flag_kr
-                                    Language.SPAN -> R.drawable.flag_es
-                                    Language.INDONESIA -> R.drawable.flag_id
-                                    Language.THAILAND -> R.drawable.flag_th
-                                    Language.VIETNAM -> R.drawable.flag_vn
-                                }
-                            ),
+                            painter =
+                                painterResource(
+                                    when (language) {
+                                        Language.TAIWAN -> R.drawable.flag_tw
+                                        Language.CHINA -> R.drawable.flag_cn
+                                        Language.ENGLISH -> R.drawable.flag_us
+                                        Language.JAPAN -> R.drawable.flag_jp
+                                        Language.KOREA -> R.drawable.flag_kr
+                                        Language.SPAN -> R.drawable.flag_es
+                                        Language.INDONESIA -> R.drawable.flag_id
+                                        Language.THAILAND -> R.drawable.flag_th
+                                        Language.VIETNAM -> R.drawable.flag_vn
+                                    },
+                                ),
                             contentDescription = null,
                             modifier = Modifier.size(20.dp),
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = language.getLocaleString(R.string.language),
-                            color = if (language == LocalLanguage) {
-                                MaterialTheme.colorScheme.onSecondary
-                            } else {
-                                MaterialTheme.colorScheme.secondary
-                            },
+                            color =
+                                if (language == LocalLanguage) {
+                                    MaterialTheme.colorScheme.onSecondary
+                                } else {
+                                    MaterialTheme.colorScheme.secondary
+                                },
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
                         )
                     }
                     if (language != Language.all.lastOrNull()) {

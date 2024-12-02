@@ -27,12 +27,12 @@ import org.koin.dsl.module
  * ```
  */
 object TaipeiTourServiceModule {
-
     operator fun invoke(overrideModules: List<Module> = emptyList()): List<Module> {
-        val module = module {
-            singleOf(::RetrofitProviderImpl).bind<RetrofitProvider>()
-            singleOf(::TaipeiTourApiImpl) { bind<TaipeiTourApi>() }
-        }
+        val module =
+            module {
+                singleOf(::RetrofitProviderImpl).bind<RetrofitProvider>()
+                singleOf(::TaipeiTourApiImpl) { bind<TaipeiTourApi>() }
+            }
         return listOf(module) + overrideModules
     }
 }

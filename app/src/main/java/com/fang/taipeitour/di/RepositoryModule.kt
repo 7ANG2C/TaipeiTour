@@ -9,9 +9,9 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 object RepositoryModule {
-
-    operator fun invoke() = module {
-        singleOf(::UserPreferencesRepository)
-        factoryOf(::GetAllAttractionRepositoryImpl).bind<GetAllAttractionRepository>()
-    }
+    operator fun invoke() =
+        module {
+            singleOf(::UserPreferencesRepository)
+            factoryOf(::GetAllAttractionRepositoryImpl).bind<GetAllAttractionRepository>()
+        }
 }

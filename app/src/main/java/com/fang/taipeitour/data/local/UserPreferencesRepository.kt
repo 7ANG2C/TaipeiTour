@@ -14,30 +14,32 @@ import kotlinx.coroutines.flow.mapLatest
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserPreferencesRepository(
-    private val dataStore: UserPreferencesDataStore
+    private val dataStore: UserPreferencesDataStore,
 ) {
+    operator fun invoke() =
+        dataStore.invoke()
+            .mapLatest {
+                val default = UserPreferences.default
+                UserPreferences(
+                    language = Language[it.language] ?: default.language,
+                    darkMode = DarkMode[it.darkMode] ?: default.darkMode,
+                    colorScheme = ColorScheme[it.colorScheme] ?: default.colorScheme,
+                )
+            }
+            .flowOn(Dispatchers.Default)
 
-    operator fun invoke() = dataStore.invoke()
-        .mapLatest {
-            val default = UserPreferences.default
-            UserPreferences(
-                language = Language[it.language] ?: default.language,
-                darkMode = DarkMode[it.darkMode] ?: default.darkMode,
-                colorScheme = ColorScheme[it.colorScheme] ?: default.colorScheme,
-            )
-        }
-        .flowOn(Dispatchers.Default)
+    fun getLanguage() =
+        invoke()
+            .mapLatest { it.language }
+            .distinctUntilChanged()
 
-    fun getLanguage() = invoke()
-        .mapLatest { it.language }
-        .distinctUntilChanged()
-
-    fun isDefault() = dataStore.invoke()
-        .mapLatest {
-            it.language.isEmpty() &&
-                it.darkMode.isEmpty() &&
-                it.colorScheme.isEmpty()
-        }
+    fun isDefault() =
+        dataStore.invoke()
+            .mapLatest {
+                it.language.isEmpty() &&
+                    it.darkMode.isEmpty() &&
+                    it.colorScheme.isEmpty()
+            }
 
     suspend fun seLanguage(language: Language) {
         dataStore.setLanguage(language.key)

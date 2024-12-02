@@ -11,7 +11,6 @@ import org.junit.Before
 import org.junit.Test
 
 class PreviewFunctionFlavorImplTest {
-
     private lateinit var flavorImpl: PreviewFunctionFlavorImpl
 
     @Before
@@ -21,9 +20,12 @@ class PreviewFunctionFlavorImplTest {
 
     @Test
     fun testPreviewFunctionFlavorImpl() {
-        val mockPreviewFunctions = if (BuildConfig.DEBUG) {
-            PreviewFunction.values().toList()
-        } else emptyList()
+        val mockPreviewFunctions =
+            if (BuildConfig.DEBUG) {
+                PreviewFunction.entries
+            } else {
+                emptyList()
+            }
 
         val mockFlavor = mockk<PreviewFunctionFlavor>()
         every { mockFlavor.invoke() } returns mockPreviewFunctions

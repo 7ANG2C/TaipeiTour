@@ -21,9 +21,7 @@ import UserPreferences as ProtoUserPreferences
  * user app preferences repository DataStore
  */
 class UserPreferencesDataStore(context: Context) {
-
     internal class DataSerializer : Serializer<ProtoUserPreferences> {
-
         override val defaultValue: ProtoUserPreferences =
             ProtoUserPreferences.getDefaultInstance()
 
@@ -35,29 +33,34 @@ class UserPreferencesDataStore(context: Context) {
             }
         }
 
-        override suspend fun writeTo(t: ProtoUserPreferences, output: OutputStream) {
+        override suspend fun writeTo(
+            t: ProtoUserPreferences,
+            output: OutputStream,
+        ) {
             t.writeTo(output)
         }
     }
 
     private companion object {
         val Context.dataStore: DataStore<ProtoUserPreferences> by dataStore(
-            "user_preferences.pb", DataSerializer()
+            "user_preferences.pb",
+            DataSerializer(),
         )
     }
 
     private val dataStore = context.dataStore
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    operator fun invoke() = dataStore.data
-        .mapLatest {
-            DataStoreUserPreferences(
-                language = it.language,
-                darkMode = it.darkMode,
-                colorScheme = it.colorScheme
-            )
-        }
-        .flowOn(Dispatchers.Default)
+    operator fun invoke() =
+        dataStore.data
+            .mapLatest {
+                DataStoreUserPreferences(
+                    language = it.language,
+                    darkMode = it.darkMode,
+                    colorScheme = it.colorScheme,
+                )
+            }
+            .flowOn(Dispatchers.Default)
 
     suspend fun setLanguage(key: String) {
         withContext(Dispatchers.Default) {
@@ -88,9 +91,12 @@ class UserPreferencesDataStore(context: Context) {
     suspend fun toggleColorScheme() {
         withContext(Dispatchers.Default) {
             dataStore.updateData { old ->
-                val colorScheme = if (old.colorScheme.isEmpty()) {
-                    ColorScheme.default
-                } else ColorScheme[old.colorScheme]
+                val colorScheme =
+                    if (old.colorScheme.isEmpty()) {
+                        ColorScheme.default
+                    } else {
+                        ColorScheme[old.colorScheme]
+                    }
                 colorScheme?.next?.let {
                     old.toBuilder().setColorScheme(it.key).build()
                 } ?: old

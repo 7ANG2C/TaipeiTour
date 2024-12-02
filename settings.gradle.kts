@@ -2,12 +2,21 @@ rootProject.name = "TaipeiTour"
 
 pluginManagement {
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
         mavenCentral()
         gradlePluginPortal()
     }
     resolutionStrategy {
         eachPlugin {
+            if (requested.id.id in setOf("com.android.library", "com.android.application")) {
+                useModule("com.android.tools.build:gradle:${requested.version}")
+            }
             if (requested.id.id in setOf("org.jetbrains.kotlin.android", "kotlin-parcelize")) {
                 useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
             }

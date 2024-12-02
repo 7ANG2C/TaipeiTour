@@ -47,7 +47,7 @@
 - [Material3 Theme Builder](https://m3.material.io/theme-builder#/custom "md3-theme-builder")
 
 ## 備註
-- 開發時間表
+- 開發時間表 (2024)
   | 0727 | 0728 | 0729 | 0730 | 0731 | 0801 |
   | - | - | - | - | - | - |
   | 確認規格<br>規劃實作方式 | 專案建置<br>服務串接<br>ImageSlider 實作 | 主頁實作<br>DataStore 建置<br>Flavor 建置 | 研究動畫<br>依賴版本更新 | Drawer 實作<br>單景點頁面實作<br>部分頁面動畫實作 | 單景點頁面實作<br>UserPreferences 建置 |

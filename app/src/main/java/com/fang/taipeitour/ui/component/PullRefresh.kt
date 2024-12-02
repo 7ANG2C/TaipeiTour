@@ -17,7 +17,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,14 +37,14 @@ fun PullRefresh(
     modifier: Modifier = Modifier,
     isRefreshing: Boolean,
     onRefresh: Invoke,
-    content: ComposableInvoke
+    content: ComposableInvoke,
 ) {
     val pullState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh)
-    var offset by remember { mutableStateOf(0) }
+    var offset by remember { mutableIntStateOf(0) }
     val animatedOffset by animateIntAsState(
         targetValue = offset,
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-        label = "pull"
+        label = "pull",
     )
 
     val height = 60.dp
@@ -52,41 +52,46 @@ fun PullRefresh(
     val triggerPx = remember { with(density) { height.toPx() } }
 
     CompositionLocalProvider(
-        LocalOverscrollConfiguration provides null
+        LocalOverscrollConfiguration provides null,
     ) {
         Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .pullRefresh(pullState, !isRefreshing)
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .pullRefresh(pullState, !isRefreshing),
         ) {
             Loading(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(height)
-                    .align(Alignment.TopCenter)
-                    .scale(min(animatedOffset / triggerPx, 1f) * 1f),
-                isFancy = false
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(height)
+                        .align(Alignment.TopCenter)
+                        .scale(min(animatedOffset / triggerPx, 1f) * 1f),
+                isFancy = false,
             )
 
             val willRefresh = pullState.progress > 0
 
-            offset = when {
-                willRefresh || isRefreshing -> triggerPx.roundToInt()
-                else -> 0
-            }
+            offset =
+                when {
+                    willRefresh || isRefreshing -> triggerPx.roundToInt()
+                    else -> 0
+                }
             val scale by animateFloatAsState(
                 targetValue = if (willRefresh) .95f else 1f,
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                ),
-                label = "scale"
+                animationSpec =
+                    spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                    ),
+                label = "scale",
             )
 
             Box(
-                modifier = Modifier
-                    .scale(scale)
-                    .offset { IntOffset(x = 0, y = animatedOffset) }
-                    .fillMaxSize()
+                modifier =
+                    Modifier
+                        .scale(scale)
+                        .offset { IntOffset(x = 0, y = animatedOffset) }
+                        .fillMaxSize(),
             ) {
                 content()
             }

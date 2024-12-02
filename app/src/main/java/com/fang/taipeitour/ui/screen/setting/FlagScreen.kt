@@ -33,23 +33,26 @@ private val colorFlagWhite = Color(0xFFF1F1F1)
 @Composable
 fun FlagTw() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorFlagRed)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(colorFlagRed),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxHeight(0.7f)
-                .fillMaxWidth(0.25f)
-                .clip(RoundedCornerShape(bottomEnd = 4.dp))
-                .background(colorFlagBlue)
+            modifier =
+                Modifier
+                    .fillMaxHeight(0.7f)
+                    .fillMaxWidth(0.25f)
+                    .clip(RoundedCornerShape(bottomEnd = 4.dp))
+                    .background(colorFlagBlue),
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_flag_tw_sun),
                 contentDescription = null,
-                modifier = Modifier
-                    .align(Alignment.Center),
-                tint = colorFlagWhite
+                modifier =
+                    Modifier
+                        .align(Alignment.Center),
+                tint = colorFlagWhite,
             )
         }
     }
@@ -58,21 +61,23 @@ fun FlagTw() {
 @Composable
 fun FlagCn() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorFlagRed)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(colorFlagRed),
     ) {
         Row(
-            modifier = Modifier
-                .padding(start = 8.dp)
-                .fillMaxHeight(),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .padding(start = 8.dp)
+                    .fillMaxHeight(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_star),
                 contentDescription = null,
                 modifier = Modifier.padding(horizontal = 16.dp),
-                tint = colorFlagYellow
+                tint = colorFlagYellow,
             )
             Column {
                 repeat(4) {
@@ -81,11 +86,11 @@ fun FlagCn() {
                         painter = painterResource(R.drawable.ic_star),
                         contentDescription = null,
                         modifier =
-                        Modifier
-                            .padding(start = padding.dp)
-                            .weight(1f)
-                            .scale(0.5f),
-                        tint = colorFlagYellow
+                            Modifier
+                                .padding(start = padding.dp)
+                                .weight(1f)
+                                .scale(0.5f),
+                        tint = colorFlagYellow,
                     )
                 }
             }
@@ -96,8 +101,9 @@ fun FlagCn() {
 @Composable
 fun FlagEn() {
     Box(
-        modifier = Modifier
-            .fillMaxHeight()
+        modifier =
+            Modifier
+                .fillMaxHeight(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             (0..4).forEach {
@@ -106,33 +112,35 @@ fun FlagEn() {
                     Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .background(color)
+                        .background(color),
                 )
             }
         }
         Column(
-            modifier = Modifier
-                .fillMaxHeight(0.6f)
-                .fillMaxWidth(0.3f)
-                .clip(RoundedCornerShape(bottomEnd = 4.dp))
-                .background(colorFlagBlue),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier =
+                Modifier
+                    .fillMaxHeight(0.6f)
+                    .fillMaxWidth(0.3f)
+                    .clip(RoundedCornerShape(bottomEnd = 4.dp))
+                    .background(colorFlagBlue),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             repeat(4) {
                 val count = if (it % 2 == 0) 6 else 5
                 val padding = if (it % 2 == 0) 1f else 5f / 6f
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth(padding)
-                        .weight(1f),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(padding)
+                            .weight(1f),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     repeat(count) {
                         Icon(
                             painter = painterResource(R.drawable.ic_star),
                             contentDescription = null,
                             modifier = Modifier.scale(0.6f),
-                            tint = colorFlagWhite
+                            tint = colorFlagWhite,
                         )
                     }
                 }
@@ -144,18 +152,20 @@ fun FlagEn() {
 @Composable
 fun FlagJp() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorFlagWhite)
-            .padding(16.dp)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(colorFlagWhite)
+                .padding(16.dp),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .aspectRatio(1f)
-                .clip(CircleShape)
-                .background(colorFlagRed)
-                .align(Alignment.Center)
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .aspectRatio(1f)
+                    .clip(CircleShape)
+                    .background(colorFlagRed)
+                    .align(Alignment.Center),
         )
     }
 }
@@ -163,36 +173,40 @@ fun FlagJp() {
 @Composable
 fun FlagKo() {
     Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorFlagWhite),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(colorFlagWhite),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         val color = Color(0xFF0F111D)
         Icon(
             painter = painterResource(R.drawable.ic_menu),
             contentDescription = null,
-            modifier = Modifier
-                .weight(1f)
-                .scale(0.6f)
-                .rotate(315f),
-            tint = color
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .scale(0.6f)
+                    .rotate(315f),
+            tint = color,
         )
         Image(
             painter = painterResource(R.drawable.ic_ko_tai_chi),
             contentDescription = null,
-            modifier = Modifier
-                .fillMaxHeight(0.9f)
-                .aspectRatio(1f),
+            modifier =
+                Modifier
+                    .fillMaxHeight(0.9f)
+                    .aspectRatio(1f),
         )
         Icon(
             painter = painterResource(R.drawable.ic_menu),
             contentDescription = null,
-            modifier = Modifier
-                .weight(1f)
-                .scale(0.6f)
-                .rotate(315f),
-            tint = color
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .scale(0.6f)
+                    .rotate(315f),
+            tint = color,
         )
     }
 }
@@ -200,24 +214,27 @@ fun FlagKo() {
 @Composable
 fun FlagEs() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorFlagRed)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(colorFlagRed),
     ) {
         Box(
-            modifier = Modifier
-                .background(colorFlagYellow)
-                .fillMaxWidth()
-                .fillMaxHeight(0.7f)
-                .align(Alignment.Center)
+            modifier =
+                Modifier
+                    .background(colorFlagYellow)
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.7f)
+                    .align(Alignment.Center),
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_flag_es_shield),
                 contentDescription = null,
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(start = 20.dp),
-                tint = colorFlagRed
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(start = 20.dp),
+                tint = colorFlagRed,
             )
         }
     }
@@ -234,7 +251,7 @@ fun FlagId() {
                 Modifier
                     .fillMaxWidth()
                     .weight(weight)
-                    .background(color)
+                    .background(color),
             )
         }
     }
@@ -254,7 +271,7 @@ fun FlagTh() {
                 Modifier
                     .fillMaxWidth()
                     .weight(weight)
-                    .background(color)
+                    .background(color),
             )
         }
     }
@@ -263,16 +280,16 @@ fun FlagTh() {
 @Composable
 fun FlagVn() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorFlagRed)
-
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(colorFlagRed),
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_star),
             contentDescription = null,
             modifier = Modifier.align(Alignment.Center),
-            tint = colorFlagYellow
+            tint = colorFlagYellow,
         )
     }
 }

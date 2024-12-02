@@ -4,7 +4,8 @@ import com.fang.taipeitour.model.attraction.Attraction
 
 sealed class Item {
     data class Data(
-        val attraction: Attraction
+        val attraction: Attraction,
     ) : Item()
-    object Loading : Item()
+
+    data object Loading : Item()
 }

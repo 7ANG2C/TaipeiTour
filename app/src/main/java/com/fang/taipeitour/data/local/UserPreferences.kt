@@ -9,10 +9,12 @@ data class UserPreferences(
     val darkMode: DarkMode,
     val colorScheme: ColorScheme,
 ) {
-
     companion object {
-        val default = UserPreferences(
-            Language.default, DarkMode.default, ColorScheme.default
-        )
+        val default =
+            UserPreferences(
+                Language.default,
+                DarkMode.default,
+                ColorScheme.default,
+            )
     }
 }

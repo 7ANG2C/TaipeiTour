@@ -25,9 +25,10 @@ enum class ColorScheme(val light: MaterialScheme, val dark: MaterialScheme, val 
 
     companion object {
         val default = BLUEBERRY
-        operator fun get(key: String): ColorScheme? = all.find { it.key == key }
 
-        private val all by lazy { values().toList() }
+        operator fun get(key: String) = all.find { it.key == key }
+
+        private val all by lazy { entries }
     }
 
     val next get() = all.getOrNull(ordinal + 1) ?: default

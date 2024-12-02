@@ -7,5 +7,5 @@ package com.module.taipeitourapi.external.model.response.common
  */
 data class Category(
     val id: Int,
-    val name: String
+    val name: String,
 )

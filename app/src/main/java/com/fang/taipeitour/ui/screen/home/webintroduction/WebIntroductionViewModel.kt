@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class WebIntroductionViewModel : ViewModel() {
-
     private val _titleState = MutableStateFlow("")
     val titleState = _titleState.asStateFlow()
 

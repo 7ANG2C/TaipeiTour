@@ -3,11 +3,14 @@ package com.fang.taipeitour.ui.main
 import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,8 +19,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -44,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +63,7 @@ import com.fang.taipeitour.dsl.ComposableInvoke
 import com.fang.taipeitour.dsl.Invoke
 import com.fang.taipeitour.model.language.Language
 import com.fang.taipeitour.model.language.getLocaleString
+import com.fang.taipeitour.ui.component.dsl.LocalDarkMode
 import com.fang.taipeitour.ui.component.dsl.LocalLanguage
 import com.fang.taipeitour.ui.component.dsl.LocalStaticPreferences
 import com.fang.taipeitour.ui.component.dsl.stateValue
@@ -67,10 +74,9 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        enableEdgeToEdge()
         setContent {
             val viewModel = koinViewModel<MainViewModel>()
             viewModel.preferencesState.stateValue()?.let { preferences ->
@@ -78,7 +84,19 @@ class MainActivity : AppCompatActivity() {
                     var menuState by rememberSaveable {
                         mutableStateOf(ScreenMenu.HOME)
                     }
-                    Screen(modifier = Modifier.fillMaxSize()) {
+                    Screen(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .background(
+                                    animateColorAsState(
+                                        targetValue = if (LocalDarkMode) Color.Black else Color.White,
+                                        label = "background",
+                                    ).value,
+                                )
+                                .statusBarsPadding()
+                                .navigationBarsPadding(),
+                    ) {
                         val drawerState = rememberDrawerState(DrawerValue.Closed)
                         ModalNavigationDrawer(
                             modifier = Modifier.fillMaxSize(),
@@ -89,31 +107,31 @@ class MainActivity : AppCompatActivity() {
                                 MenuDrawer {
                                     menuState = it
                                     coroutineScope.launch {
-                                        drawerState.animateTo(
-                                            DrawerValue.Closed, tween(500)
-                                        )
+                                        drawerState.snapTo(DrawerValue.Closed)
                                     }
                                 }
-                            }
+                            },
                         ) {
-
                             // main content
                             Crossfade(
                                 targetState = menuState,
                                 animationSpec = tween(400),
-                                label = "main_content"
+                                label = "main_content",
                             ) { menu ->
                                 val scale by animateFloatAsState(
-                                    targetValue = if (drawerState.targetValue == DrawerValue.Open) {
-                                        0.9f
-                                    } else 1f,
+                                    targetValue =
+                                        if (drawerState.targetValue == DrawerValue.Open) {
+                                            0.9f
+                                        } else {
+                                            1f
+                                        },
                                     animationSpec = tween(durationMillis = 300),
-                                    label = "scale"
+                                    label = "scale",
                                 )
                                 Box(
                                     Modifier
                                         .fillMaxSize()
-                                        .scale(scale)
+                                        .scale(scale),
                                 ) {
                                     val coroutineScope = rememberCoroutineScope()
                                     val onMenuClicked: Invoke = {
@@ -135,9 +153,10 @@ class MainActivity : AppCompatActivity() {
                         val coroutineScope = rememberCoroutineScope()
                         BackHandler {
                             when {
-                                drawerState.isOpen -> coroutineScope.launch {
-                                    drawerState.close()
-                                }
+                                drawerState.isOpen ->
+                                    coroutineScope.launch {
+                                        drawerState.close()
+                                    }
                                 menuState != ScreenMenu.HOME -> menuState = ScreenMenu.HOME
                                 else -> showLeaveDialog = true
                             }
@@ -151,7 +170,7 @@ class MainActivity : AppCompatActivity() {
     @Composable
     private fun Screen(
         modifier: Modifier,
-        content: ComposableInvoke
+        content: ComposableInvoke,
     ) {
         TaipeiTourTheme {
             Surface(modifier = modifier, content = content)
@@ -165,33 +184,36 @@ class MainActivity : AppCompatActivity() {
     private fun MenuDrawer(onMenuSelected: Action<ScreenMenu>) {
         ModalDrawerSheet {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .padding(16.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth(0.7f)
+                        .padding(16.dp),
             ) {
                 // avatar
                 Row(
                     modifier = Modifier.padding(vertical = 40.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    val avatar = when (LocalLanguage) {
-                        Language.TAIWAN -> R.drawable.avatar_tw
-                        Language.CHINA -> R.drawable.avatar_cn
-                        Language.ENGLISH -> R.drawable.avatar_en
-                        Language.JAPAN -> R.drawable.avatar_jp
-                        Language.KOREA -> R.drawable.avatar_ko
-                        Language.SPAN -> R.drawable.avatar_es
-                        Language.INDONESIA -> R.drawable.avatar_id
-                        Language.THAILAND -> R.drawable.avatar_th
-                        Language.VIETNAM -> R.drawable.avatar_vn
-                    }
+                    val avatar =
+                        when (LocalLanguage) {
+                            Language.TAIWAN -> R.drawable.avatar_tw
+                            Language.CHINA -> R.drawable.avatar_cn
+                            Language.ENGLISH -> R.drawable.avatar_en
+                            Language.JAPAN -> R.drawable.avatar_jp
+                            Language.KOREA -> R.drawable.avatar_ko
+                            Language.SPAN -> R.drawable.avatar_es
+                            Language.INDONESIA -> R.drawable.avatar_id
+                            Language.THAILAND -> R.drawable.avatar_th
+                            Language.VIETNAM -> R.drawable.avatar_vn
+                        }
                     Image(
                         painter = painterResource(avatar),
                         contentDescription = "avatar image",
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(shape = CircleShape)
+                        modifier =
+                            Modifier
+                                .size(50.dp)
+                                .clip(shape = CircleShape),
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
@@ -199,7 +221,7 @@ class MainActivity : AppCompatActivity() {
                         fontStyle = MaterialTheme.typography.titleMedium.fontStyle,
                         color = MaterialTheme.colorScheme.secondary,
                         fontSize = 24.sp,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
                     )
                 }
 
@@ -208,10 +230,11 @@ class MainActivity : AppCompatActivity() {
                     items(ScreenMenu.all) { menu ->
                         Column {
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .clickable { onMenuSelected(menu) },
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .clickable { onMenuSelected(menu) },
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Spacer(modifier = Modifier.width(16.dp))
@@ -219,14 +242,14 @@ class MainActivity : AppCompatActivity() {
                                     painter = painterResource(menu.icon),
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(24.dp)
+                                    modifier = Modifier.size(24.dp),
                                 )
                                 Text(
                                     text = LocalLanguage.getLocaleString(menu.titleRes),
                                     color = MaterialTheme.colorScheme.primary,
                                     fontSize = 16.sp,
                                     modifier = Modifier.padding(12.dp),
-                                    fontWeight = FontWeight.Normal
+                                    fontWeight = FontWeight.Normal,
                                 )
                             }
                             if (menu != ScreenMenu.all.last()) {
@@ -252,7 +275,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Composable
-    private fun LeaveDialog(showLeaveDialog: Boolean, dismissDialog: Invoke) {
+    private fun LeaveDialog(
+        showLeaveDialog: Boolean,
+        dismissDialog: Invoke,
+    ) {
         if (showLeaveDialog) {
             AlertDialog(
                 onDismissRequest = dismissDialog,
@@ -261,7 +287,7 @@ class MainActivity : AppCompatActivity() {
                         onClick = {
                             dismissDialog.invoke()
                             finish()
-                        }
+                        },
                     ) {
                         Text(LocalLanguage.getLocaleString(R.string.leave_dialog_confirm))
                     }
@@ -271,7 +297,7 @@ class MainActivity : AppCompatActivity() {
                 },
                 text = {
                     Text(LocalLanguage.getLocaleString(R.string.leave_dialog_text))
-                }
+                },
             )
         }
     }

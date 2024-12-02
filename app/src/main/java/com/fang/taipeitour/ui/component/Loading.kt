@@ -14,17 +14,18 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun Loading(
     modifier: Modifier = Modifier,
-    isFancy: Boolean = true
+    isFancy: Boolean = true,
 ) {
     Surface(
         modifier = modifier,
-        color = Color.Transparent
+        color = Color.Transparent,
     ) {
         Box(
-            modifier = Modifier.size(
-                if (isFancy) 42.dp else 32.dp
-            ),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier.size(
+                    if (isFancy) 42.dp else 32.dp,
+                ),
+            contentAlignment = Alignment.Center,
         ) {
             if (isFancy) {
                 CircularProgressIndicator(

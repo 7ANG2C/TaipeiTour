@@ -5,7 +5,6 @@ import android.location.LocationManager
 import androidx.core.content.getSystemService
 
 object LocationUtil {
-
     /**
      * 是否開啟定位
      */
